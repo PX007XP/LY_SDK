@@ -27,6 +27,8 @@ public:
     int PostFileToNet(QString strFileName);
     //完成检测
     int CompeleteCheck( );
+    // 提交审核
+    int SubmitForView();
 private:
     void DealWithLoginResponse(QJsonObject& json);
     void DealWithPageListResponse(QJsonObject& json);
@@ -44,6 +46,8 @@ private:
 
     OperationInterface* m_pOperationObject;
     bool m_bLoginStatus = false;
+
+    int m_iStatus = 0;  // 单号状态  1 上传文件  2 完成检测 3 提交审核
 public slots:
     void SlotsRecvReplayData(QNetworkReply* pReplay);
 

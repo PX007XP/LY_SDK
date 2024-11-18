@@ -73,8 +73,6 @@ private slots:
 
     void handleExcelException(int code, const QString &source, const QString &desc, const QString &help);
 
-    void on_pushFileButton_clicked();
-
     void on_ComCheckButton_clicked();
 
     void on_ShowDataButton_clicked();
@@ -105,6 +103,8 @@ private:
 
     // 根据文件夹显示文件
     int SetFileComboByDirPath(QString strDirPath);
+
+    void on_pushFileButton_clicked();
 
 public:
 

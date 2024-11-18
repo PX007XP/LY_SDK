@@ -1,6 +1,7 @@
 #include "globle.h"
 #include <QDebug>
 #include <QDir>
+#include <QFileInfo>
 #include "logger.h"
 
 QString g_strReqNo = QStringLiteral("ReqNO");
@@ -11,7 +12,7 @@ QString g_strDeviceNo = QStringLiteral("DeviceNo"); // 机台
 QString g_strReqTime = QStringLiteral("CreateTime"); // 申请时间
 QString g_strTestCon = QStringLiteral("TestCon"); // 检查要求
 //QString g_strReqTime = QStringLiteral("CreateTime"); // 样品数量
-//QString g_strReqTime = QStringLiteral("CreateTime"); // 收件时间
+QString g_strRevArtTime = QStringLiteral("UpdateTime"); // 收件时间
 QString g_strReportType = QStringLiteral("ReportType"); // 检验类别
 //QString g_strReqTime = QStringLiteral("CreateTime"); // 是否破坏
 QString g_strProjectClassId = QStringLiteral("ProjectClassId"); // 检查项目
@@ -42,4 +43,10 @@ int CheckDirectoryExists(QString strPath)
         qDebug() << "目录已存在:" << strPath;
     }
     return 0;
+}
+
+QString GetFileSuffix(const QString strFile)
+{
+    QFileInfo fileInfo(strFile);
+    return fileInfo.suffix();
 }
