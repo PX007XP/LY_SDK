@@ -27,7 +27,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
+   <item row="0" column="1" colspan="2">
     <widget class="QSplitter" name="splitter_2">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -50,8 +50,8 @@
      </widget>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QSplitter" name="splitter">
+   <item row="0" column="3">
+    <widget class="QSplitter" name="splitter_3">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -67,37 +67,54 @@
      </widget>
     </widget>
    </item>
-   <item row="4" column="5">
-    <widget class="QDateTimeEdit" name="dateTimeEditStart">
-     <property name="calendarPopup">
-      <bool>true</bool>
+   <item row="0" column="4" rowspan="9">
+    <widget class="Line" name="line_2">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
      <property name="currentSectionIndex">
       <number>0</number>
      </property>
     </widget>
    </item>
-   <item row="4" column="4">
-    <widget class="QLabel" name="label_12">
+   <item row="0" column="5">
+    <widget class="QLabel" name="label_4">
      <property name="text">
       <string>开始时间</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="5">
-    <widget class="QLineEdit" name="MobanlujinEdit"/>
+   <item row="0" column="6">
+    <widget class="QLineEdit" name="MobanlujinEdit">
+     <property name="text">
+      <string>D:\</string>
+     </property>
+    </widget>
    </item>
-   <item row="8" column="6">
-    <widget class="QLabel" name="label_9">
+   <item row="1" column="5">
+    <widget class="QLabel" name="label">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="6" column="5">
-    <widget class="QLineEdit" name="lineEdit"/>
+   <item row="1" column="6">
+    <widget class="QComboBox" name="PathcomboBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="currentIndex">
+      <number>-1</number>
+     </property>
+    </widget>
    </item>
-   <item row="2" column="0" rowspan="7" colspan="3">
+   <item row="2" column="0" rowspan="7" colspan="4">
     <layout class="QGridLayout" name="gridLayout">
      <item row="5" column="7">
       <widget class="QLabel" name="label_jiancexiangmu">
@@ -172,7 +189,7 @@
      <item row="4" column="4" colspan="2">
       <widget class="QLabel" name="label_yangpingshuliang">
        <property name="text">
-        <string>请先输入mms子单号</string>
+        <string>5</string>
        </property>
       </widget>
      </item>
@@ -346,38 +363,103 @@
      </item>
     </layout>
    </item>
-   <item row="7" column="5">
-    <widget class="QLineEdit" name="lineEdit_2"/>
-   </item>
-   <item row="2" column="4">
+   <item row="2" column="5">
     <widget class="QLabel" name="label_2">
      <property name="text">
       <string>材料名称：</string>
      </property>
     </widget>
    </item>
-   <item row="17" column="0" colspan="7">
-    <widget class="QTextEdit" name="showdataEdit">
-     <property name="enabled">
-      <bool>true</bool>
+   <item row="2" column="6">
+    <widget class="QComboBox" name="TypecomboBox">
+     <property name="currentIndex">
+      <number>-1</number>
      </property>
     </widget>
    </item>
-   <item row="15" column="0" colspan="7">
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="4">
+   <item row="3" column="5">
     <widget class="QLabel" name="label_3">
      <property name="text">
       <string>报告选择:</string>
      </property>
     </widget>
    </item>
-   <item row="10" column="0" colspan="3">
+   <item row="3" column="6">
+    <widget class="QComboBox" name="FilecomboBox">
+     <property name="currentIndex">
+      <number>-1</number>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="5">
+    <widget class="QLabel" name="label_12">
+     <property name="text">
+      <string>开始时间</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="6">
+    <widget class="QDateTimeEdit" name="dateTimeEditStart">
+     <property name="calendarPopup">
+      <bool>true</bool>
+     </property>
+     <property name="currentSectionIndex">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="5">
+    <widget class="QLabel" name="label_14">
+     <property name="text">
+      <string>结束时间</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="6">
+    <widget class="QDateTimeEdit" name="dateTimeEditEnd">
+     <property name="displayFormat">
+      <string>yyyy-M-d H:mm</string>
+     </property>
+     <property name="calendarPopup">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="5">
+    <widget class="QLabel" name="label_15">
+     <property name="text">
+      <string>测量人员</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="6">
+    <widget class="QLineEdit" name="lineEdit"/>
+   </item>
+   <item row="7" column="5">
+    <widget class="QLabel" name="label_16">
+     <property name="text">
+      <string>审核人员</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="6">
+    <widget class="QLineEdit" name="lineEdit_2"/>
+   </item>
+   <item row="8" column="7">
+    <widget class="QLabel" name="label_9">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0" colspan="5">
+    <widget class="Line" name="line_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0" colspan="4">
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
@@ -611,22 +693,43 @@
      </item>
     </layout>
    </item>
-   <item row="0" column="2">
-    <widget class="QSplitter" name="splitter_3">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <widget class="QPushButton" name="LoginPushButton">
-      <property name="text">
-       <string>登录</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="SavePasswordPushButton">
-      <property name="text">
-       <string>设置</string>
-      </property>
-     </widget>
-    </widget>
+   <item row="11" column="3" rowspan="2">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="2" column="0">
+      <widget class="QPushButton" name="ShowDataButton">
+       <property name="text">
+        <string>信息显示</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QPushButton" name="ComCheckButton">
+       <property name="text">
+        <string>完成检测</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QPushButton" name="WriteFilepushButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>上传数据</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QPushButton" name="ClearDataButton">
+       <property name="text">
+        <string>清空数据</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item row="0" column="4">
     <widget class="QLabel" name="label_4">
@@ -645,21 +748,123 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit_4"/>
+      <widget class="QLineEdit" name="saveFilePathEdit"/>
      </item>
     </layout>
    </item>
-   <item row="16" column="0" colspan="2">
-    <widget class="QTableView" name="tableView">
-     <property name="font">
-      <font>
-       <family>Agency FB</family>
-      </font>
+   <item row="13" column="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_8">
+     <item>
+      <widget class="QLabel" name="label_10">
+       <property name="text">
+        <string>检查类别：</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="jianceleibie_comboBox">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>FAI</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>CIK</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>首件</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>巡件1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>巡件2</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>巡件3</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>尾件</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>来料</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>CR&amp;R</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>出货</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>调机</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>指定尺寸</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>调机复测</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>架机首件</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>换刀首件</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>FAI+CPK</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>刀具尺寸</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="14" column="0" colspan="8">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="mouseTracking">
-      <bool>true</bool>
-     </property>
-     <property name="acceptDrops">
+    </widget>
+   </item>
+   <item row="15" column="0" colspan="8">
+    <widget class="QTextEdit" name="showdataEdit">
+     <property name="enabled">
       <bool>true</bool>
      </property>
     </widget>

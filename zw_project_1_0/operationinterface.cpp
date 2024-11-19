@@ -9,6 +9,7 @@
 #include <QList>
 #include <QHostAddress>
 #include <QNetworkInterface>
+#include <QStandardPaths>
 #include <QDir>
 #include "globle.h"
 #include "logger.h"
@@ -212,15 +213,31 @@ void OperationInterface::RecieveData()
 
 void OperationInterface::on_WriteFilepushButton_clicked()
 {
+    // 生成文件并上传
     //const char* pString = "./template/880-GNT022-03-003.xlsm";
     //const char* pString = "D:\\S_wroking\\123.xlsx";
     //QString strFilePath = QString::fromUtf8(pString);
+    /*
     QString currentPath = QDir::currentPath();
     QString strFilePath = currentPath + "/template/880-GNT022-03-003.xlsm";
+    */
+    QString strRootPath = ui->MobanlujinEdit->text();
+    QString strProjectPath = ui->PathcomboBox->currentText();
+    QString strTypePath = ui->TypecomboBox->currentText();
+    QString strFileName = ui->FilecomboBox->currentText();
+    if(strRootPath.isEmpty() || strProjectPath.isEmpty() || strTypePath.isEmpty() || strFileName.isEmpty())
+    {
+        QMessageBox::information(this,"错误","请先选择模版");
+        return;
+    }
+    QString strFilePath = strRootPath + "\\" + strProjectPath + "\\" + strTypePath + "\\" + strFileName;
     qDebug()<<"********************** " << strFilePath;
     int iRet = m_pExcellWork->WriteData(&m_vRecvData , strFilePath);
     qDebug() << "WriteData return " << iRet;
     LOG_DEBUG("WriteData return %d",iRet);
+
+    // 上传文件
+    on_pushFileButton_clicked();
 }
 
 
@@ -266,11 +283,32 @@ void OperationInterface::on_pushFileButton_clicked()
 
 void OperationInterface::on_ComCheckButton_clicked()
 {
-    m_pHttpNetObject->CompeleteCheck( );
+    int iRet = m_pHttpNetObject->CompeleteCheck( );
     // 删除保存的文件
     QFile file(m_strPushFilePath);
-    file.remove();
-    m_strPushFilePath.clear();
+    if(!file.exists())
+    {
+        LOG_ERROR("complete check is error :no file:%s",m_strPushFilePath.toStdString().c_str());
+    }
+    else
+    {
+        int iLastIndexName = m_strPushFilePath.lastIndexOf('/');
+        if(-1 == m_strPushFilePath)
+        {
+            iLastIndexName = m_strPushFilePath.lastIndexOf('\\');
+        }
+        if(-1 == m_strPushFilePath)
+        {
+            //
+            return ;
+        }
+        QString strFileName = m_strPushFilePath.mid(iLastIndexName+1);
+        qDebug() << "file name is :" << strFileName;
+        QString strNewFilePath = ui->saveFilePathEdit->text() + "/" + strFileName;
+        file.rename(strNewFilePath);
+        m_strPushFilePath.clear();
+        LOG_INFO("complete check return=%d , filepath=%s ,%s",iRet,strNewFilePath.toStdString().c_str());
+    }
 }
 
 void OperationInterface::MessageBoxInfomation(QString strType, QString strValue)
@@ -332,9 +370,12 @@ void OperationInterface::SetUIMessageInfo(QString strUiName, QString strData)
     {
         ui->label_beizhu->setText(strData);
     }
-    else if(g_strReqNo == strUiName)
+    else if(g_strRevArtTime == strUiName)
     {
+        ui->label_shoujianshijian->setText(strData);
 
+        QDateTime dateTime = QDateTime::fromString(strData, "yyyy-MM-dd HH:mm:ss");
+        ui->dateTimeEditStart->setDateTime(dateTime);
     }
     else if(g_strReqNo == strUiName)
     {
@@ -454,6 +495,8 @@ int OperationInterface::UiInit()
 
     ui->dateTimeEditEnd->setDateTime(QDateTime::currentDateTime());  // 设置当前日期时间
     ui->dateTimeEditEnd->setDisplayFormat("yyyy-MM-dd HH:mm:ss");  // 设置显示格式
+    QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    ui->saveFilePathEdit->setText(desktopPath);
 
     return 0;
 }

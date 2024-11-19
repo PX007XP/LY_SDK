@@ -19,6 +19,9 @@ extern QString g_strProjectStageId ; // 工序
 extern QString g_strSatageNo; // 夹具编号
 extern QString g_strOrgCode ; // 模穴号
 extern QString g_strRemark ; // 备注
+extern QString g_strRevArtTime; // 收件时间
 
 int CheckDirectoryExists(QString strPath);
+
+QString GetFileSuffix(QString strFile);
 #endif // GLOBLE_H

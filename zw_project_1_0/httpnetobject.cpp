@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QJsonArray>
 #include "operationinterface.h"
+#include "ui_operationinterface.h"
 #include "globle.h"
 #include "logger.h"
 
@@ -176,7 +177,7 @@ int HttpNetObject::CompeleteCheck()
     request.setSslConfiguration(QSslConfiguration::defaultConfiguration());
     // 设置请求头部信息（如果需要）
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-
+    qDebug() << "m_strToken: " << m_strToken;
 
     QJsonObject json;
     json["chkResultUserListId"] = m_strBizid;
@@ -187,7 +188,7 @@ int HttpNetObject::CompeleteCheck()
     json["OKQty"] = 5;
     json["Remark"] = "";
     json["reportType"] = 0;
-    json["OldUserCode"] = m_strUserName;
+    json["OldUserCode"] = m_strUserName; // todo 账号
 
     QJsonDocument jsonDoc(json);
     QByteArray jsonData = jsonDoc.toJson();
@@ -196,7 +197,39 @@ int HttpNetObject::CompeleteCheck()
     qDebug() <<"get data: " <<jsonData ;
     QNetworkReply *pReply = m_pManager->post(request, jsonData);
 
+    m_iStatus = 2; // 完成检测 待提交审核
+
     return 0;
+}
+
+int HttpNetObject::SubmitForView()
+{
+    if(2 != m_iStatus)
+    {
+        return -1;
+    }
+    // 定义请求的URL（假设这是登录接口的地址）
+    QUrl url("https://mom.lingyiitech.com:8092/api/Quality/MMS_ChkResultList/UpdateStatus");
+
+    // 创建请求对象
+    QNetworkRequest request(url);
+    request.setRawHeader("Authorization", QString("Bearer %1").arg(m_strToken).toUtf8());
+    request.setSslConfiguration(QSslConfiguration::defaultConfiguration());
+    // 设置请求头部信息（如果需要）
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    QJsonObject json;
+    json["ReqDetailNo"] = m_pOperationObject->GetUiPointObject()->NumberEdit->text();
+    json["DetailSchedule"] = 3;
+
+    QJsonDocument jsonDoc(json);
+    QByteArray jsonData = jsonDoc.toJson();
+
+    // 发送POST请求
+    qDebug() <<"get data: " <<jsonData ;
+    QNetworkReply *pReply = m_pManager->post(request, jsonData);
+
+    m_iStatus = 3;
 }
 
 void HttpNetObject::DealWithLoginResponse(QJsonObject &json)
@@ -238,6 +271,7 @@ void HttpNetObject::DealWithPageListResponse(QJsonObject &json)
         GetJsonValueBykey(pageListData , g_strSatageNo);
         GetJsonValueBykey(pageListData , g_strOrgCode);
         GetJsonValueBykey(pageListData , g_strRemark);
+        GetJsonValueBykey(pageListData, g_strRevArtTime);
 
     }
 
@@ -274,16 +308,19 @@ int HttpNetObject::GetJsonValueBykey(QJsonObject jsonObject,QString strKeyName)
 void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
 {
     QString strResponse ;
-    if (pReplay->error() == QNetworkReply::NoError) {
+    if (pReplay->error() == QNetworkReply::NoError)
+    {
         // 处理成功响应
         strResponse = pReplay->readAll();
         qDebug() << "Response:" << strResponse;
-        LOG_DEBUG(strResponse.toUtf8().data());
-    } else {
+        LOG_INFO("httpnet response is :%s ",strResponse.toUtf8().data());
+    }
+    else
+    {
         // 处理错误
         strResponse = pReplay->readAll();
         qDebug() << "Error:" << pReplay->errorString();
-        LOG_DEBUG("http response error %d", pReplay->error());
+        LOG_ERROR("http response error %d , %s", pReplay->error(),strResponse.toUtf8().data());
     }
 
     QJsonObject json;
@@ -335,19 +372,29 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
     }
     else if(json.contains("Success"))
     {
-        if( "true" == json.value("Success").toString() && "200" == json.value("Code").toString())
+        qDebug()<<"http resopnse data is : " << json.value("Success").toString() << ", code :" << json.value("Code").toInt();
+        LOG_INFO("收到网页系统回复 status=%d , %s , %s",m_iStatus,json.value("Success").toString().toStdString().c_str(),json.value("Code").toString().toStdString().c_str() );
+        if( true == json.value("Success").toBool() && 200 == json.value("Code").toInt())
         {
-            m_pOperationObject->MessageBoxInfomation("提示", "成功");
+            if(2 == m_iStatus)
+            {
+                // 提交审核
+                SubmitForView();
+            }
+            else
+            {
+                m_pOperationObject->MessageBoxInfomation("提示", "成功");
+            }
         }
         else
         {
-            m_pOperationObject->MessageBoxInfomation("提示", "失败");
+            m_pOperationObject->MessageBoxInfomation("提示", "失败1");
             LOG_ERROR("http response error1 %s" ,strResponse.toStdString().data() );
         }
     }
     else
     {
-        m_pOperationObject->MessageBoxInfomation("提示", "失败");
+        m_pOperationObject->MessageBoxInfomation("提示", "失败2");
         LOG_ERROR("http response error2 %s" ,strResponse.toStdString().data() );
     }
     pReplay->deleteLater();

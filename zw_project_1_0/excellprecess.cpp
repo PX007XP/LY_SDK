@@ -38,10 +38,10 @@ int ExcellPrecess::Init(OperationInterface* pOperationInterFace)
 
 
    // if (m_pAxObject->setControl("Excel.Application"))
-    {	// 加载 Microsoft Excel 控件
-        LOG_INFO("load Excel.Application success");
-    }
-     if( m_pAxObject->setControl("kET.Application"))
+  //  {	// 加载 Microsoft Excel 控件
+   //     LOG_INFO("load Excel.Application success");
+   // }
+   /* else*/ if( m_pAxObject->setControl("KET.Application"))
     {
         LOG_INFO("load kET.Application success");
     }
@@ -52,6 +52,7 @@ int ExcellPrecess::Init(OperationInterface* pOperationInterFace)
     m_pWorkBooks = m_pAxObject->querySubObject("Workbooks");
     if(nullptr == m_pWorkBooks)
     {
+        LOG_ERROR("get workbooks faild");
         return -1;
     }
 
@@ -70,7 +71,6 @@ int ExcellPrecess::Init(OperationInterface* pOperationInterFace)
 
 int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QString &strFilePath)
 {
-
     if(nullptr == m_pWorkBooks)
     {
         return -1;
@@ -88,19 +88,32 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
     QAxObject *pWorkbook = m_pWorkBooks->querySubObject("Open(const QString&)", strFilePath);
     if(nullptr == pWorkbook)
     {
-        return -2;
+        return -3;
     }
 
     //新写文件
     QString currentPath = QDir::currentPath();
-    std::string strFileName = "/temporary/880-GNT022-03-004.xlsm";
+    QString strSubNumber = m_pOperationInterFace->GetUiPointObject()->NumberEdit->text();
+    if(strSubNumber.isEmpty())
+    {
+        m_pOperationInterFace->ShowMessageBoxInfo("错误", "无法");
+        return -4;
+    }
+
+    std::string strFileName = "/temporary/";
+    QString strSuffix = GetFileSuffix(strFilePath);
+    if(strSuffix.isEmpty())
+    {
+        return -5;
+    }
+    // 新文件名
     QString strNewFile = QString::fromStdString(strFileName);
-    strNewFile = currentPath + strNewFile;
+    strNewFile = currentPath + strNewFile + strSubNumber + "." +strSuffix;
 
     if(IsFileOpen(strNewFile))
     {
         m_pOperationInterFace->ShowMessageBoxInfo("错误", "目标文件已打开");
-        return -3;
+        return -6;
     }
     //捕获异常
     m_pOperationInterFace->SetSlotExcelException(pWorkbook , strFilePath);
@@ -109,20 +122,21 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
     QAxObject *pSheets = pWorkbook->querySubObject("Sheets");
     if(nullptr == pSheets)
     {
-        return -4;
+        return -7;
     }
     //3 . 打开工作簿
      qDebug() << "WriteData 3 : filepath" << strFilePath ;
     QAxObject *pSheet =pSheets->querySubObject("Item(int)", 1);
     if(nullptr == pSheet)
     {
-        return -5;
+        return -8;
     }
 
     QVariant sheetName = pSheet->dynamicCall("Name");
     qDebug() << "Sheet Name:" << sheetName.toString();
 
     // 读取位置信息
+    FillBasicInfomation(pSheet);
     ReadCellKey(pSheet);
     int iNowColumn = m_pSheetInfo->GetNowColumn();
     for(auto& it : *pVectorData)
@@ -133,7 +147,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
             if(-1 == iBeginRow)
             {
                 qDebug() << "writedata error key: " << it_value.strName << ", column: " << iBeginRow;
-                LOG_ERROR("error writedata error key:%s ,column:%d",it_value.strName , iBeginRow);
+                LOG_ERROR("error writedata error key:%s ,column:%d",it_value.strName.toStdString().c_str() , iBeginRow);
                 continue;
             }
             QAxObject *pCell = pSheet->querySubObject("Cells(int, int)", iBeginRow, iNowColumn);
@@ -143,7 +157,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
             
             QVariant cellValue = pCell->dynamicCall("Value()");
           //  qDebug() << "fill cell :  " << iNowColumn << ": " << iBeginRow  << "value:" << cellValue.toString();
-          LOG_ERROR("error writedata success row:%d ,column:%d,key:%s,value:%s ",iNowColumn , iBeginRow,it_value.strName.toStdString().c_str() ,cellValue.toString().toStdString().c_str());
+          LOG_DEBUG("error writedata success row:%d ,column:%d,key:%s,value:%s ",iNowColumn , iBeginRow,it_value.strName.toStdString().c_str() ,cellValue.toString().toStdString().c_str());
         }
         iNowColumn++;
     }
@@ -156,13 +170,9 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
     DealFilePath(strNewFile);
     qDebug() << "new file: " << strNewFile;
     QVariant result = pWorkbook->dynamicCall("SaveAs(const QString&)", strNewFile);
-    if (!result.isValid() )
+    if (!result.isValid() || result.isNull())
     {
-        return -6;
-    }
-    if( result.isNull())
-    {
-        return -7;
+        return -9;
     }
     else
     {
@@ -172,6 +182,45 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
         LOG_INFO("writedata save newfile success :%s",strNewFile.toStdString().c_str());
         
     }
+
+    return 0;
+}
+
+int ExcellPrecess::FillBasicInfomation(QAxObject *pSheet)
+{
+    // 回填时间
+    QString strBeginTime = m_pOperationInterFace->GetUiPointObject()->dateTimeEditStart->text();
+    QAxObject *pCell = pSheet->querySubObject("Cells(int, int)", 6, 6);
+    // QVariant cellValue = pCell->dynamicCall("Value()");
+    pCell->setProperty("Value", strBeginTime);
+
+    // 结束时间
+    QString strEndTime = m_pOperationInterFace->GetUiPointObject()->dateTimeEditStart->text();
+    pCell = pSheet->querySubObject("Cells(int, int)", 7, 6);
+    // QVariant cellValue = pCell->dynamicCall("Value()");
+    pCell->setProperty("Value", strEndTime);
+
+    // 检查类别
+    QString strCheckType = m_pOperationInterFace->GetUiPointObject()->jianceleibie_comboBox->currentText();
+    pCell = pSheet->querySubObject("Cells(int, int)", 8, 6);
+    // QVariant cellValue = pCell->dynamicCall("Value()");
+    pCell->setProperty("Value", strCheckType);
+
+    // 样品数量：
+    QString strSampleNum =  m_pOperationInterFace->GetUiPointObject()->label_yangpingshuliang->text();
+    pCell = pSheet->querySubObject("Cells(int, int)",11, 6);
+    // QVariant cellValue = pCell->dynamicCall("Value()");
+    pCell->setProperty("Value", strSampleNum);
+
+    QVariant cellValue = pCell->dynamicCall("Value()");
+   // qDebug() << "basic infomation fill cell :  " << cellValue.toString();
+    LOG_INFO("basic infomation writedata success row:%d ,column:%d,key:%s,value:%s ",11 , 6 ,cellValue.toString().toStdString().c_str());
+
+    // 送检单位：
+    QString strCompany = "成都领益";
+    pCell = pSheet->querySubObject("Cells(int, int)", 2, 5);
+    pCell->setProperty("Value", strSampleNum);
+
 
     return 0;
 }
