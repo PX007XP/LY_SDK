@@ -31,6 +31,9 @@ public:
     // 显示表格内容
     int ShowExeclData();
 
+    // 加载文件完成后，更新模型内容
+    bool LoadData();
+
 private:
     QAxObject* m_pAxObject = nullptr;
     QAxObject* m_pWorkBooks = nullptr;
@@ -49,6 +52,7 @@ private:
    // int CheckDirectoryExists(QString strPath);
     int CheckFileExists(QString strFile);
     int DealFilePath(QString &strFile);
+
 
 };
 

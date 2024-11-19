@@ -41,27 +41,27 @@ extern int g_iLogLevel;
 #define LOG_DEBUG(_fmt_, ...) \
     if(g_iLogLevel >= LOGGER_DEBUG && g_pLogger) \
     {\
-        g_pLogger->writeLog(LOGGER_DEBUG ,_fmt_ ,__VA_ARGS__ );\
+        g_pLogger->writeLog(LOGGER_DEBUG ,_fmt_ ,##__VA_ARGS__ );\
     }
 #define LOG_INFO(_fmt_, ...)\
     if(g_iLogLevel >= LOGGER_INFO && g_pLogger) \
     {\
-        g_pLogger->writeLog(LOGGER_INFO ,_fmt_ ,__VA_ARGS__ );\
+        g_pLogger->writeLog(LOGGER_INFO ,_fmt_ ,##__VA_ARGS__ );\
     }
 #define LOG_WARN(_fmt_, ...)\
     if(g_iLogLevel >= LOGGER_WARN && g_pLogger) \
     {\
-        g_pLogger->writeLog(LOGGER_WARN ,_fmt_ ,__VA_ARGS__ );\
+        g_pLogger->writeLog(LOGGER_WARN ,_fmt_ ,##__VA_ARGS__ );\
     }
 #define LOG_ERROR(_fmt_, ...)\
     if(g_iLogLevel >= LOGGER_ERROR && g_pLogger) \
     {\
-        g_pLogger->writeLog(LOGGER_ERROR ,_fmt_ ,__VA_ARGS__ );\
+        g_pLogger->writeLog(LOGGER_ERROR ,_fmt_ ,##__VA_ARGS__ );\
     }
 #define LOG_STATS(_fmt_, ...)\
     if(g_iLogLevel >= LOGGER_STATS && g_pLogger) \
     {\
-        g_pLogger->writeLog(LOGGER_STATS ,_fmt_ ,__VA_ARGS__ );\
+        g_pLogger->writeLog(LOGGER_STATS ,_fmt_ ,##__VA_ARGS__ );\
     }
 
 #endif // LOGGER_H

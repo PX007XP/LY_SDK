@@ -17,8 +17,11 @@ SOURCES += \
     logger.cpp \
     main.cpp \
     operationinterface.cpp \
+    readpoint.cpp \
     recvfile.cpp \
-    sheetfilldatarange.cpp
+    sheetfilldatarange.cpp \
+    tablemodel.cpp \
+    tempdata.cpp
 
 HEADERS += \
     configobject.h \
@@ -27,8 +30,11 @@ HEADERS += \
     httpnetobject.h \
     logger.h \
     operationinterface.h \
+    readpoint.h \
     recvfile.h \
-    sheetfilldatarange.h
+    sheetfilldatarange.h \
+    tablemodel.h \
+    tempdata.h
 
 FORMS += \
     operationinterface.ui

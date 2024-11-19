@@ -14,6 +14,7 @@
 #include "logger.h"
 #include "configobject.h"
 
+
 OperationInterface::OperationInterface(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::OperationInterface)
@@ -78,12 +79,15 @@ OperationInterface::OperationInterface(QWidget *parent)
     connect(this,&OperationInterface::SendMessage , m_pRecvFileWorker , &RecvFile::SendMessageToServer);
 
 
+
+
    // m_pSocket = new QTcpSocket();
     //connect(m_pSocket,SIGNAL(readyRead()),this,SLOT(RecieveData()));
 
     // HTTP测试
 
     // 获取本机ip
+    m_tempData=new TempData(ui->tableView);
 
     UiInit();
     GetLocalIp();
@@ -403,7 +407,8 @@ void OperationInterface::GetLocalIp()
 
 void OperationInterface::on_ShowDataButton_clicked()
 {
-    m_pExcellWork->ShowExeclData();
+    //m_pExcellWork->ShowExeclData();
+    m_tempData->LoadData(ui->MobanlujinEdit->text());
 }
 
 

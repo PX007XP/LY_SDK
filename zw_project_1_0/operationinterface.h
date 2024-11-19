@@ -7,6 +7,7 @@
 #include "excellprecess.h"
 #include <QVector>
 #include "httpnetobject.h"
+#include "tempdata.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -88,6 +89,7 @@ private:
     QThread* m_pSocketThread  ;
     RecvFile *m_pRecvFileWorker ;
     QString m_strLocalIp;
+    TempData *m_tempData;
 
     // UI的相关初始化
     int UiInit();
