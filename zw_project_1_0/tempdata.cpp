@@ -2,7 +2,7 @@
 #include <QAxBase>
 #include "readpoint.h"
 #include <QDir>
-TempData::TempData(QTableView *tv) {
+TempData::TempData(QTableView* tv) {
     m_tableView = tv;
     m_model = new TableModel;
     // 创建一个 QAxObject 来控制 Excel 应用程序
@@ -35,9 +35,6 @@ TempData::~TempData()
     delete m_excel;
 }
 bool TempData::LoadData(QString filename){
-    if(m_model == nullptr){
-        m_model = new TableModel;
-    }
     if(m_workbooks == nullptr){
         m_workbooks = m_excel->querySubObject("Workbooks");
     }
@@ -81,13 +78,22 @@ bool TempData::LoadData(QString filename){
     str.replace(QRegExp("[\r\n]"), "");
     headList<<(str);
     //获取设置的显示行数或者默认的32行
-    int col=33;
-    m_model->setColumnCount(col);
+    int row=160;
     QStringList numStr;
-    for(int i =1;i<col;i++){
-        numStr<<(QString::number(i));
+    int isvalue=9;
+    while(true){
+        if(!varRows[14].toList()[isvalue].isNull()){
+            headList<<QString::number(isvalue-8);
+        }else{
+            break;
+        }
+        isvalue++;
     }
-    headList<<"1"<<"2"<<"3";
+    if(m_model == nullptr){
+        m_model = new TableModel(row,headList.size());
+    }
+    m_model->setColumnCount(headList.size());
+    m_model->setRowCount(row);
     m_model->setHorizontalHeaderLabels(headList);
 
     //points.clear();
@@ -95,7 +101,7 @@ bool TempData::LoadData(QString filename){
     //读取标准计算字体颜色
 
     // 填充数据
-    int row=14;
+    int startRow=14;
     int modelcol=1;
     while(true){
         //QAxObject *cell = sheet->querySubObject("Cells(int, int)", points[i][0], points[i][1]);  // 获取 A1 单元格
@@ -111,7 +117,8 @@ bool TempData::LoadData(QString filename){
         QVariant result = range->dynamicCall("Value");
         */
         // 输出整行数据
-        QVariantList rowData= varRows[row].toList() ;//result.toList();
+        if(startRow >= varRows.size())break;
+        QVariantList rowData= varRows[startRow].toList() ;//result.toList();
         float stand=0,measure=0,ups=0,downs=0;
         if(rowData.size()>5){
             stand=rowData[4].toFloat();
@@ -124,6 +131,7 @@ bool TempData::LoadData(QString filename){
         }
         if (rowData.size()>10){
             if(rowData[9].isNull()){
+                startRow++;
                 continue;
             }
             measure=rowData[9].toFloat();
@@ -132,18 +140,22 @@ bool TempData::LoadData(QString filename){
             qDebug() << value.toString();
         }
         qDebug() << "A1 Cell Value:" << value.toString();  // 输出 A1 单元格的值
-
-        QStandardItem *item=new QStandardItem(QString::number(measure));
+        //QStandardItem *item=new QStandardItem(QString::number(measure));
         // 设置字体颜色为红色
-        item->setForeground(QBrush(standFont(measure,stand,ups,downs)));
-        m_model -> setItem(row-14,1,new QStandardItem(QString::number(modelcol++)));
-        m_model->setItem(row-14,2,item);
+        //item->setForeground(QBrush(standFont(measure,stand,ups,downs)));
+        m_model -> setItem(startRow-14,1,new QStandardItem(QString::number(modelcol++)));
+        //m_model->setItem(startRow-14,2,item);
         for (int i=9;i<rowData.size();i++){
-            measure= measure=rowData[i].toFloat();
+            if(rowData[i].isNull())break;
+            measure=rowData[i].toFloat();
             QStandardItem *item=new QStandardItem(QString::number(measure));
             // 设置字体颜色为红色
             item->setForeground(QBrush(standFont(measure,stand,ups,downs)));
-            m_model->setItem(row-14,2,item);
+            m_model->setItem(startRow-14,i-7,item);
+        }
+        startRow++;
+        if(startRow-14>row){
+            break;
         }
     }
 
@@ -193,7 +205,7 @@ QString TempData::ReadData(int row, int col)
     return QString("");
 }
 
-QColor TempData::standFont(int measure,int stand, int up, int down)
+QColor TempData::standFont(float measure,float stand, float up, float down)
 {
     //（测量值-标准值）/公差 *100%  算出百分比 按颜色输出
     /*
@@ -204,7 +216,7 @@ QColor TempData::standFont(int measure,int stand, int up, int down)
     100	红色
     */
     QColor res;
-    int dv=measure-stand;
+    float dv=measure-stand;
     float k;
     if(dv>=0){
         k=dv/up*100;
@@ -223,4 +235,13 @@ QColor TempData::standFont(int measure,int stand, int up, int down)
         res=Qt::black;
     }
     return res;
+}
+
+void TempData::modslot(bool fs)
+{
+    if(fs){
+        m_tableView->setEditTriggers(QAbstractItemView::SelectedClicked);
+    }else{
+        m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    }
 }

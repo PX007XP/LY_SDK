@@ -18,41 +18,42 @@ public:
         //data_.append({"Bob", 30});
         //data_.append({"Charlie", 35});
     }
-
+    TableModel(int rows, int columns, QObject* parent = nullptr)
+        : QStandardItemModel(rows, columns, parent) // 显式调用父类的构造函数
+    {
+        // 在这里可以添加其他初始化代码
+    }
+    /*
     int rowCount(const QModelIndex &parent = QModelIndex()) const override {
-        return data_.count();  // 返回行数
+        return rowCount();  // 返回行数
     }
 
     int columnCount(const QModelIndex &parent = QModelIndex()) const override {
-        return 2;  // 两列：姓名和年龄
+        return columnCount();  // 两列：姓名和年龄
     }
-
+    */
+    /*
     QVariant data(const QModelIndex &index, int role) const override {
         if (!index.isValid())
             return QVariant();
 
         if (role == Qt::DisplayRole) {
             // 显示数据
-            const auto &row = data_.at(index.row());
-            if (index.column() == 0) {
-                return row[index.column()];  // 姓名
-            } else if (index.column() == 1) {
-                return row[index.column()];  // 年龄
-            }
+            return QVariant(item(index.row(),index.column())->text());
         }
 
         return QVariant();
     }
-
+    */
     bool setData(const QModelIndex &index, const QVariant &value, int role) override {
         if (index.isValid() && role == Qt::EditRole) {
-            auto &row = data_[index.row()];
-
-            if (index.column() == 0) {
-                  qDebug()<<QString("不可更改") ;//更新姓名
-            } else if (index.column() >= 1) {
-                row[index.column()]=value.toFloat();  // 更新年龄
+            // 获取现有的 QStandardItem
+            QStandardItem *item = this->item(index.row(), index.column());
+            if (item) {
+                // 直接修改该单元格的文本内容
+                item->setText(value.toString());
             }
+
 
             // 发出数据已更改的信号
             emit dataChanged(index, index);
@@ -72,7 +73,7 @@ public:
     }
 
 private:
-    QVector<QVector<float>> data_;  // 存储数据，每一行是一个姓名和年龄的对
+    //QVector<QVector<float>> data_;  // 存储数据，每一行是一个姓名和年龄的对
 };
 
 #endif // TABLEMODEL_H

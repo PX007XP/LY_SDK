@@ -87,6 +87,7 @@ private:
     QThread* m_pSocketThread  ;
     RecvFile *m_pRecvFileWorker ;
     QString m_strLocalIp;
+    QTableView *m_tableView;
     TempData *m_tempData;
 
     // UI的相关初始化

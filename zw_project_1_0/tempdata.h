@@ -9,6 +9,7 @@
 #include <QAxObject>
 #include <QDebug>
 #include "tablemodel.h"
+#include <QObject>
 class MyItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
@@ -22,6 +23,7 @@ public:
         initStyleOption(&options, index);
 
         // 选择性地修改字体颜色
+        /*
         if (index.row() % 2 == 0)  // 示例：偶数行设置红色字体
         {
             painter->setPen(QColor(255, 0, 0));  // 设置字体颜色为红色
@@ -30,20 +32,24 @@ public:
         {
             painter->setPen(QColor(0, 0, 255));  // 设置字体颜色为蓝色
         }
-
+        */
         // 绘制单元格内容
         QStyledItemDelegate::paint(painter, options, index);
     }
 };
-class TempData
+class TempData  : public QObject
 {
+    Q_OBJECT
+
 public:
     TempData(QTableView *tv);
     virtual ~TempData();
     bool LoadData(QString filename);
     void WriteData(QString filename);
     QString ReadData(int row,int col);
-    QColor standFont(int measure,int stand,int up,int down);
+    QColor standFont(float measure,float stand,float up,float down);
+    public slots:
+        void modslot(bool fs);
 private:
     //显示视图和模型
     TableModel* m_model;
