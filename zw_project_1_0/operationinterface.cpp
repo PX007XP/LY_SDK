@@ -226,7 +226,7 @@ void OperationInterface::on_WriteFilepushButton_clicked()
         QMessageBox::information(this,"错误","请先选择模版");
         return;
     }
-    QString strFilePath = strRootPath + "\\" + strProjectPath + "\\" + strTypePath + "\\" + strFileName;
+    QString strFilePath = strRootPath /* + "/"*/ + strProjectPath + "/" + strTypePath + "/" + strFileName;
     qDebug()<<"********************** " << strFilePath;
     int iRet = m_pExcellWork->WriteData(&m_vRecvData , strFilePath);
     qDebug() << "WriteData return " << iRet;
@@ -303,6 +303,9 @@ void OperationInterface::on_ComCheckButton_clicked()
         QString strNewFilePath = ui->saveFilePathEdit->text() + "/" + strFileName;
         file.rename(strNewFilePath);
         m_strPushFilePath.clear();
+
+        //todo  调用清空显示界面数据接口
+
         LOG_INFO("complete check return=%d , filepath=%s ,%s",iRet,strNewFilePath.toStdString().c_str());
     }
 }
@@ -411,7 +414,7 @@ void OperationInterface::handleExcelException(int code, const QString &source, c
 void OperationInterface::GetLocalIp()
 {
     QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
-
+    QString strLocalIp ;
     foreach (const QNetworkInterface &interface, interfaces)
     {
         if (interface.flags().testFlag(QNetworkInterface::IsUp) &&
@@ -432,10 +435,24 @@ void OperationInterface::GetLocalIp()
                         m_strLocalIp = ip.toString();
                     }
                 }
+                // 如果没有WLAN接口，则选择以太网接口的IP地址
+                else if (interface.humanReadableName().contains("以太网") && m_strLocalIp.isEmpty())
+                {
+                    m_strLocalIp = ip.toString();
+                }
+                // 如果没有找到WLAN或以太网接口，则选择第一个符合条件的IP地址
+                else if (strLocalIp.isEmpty())
+                {
+                    strLocalIp = ip.toString();
+                }
             }
         }
     }
-
+    if(m_strLocalIp.isEmpty() && !strLocalIp.isEmpty())
+    {
+        m_strLocalIp = strLocalIp;
+        LOG_ERROR("选择第一个ip作为连接地址，%s",m_strLocalIp.toStdString().c_str());
+    }
     ui->IpEdit->setText(m_strLocalIp);
 }
 

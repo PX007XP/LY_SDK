@@ -32,15 +32,15 @@ ExcellPrecess::~ExcellPrecess()
 
 int ExcellPrecess::Init(OperationInterface* pOperationInterFace)
 {
-    m_pAxObject = new QAxObject("KET.Application");
+    m_pAxObject = new QAxObject("Excel.Application");
     m_pAxObject->dynamicCall("SetVisible(bool)", false);
 
 
-   // if (m_pAxObject->setControl("Excel.Application"))
-  //  {	// 加载 Microsoft Excel 控件
-   //     LOG_INFO("load Excel.Application success");
-   // }
-   /* else*/ if( m_pAxObject->setControl("KET.Application"))
+    if (m_pAxObject->setControl("Excel.Application"))
+    {	// 加载 Microsoft Excel 控件
+        LOG_INFO("load Excel.Application success");
+    }
+    else if( m_pAxObject->setControl("KET.Application"))
     {
         LOG_INFO("load kET.Application success");
     }
@@ -84,6 +84,12 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
         m_pOperationInterFace->MessageBoxInfomation("错误",strError);
         return -2;
     }
+    qDebug() << "文件路径：" << strFilePath;
+    if(IsFileOpen(strFilePath))
+    {
+        m_pOperationInterFace->ShowMessageBoxInfo("错误", "目标文件已打开");
+        return 1;
+    }
     QAxObject *pWorkbook = m_pWorkBooks->querySubObject("Open(const QString&)", strFilePath);
     if(nullptr == pWorkbook)
     {
@@ -103,6 +109,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
     QString strSuffix = GetFileSuffix(strFilePath);
     if(strSuffix.isEmpty())
     {
+        pWorkbook->dynamicCall("Close()");
         return -5;
     }
     // 新文件名
@@ -112,6 +119,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
     if(IsFileOpen(strNewFile))
     {
         m_pOperationInterFace->ShowMessageBoxInfo("错误", "目标文件已打开");
+        pWorkbook->dynamicCall("Close()");
         return -6;
     }
     //捕获异常
@@ -121,6 +129,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
     QAxObject *pSheets = pWorkbook->querySubObject("Sheets");
     if(nullptr == pSheets)
     {
+        pWorkbook->dynamicCall("Close()");
         return -7;
     }
     //3 . 打开工作簿
@@ -128,6 +137,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
     QAxObject *pSheet =pSheets->querySubObject("Item(int)", 1);
     if(nullptr == pSheet)
     {
+        pWorkbook->dynamicCall("Close()");
         return -8;
     }
 
@@ -171,6 +181,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
     QVariant result = pWorkbook->dynamicCall("SaveAs(const QString&)", strNewFile);
     if (!result.isValid() || result.isNull())
     {
+        pWorkbook->dynamicCall("Close()");
         return -9;
     }
     else
