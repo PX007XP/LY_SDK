@@ -14,6 +14,9 @@
 #include "globle.h"
 #include "logger.h"
 #include "configobject.h"
+#include "tempdata.h"
+#include <QTableView>
+
 
 OperationInterface::OperationInterface(QWidget *parent)
     : QWidget(parent)
@@ -79,12 +82,26 @@ OperationInterface::OperationInterface(QWidget *parent)
     connect(this,&OperationInterface::SendMessage , m_pRecvFileWorker , &RecvFile::SendMessageToServer);
 
 
+
+
    // m_pSocket = new QTcpSocket();
     //connect(m_pSocket,SIGNAL(readyRead()),this,SLOT(RecieveData()));
 
     // HTTP测试
 
     // 获取本机ip
+    // 创建一个垂直布局管理器
+    QVBoxLayout *layout = new QVBoxLayout(this);
+
+
+    m_tableView=new QTableView;
+    // 添加按钮到布局
+    layout->addWidget(m_tableView);
+    ui->showdataEdit->setLayout(layout);
+    m_tableView->setParent(ui->showdataEdit);
+    m_tableView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_tableView->adjustSize();
+    m_tempData=new TempData(m_tableView);
 
     UiInit();
     GetLocalIp();
@@ -461,7 +478,8 @@ void OperationInterface::GetLocalIp()
 
 void OperationInterface::on_ShowDataButton_clicked()
 {
-    m_pExcellWork->ShowExeclData();
+    //m_pExcellWork->ShowExeclData();
+    m_tempData->LoadData(ui->MobanlujinEdit->text()+ui->FilecomboBox->currentText(),ui->label_yangpingshuliang->text().toInt());
 }
 
 

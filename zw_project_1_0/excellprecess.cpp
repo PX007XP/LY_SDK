@@ -17,7 +17,8 @@
 #include <QAxWidget>
 #include <objbase.h>
 #include <QFileInfo>
-#include <QAxBase>
+#include <QVariant>
+
 
 
 ExcellPrecess::ExcellPrecess() {}
