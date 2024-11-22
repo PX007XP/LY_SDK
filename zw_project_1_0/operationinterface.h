@@ -109,6 +109,8 @@ private:
 
     void on_pushFileButton_clicked();
 
+    int GetMobanFileName(QString& strFilePath);
+
 public:
 
 private:

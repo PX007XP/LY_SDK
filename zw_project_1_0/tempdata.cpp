@@ -2,6 +2,7 @@
 #include <QAxBase>
 #include "readpoint.h"
 #include <QDir>
+#include <logger.h>
 TempData::TempData(QTableView* tv) {
     m_tableView = tv;
     m_model = new TableModel;
@@ -16,7 +17,18 @@ TempData::TempData(QTableView* tv) {
         }
 
     }
-
+    if (m_excel->setControl("Excel.Application"))
+    {	// 加载 Microsoft Excel 控件
+        LOG_INFO("load Excel.Application success");
+    }
+    else if( m_excel->setControl("KET.Application"))
+    {
+        LOG_INFO("load kET.Application success");
+    }
+    else
+    {
+        LOG_ERROR("加载excel控件失败");
+    }
     // 设置 Excel 为不可见
     m_excel->setProperty("Visible", false);
 
@@ -43,9 +55,18 @@ bool TempData::LoadData(QString filename, int showrow){
         filename="F:\\zw_project_1_0\\880-GNT022-03-00.xlsm";
     }
     m_workbooks->querySubObject("Open(const QString&)", filename);
+    if(nullptr == m_workbooks)
+    {
+        LOG_ERROR("open file faild :%s",filename.toStdString().c_str());
+    }
 
     // 获取第一个工作表（sheet）
-    m_workbook= m_excel->querySubObject("ActiveWorkBook");
+   // m_workbook= m_excel->querySubObject("ActiveWorkBook");
+    m_workbook= m_workbooks->querySubObject("ActiveWorkBook");
+    if(nullptr == m_workbook)
+    {
+        return false;
+    }
     QAxObject *sheets = m_workbook->querySubObject("Sheets");
     QAxObject *sheet = m_workbook->querySubObject("WorkSheets(int)", 1);  // 获取第一个工作表，索引从 1 开始
     QAxObject *range = sheet->querySubObject("UsedRange");
