@@ -44,7 +44,7 @@ class TempData  : public QObject
 public:
     TempData(QTableView *tv);
     virtual ~TempData();
-    bool LoadData(QString filename);
+    bool LoadData(QString filename,int showrow=33);
     void WriteData(QString filename);
     QString ReadData(int row,int col);
     QColor standFont(float measure,float stand,float up,float down);

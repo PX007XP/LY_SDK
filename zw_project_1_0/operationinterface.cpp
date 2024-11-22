@@ -462,7 +462,7 @@ void OperationInterface::GetLocalIp()
 void OperationInterface::on_ShowDataButton_clicked()
 {
     //m_pExcellWork->ShowExeclData();
-    m_tempData->LoadData(ui->MobanlujinEdit->text());
+    m_tempData->LoadData(ui->MobanlujinEdit->text()+ui->FilecomboBox->currentText(),ui->label_yangpingshuliang->text().toInt());
 }
 
 

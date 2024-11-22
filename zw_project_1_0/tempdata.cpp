@@ -34,12 +34,14 @@ TempData::~TempData()
 
     delete m_excel;
 }
-bool TempData::LoadData(QString filename){
+bool TempData::LoadData(QString filename, int showrow){
     if(m_workbooks == nullptr){
         m_workbooks = m_excel->querySubObject("Workbooks");
     }
-
-    filename="F:\\zw_project_1_0\\880-GNT022-03-00.xlsm";
+    QFile file(filename);
+    if(filename.isEmpty()||(!(file.exists()&& file.isReadable()))){
+        filename="F:\\zw_project_1_0\\880-GNT022-03-00.xlsm";
+    }
     m_workbooks->querySubObject("Open(const QString&)", filename);
 
     // 获取第一个工作表（sheet）
@@ -93,6 +95,9 @@ bool TempData::LoadData(QString filename){
         m_model = new TableModel(row,headList.size());
     }
     m_model->setColumnCount(headList.size());
+    if(showrow != 0){
+        row=showrow;
+    }
     m_model->setRowCount(row);
     m_model->setHorizontalHeaderLabels(headList);
 
@@ -117,7 +122,7 @@ bool TempData::LoadData(QString filename){
         QVariant result = range->dynamicCall("Value");
         */
         // 输出整行数据
-        if(startRow >= varRows.size())break;
+        if(startRow >= varRows.size()|| startRow>= row+14)break;
         QVariantList rowData= varRows[startRow].toList() ;//result.toList();
         float stand=0,measure=0,ups=0,downs=0;
         if(rowData.size()>5){
