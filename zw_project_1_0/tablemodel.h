@@ -52,6 +52,8 @@ public:
             if (item) {
                 // 直接修改该单元格的文本内容
                 item->setText(value.toString());
+            }else {
+                //this->setData(index,value,role);
             }
 
 

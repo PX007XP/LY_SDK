@@ -2,15 +2,15 @@
 #include <QAxBase>
 #include "readpoint.h"
 #include <QDir>
+#include <QRadioButton>
 TempData::TempData(QTableView* tv) {
     m_tableView = tv;
     m_model = new TableModel;
-    // 创建一个 QAxObject 来控制 Excel 应用程序
-    m_excel = nullptr;// new QAxObject("Excel.Application");
+    // 创建一个WPS 应用程序对象
+    m_excel = new QAxObject("Ket.Application");
     if (!m_excel) {
         qDebug() << "无法启动 Excel 应用程序!";
-        // 创建 WPS 应用程序对象
-        m_excel = new QAxObject("Ket.Application");
+        m_excel = new QAxObject("Excel.Application");
         if (!m_excel) {
             qDebug() << "Failed to create WPS COM object!";
         }
@@ -42,13 +42,19 @@ bool TempData::LoadData(QString filename, int showrow){
     if(filename.isEmpty()||(!(file.exists()&& file.isReadable()))){
         filename="F:\\zw_project_1_0\\880-GNT022-03-00.xlsm";
     }
+    m_filepath=filename;
+    if(m_workbook== nullptr){
+        m_workbook->dynamicCall("Save()");
+        m_workbook->dynamicCall("Close()");
+    }
     m_workbooks->querySubObject("Open(const QString&)", filename);
 
     // 获取第一个工作表（sheet）
+    if (m_excel ==nullptr) return false;
     m_workbook= m_excel->querySubObject("ActiveWorkBook");
     QAxObject *sheets = m_workbook->querySubObject("Sheets");
-    QAxObject *sheet = m_workbook->querySubObject("WorkSheets(int)", 1);  // 获取第一个工作表，索引从 1 开始
-    QAxObject *range = sheet->querySubObject("UsedRange");
+    m_sheet = m_workbook->querySubObject("WorkSheets(int)", 1);  // 获取第一个工作表，索引从 1 开始
+    QAxObject *range = m_sheet->querySubObject("UsedRange");
     QVariant var = range->dynamicCall("Value");
     delete range;
     QVariantList varRows= var.toList();
@@ -73,7 +79,7 @@ bool TempData::LoadData(QString filename, int showrow){
     */
     // 设置表头 14行，数据是15行
     //m_model->setHorizontalHeaderLabels(QStringList() << "Name" << "Age" << "City");
-    QAxObject *cell = sheet->querySubObject("Cells(int, int)", 14, 1);  // 获取 A1 单元格
+    QAxObject *cell = m_sheet->querySubObject("Cells(int, int)", 14, 1);  // 获取 A1 单元格
     QVariant value = cell->property("Value");
     // 使用 replace 方法删除所有换行符
     QString str=varRows[12].toList()[0].toString();
@@ -242,11 +248,26 @@ QColor TempData::standFont(float measure,float stand, float up, float down)
     return res;
 }
 
-void TempData::modslot(bool fs)
+void TempData::modslot()
 {
-    if(fs){
+    QRadioButton *button = qobject_cast<QRadioButton *>(sender());
+    if(!m_tableView) return;
+    if(button->isChecked()){
         m_tableView->setEditTriggers(QAbstractItemView::SelectedClicked);
+        //修改数据
+        connect(m_model,&QAbstractItemModel::dataChanged,this,&TempData::SaveData);
     }else{
         m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        //修改数据
+        disconnect(m_model,&QAbstractItemModel::dataChanged,this,&TempData::SaveData);
     }
+}
+
+void TempData::SaveData(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
+{
+    if (!m_sheet) return;
+    QAxObject *cell = m_sheet->querySubObject("Cells(int, int)", topLeft.row()+14, topLeft.column()+9); // A1 单元格
+    cell->setProperty("Value", m_model->data(topLeft));
+    // 保存文件
+    m_workbook->dynamicCall("Save()");
 }

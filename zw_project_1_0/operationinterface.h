@@ -8,6 +8,7 @@
 #include <QVector>
 #include "httpnetobject.h"
 #include "tempdata.h"
+#include <QRadioButton>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -89,6 +90,7 @@ private:
     QString m_strLocalIp;
     QTableView *m_tableView;
     TempData *m_tempData;
+    QRadioButton * m_radioButton;
 
     // UI的相关初始化
     int UiInit();

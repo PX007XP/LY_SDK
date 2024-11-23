@@ -49,7 +49,8 @@ public:
     QString ReadData(int row,int col);
     QColor standFont(float measure,float stand,float up,float down);
     public slots:
-        void modslot(bool fs);
+        void modslot();
+        void SaveData(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
 private:
     //显示视图和模型
     TableModel* m_model;
@@ -57,6 +58,8 @@ private:
     QAxObject *m_excel;
     QAxObject *m_workbooks;
     QAxObject *m_workbook;
+    QAxObject *m_sheet;
+    QString m_filepath;
 };
 
 #endif // TEMPDATA_H

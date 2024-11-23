@@ -102,6 +102,11 @@ OperationInterface::OperationInterface(QWidget *parent)
     m_tableView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_tableView->adjustSize();
     m_tempData=new TempData(m_tableView);
+    //修改数据
+    m_radioButton=new QRadioButton;
+    m_radioButton->setText(QString("修改数据"));
+    ui->gridLayout_2->addWidget(m_radioButton,0,1);
+    connect(m_radioButton,&QRadioButton::clicked,m_tempData,&TempData::modslot);
 
     UiInit();
     GetLocalIp();
