@@ -97,16 +97,11 @@ OperationInterface::OperationInterface(QWidget *parent)
     m_tableView=new QTableView;
     // 添加按钮到布局
     layout->addWidget(m_tableView);
-    ui->showdataEdit->setLayout(layout);
-    m_tableView->setParent(ui->showdataEdit);
-    m_tableView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    m_tableView->adjustSize();
-    m_tempData=new TempData(m_tableView);
-    //修改数据
-    m_radioButton=new QRadioButton;
-    m_radioButton->setText(QString("修改数据"));
-    ui->gridLayout_2->addWidget(m_radioButton,0,1);
-    connect(m_radioButton,&QRadioButton::clicked,m_tempData,&TempData::modslot);
+  //  ui->showdataEdit->setLayout(layout);
+  //  m_tableView->setParent(ui->showdataEdit);
+   // m_tableView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+   // m_tableView->adjustSize();
+   // m_tempData=new TempData(m_tableView);
 
     UiInit();
     GetLocalIp();
@@ -144,23 +139,23 @@ void OperationInterface::RecvSocketMessage(QByteArray szMessage)
 
     QVector<QColor> colors = {Qt::red , Qt::blue ,Qt::black,Qt::cyan ,Qt::magenta ,Qt::darkRed,Qt::green};
     int iRandId = QRandomGenerator::global()->bounded(colors.size());
-    ui->showdataEdit->setTextColor(colors[iRandId]);
-    ui->showdataEdit->append(strText1);
+  //  ui->showdataEdit->setTextColor(colors[iRandId]);
+  //  ui->showdataEdit->append(strText1);
 }
 
 void OperationInterface::ShowDetailMesage(RecvFile::STDetailData stResult)
 {
     QVector<QColor> colors = {Qt::red , Qt::blue ,Qt::black,Qt::cyan ,Qt::magenta ,Qt::darkRed,Qt::green};
     QString strParid = "partid:" + stResult.m_strPartID;
-    ui->showdataEdit->append(strParid);
+   // ui->showdataEdit->append(strParid);
     QString strTime = "时间:" + stResult.m_strDateTime;
-    ui->showdataEdit->append(strTime);
+   // ui->showdataEdit->append(strTime);
 
     QString strHeGe = "合格:" + QString(stResult.m_cQualified);
-    ui->showdataEdit->append(strHeGe);
+   // ui->showdataEdit->append(strHeGe);
 
     QString strUnits = "测量单位:" + stResult.m_strUnits;
-    ui->showdataEdit->append(strUnits);
+   // ui->showdataEdit->append(strUnits);
     qDebug() << "解析数据展示  :" << strParid << ", " << strTime << ", " << strHeGe << ", " << strUnits;
 
     auto it = stResult.m_mMeasuredValue.begin();
@@ -178,8 +173,8 @@ void OperationInterface::ShowDetailMesage(RecvFile::STDetailData stResult)
         strShow += "实际值:";
         strShow +=  QString::number(it->dActual);
         int iRandId = QRandomGenerator::global()->bounded(colors.size());
-        ui->showdataEdit->setTextColor(colors[iRandId]);
-        ui->showdataEdit->append(strShow);
+     //   ui->showdataEdit->setTextColor(colors[iRandId]);
+      //  ui->showdataEdit->append(strShow);
     }
 
     m_vRecvData.push_back(stResult);
@@ -239,20 +234,20 @@ void OperationInterface::on_WriteFilepushButton_clicked()
     QString currentPath = QDir::currentPath();
     QString strFilePath = currentPath + "/template/880-GNT022-03-003.xlsm";
     */
-    QString strRootPath = ui->MobanlujinEdit->text();
-    QString strProjectPath = ui->PathcomboBox->currentText();
-    QString strTypePath = ui->TypecomboBox->currentText();
-    QString strFileName = ui->FilecomboBox->currentText();
-    if(strRootPath.isEmpty() || strProjectPath.isEmpty() || strTypePath.isEmpty() || strFileName.isEmpty())
+    QString strFilePath;
+    int iRet = GetMobanFileName(strFilePath);
+    if(0 == iRet)
     {
-        QMessageBox::information(this,"错误","请先选择模版");
-        return;
+        int iRet = m_pExcellWork->WriteData(&m_vRecvData , strFilePath);
+        qDebug() << "WriteData return " << iRet;
+        LOG_DEBUG("WriteData return %d",iRet);
     }
-    QString strFilePath = strRootPath + "\\" + strProjectPath + "\\" + strTypePath + "\\" + strFileName;
-    qDebug()<<"********************** " << strFilePath;
-    int iRet = m_pExcellWork->WriteData(&m_vRecvData , strFilePath);
-    qDebug() << "WriteData return " << iRet;
-    LOG_DEBUG("WriteData return %d",iRet);
+    else
+    {
+        LOG_ERROR("moban file is error:%s ",strFilePath.toStdString().c_str());
+    }
+
+
 
     // 上传文件
     on_pushFileButton_clicked();
@@ -299,6 +294,22 @@ void OperationInterface::on_pushFileButton_clicked()
     m_pHttpNetObject->PostFileToNet(m_strPushFilePath);
 }
 
+int OperationInterface::GetMobanFileName(QString& strFilePath)
+{
+    QString strRootPath = ui->MobanlujinEdit->text();
+    QString strProjectPath = ui->PathcomboBox->currentText();
+    QString strTypePath = ui->TypecomboBox->currentText();
+    QString strFileName = ui->FilecomboBox->currentText();
+    if(strRootPath.isEmpty() || strProjectPath.isEmpty() || strTypePath.isEmpty() || strFileName.isEmpty())
+    {
+        QMessageBox::information(this,"错误","请先选择模版");
+        return -1 ;
+    }
+    strFilePath = strRootPath /* + "/"*/ + strProjectPath + "/" + strTypePath + "/" + strFileName;
+    qDebug()<<"********************** " << strFilePath;
+    return 0;
+}
+
 void OperationInterface::on_ComCheckButton_clicked()
 {
     int iRet = m_pHttpNetObject->CompeleteCheck( );
@@ -325,6 +336,9 @@ void OperationInterface::on_ComCheckButton_clicked()
         QString strNewFilePath = ui->saveFilePathEdit->text() + "/" + strFileName;
         file.rename(strNewFilePath);
         m_strPushFilePath.clear();
+
+        //todo  调用清空显示界面数据接口
+
         LOG_INFO("complete check return=%d , filepath=%s ,%s",iRet,strNewFilePath.toStdString().c_str());
     }
 }
@@ -433,7 +447,7 @@ void OperationInterface::handleExcelException(int code, const QString &source, c
 void OperationInterface::GetLocalIp()
 {
     QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
-
+    QString strLocalIp ;
     foreach (const QNetworkInterface &interface, interfaces)
     {
         if (interface.flags().testFlag(QNetworkInterface::IsUp) &&
@@ -454,10 +468,24 @@ void OperationInterface::GetLocalIp()
                         m_strLocalIp = ip.toString();
                     }
                 }
+                // 如果没有WLAN接口，则选择以太网接口的IP地址
+                else if (interface.humanReadableName().contains("以太网") && m_strLocalIp.isEmpty())
+                {
+                    m_strLocalIp = ip.toString();
+                }
+                // 如果没有找到WLAN或以太网接口，则选择第一个符合条件的IP地址
+                else if (strLocalIp.isEmpty())
+                {
+                    strLocalIp = ip.toString();
+                }
             }
         }
     }
-
+    if(m_strLocalIp.isEmpty() && !strLocalIp.isEmpty())
+    {
+        m_strLocalIp = strLocalIp;
+        LOG_ERROR("选择第一个ip作为连接地址，%s",m_strLocalIp.toStdString().c_str());
+    }
     ui->IpEdit->setText(m_strLocalIp);
 }
 
@@ -467,7 +495,17 @@ void OperationInterface::GetLocalIp()
 void OperationInterface::on_ShowDataButton_clicked()
 {
     //m_pExcellWork->ShowExeclData();
-    m_tempData->LoadData(ui->MobanlujinEdit->text()+ui->FilecomboBox->currentText(),ui->label_yangpingshuliang->text().toInt());
+    QString strFilePath;
+    int iRet = GetMobanFileName(strFilePath);
+    if(0 == iRet)
+    {
+        m_tempData->LoadData(ui->MobanlujinEdit->text()+ui->FilecomboBox->currentText(),ui->label_yangpingshuliang->text().toInt());
+    }
+    else
+    {
+        LOG_ERROR("moban file is error :%s",strFilePath.toStdString().c_str());
+    }
+
 }
 
 

@@ -17,11 +17,8 @@ SOURCES += \
     logger.cpp \
     main.cpp \
     operationinterface.cpp \
-    readpoint.cpp \
     recvfile.cpp \
-    sheetfilldatarange.cpp \
-    tablemodel.cpp \
-    tempdata.cpp
+    sheetfilldatarange.cpp
 
 HEADERS += \
     configobject.h \
@@ -30,14 +27,16 @@ HEADERS += \
     httpnetobject.h \
     logger.h \
     operationinterface.h \
-    readpoint.h \
     recvfile.h \
-    sheetfilldatarange.h \
-    tablemodel.h \
-    tempdata.h
+    sheetfilldatarange.h
 
 FORMS += \
     operationinterface.ui
+
+msvc{
+    QMAKE_CFLAGS += /utf-8
+    QMAKE_CXXFLAGS += /utf-8
+}
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
