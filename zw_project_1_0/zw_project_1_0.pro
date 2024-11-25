@@ -9,6 +9,8 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
  #-*- coding: utf-8 -*-
 
+ QMAKE_CXXFLAGS += /FS
+
 SOURCES += \
     configobject.cpp \
     excellprecess.cpp \
@@ -16,9 +18,12 @@ SOURCES += \
     httpnetobject.cpp \
     logger.cpp \
     main.cpp \
-    operationinterface.cpp \
     recvfile.cpp \
-    sheetfilldatarange.cpp
+    sheetfilldatarange.cpp\
+    operationinterface.cpp\
+    tempdata.cpp\
+    readpoint.cpp\
+    tablemodel.cpp
 
 HEADERS += \
     configobject.h \
@@ -26,9 +31,13 @@ HEADERS += \
     globle.h \
     httpnetobject.h \
     logger.h \
-    operationinterface.h \
     recvfile.h \
-    sheetfilldatarange.h
+    sheetfilldatarange.h\
+    operationinterface.h \
+    ui_operationinterface.h \
+    tempdata.h\
+    readpoint.h\
+    tablemodel.h
 
 FORMS += \
     operationinterface.ui

@@ -90,18 +90,12 @@ OperationInterface::OperationInterface(QWidget *parent)
     // HTTP测试
 
     // 获取本机ip
-    // 创建一个垂直布局管理器
-    QVBoxLayout *layout = new QVBoxLayout(this);
 
-
-    m_tableView=new QTableView;
-    // 添加按钮到布局
-    layout->addWidget(m_tableView);
-  //  ui->showdataEdit->setLayout(layout);
-  //  m_tableView->setParent(ui->showdataEdit);
-   // m_tableView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-   // m_tableView->adjustSize();
-   // m_tempData=new TempData(m_tableView);
+    //数据显示逻辑
+    m_tempData=new TempData(ui->ShowtableView);
+    connect(m_tempData,&TempData::dataChanged,this,&OperationInterface::DataChanged);
+    connect(ui->radioButton,&QRadioButton::clicked,m_tempData,&TempData::modslot);
+    connect(ui->ClearDataButton,&QPushButton::clicked,m_tempData,&TempData::dataClear);
 
     UiInit();
     GetLocalIp();
@@ -178,6 +172,9 @@ void OperationInterface::ShowDetailMesage(RecvFile::STDetailData stResult)
     }
 
     m_vRecvData.push_back(stResult);
+    if(m_tempData){
+        m_tempData->ShowData(stResult);
+    }
 }
 
 void OperationInterface::SetSlotExcelException(QAxObject *pWorkbook, QString strFile)
@@ -305,7 +302,7 @@ int OperationInterface::GetMobanFileName(QString& strFilePath)
         QMessageBox::information(this,"错误","请先选择模版");
         return -1 ;
     }
-    strFilePath = strRootPath /* + "/"*/ + strProjectPath + "/" + strTypePath + "/" + strFileName;
+    strFilePath = strRootPath /* + "\\"*/ + strProjectPath + "\\" + strTypePath + "\\" + strFileName;
     qDebug()<<"********************** " << strFilePath;
     return 0;
 }
@@ -499,7 +496,7 @@ void OperationInterface::on_ShowDataButton_clicked()
     int iRet = GetMobanFileName(strFilePath);
     if(0 == iRet)
     {
-        m_tempData->LoadData(ui->MobanlujinEdit->text()+ui->FilecomboBox->currentText(),ui->label_yangpingshuliang->text().toInt());
+        m_tempData->LoadData(strFilePath,ui->label_yangpingshuliang->text().toInt());
     }
     else
     {
@@ -541,6 +538,18 @@ void OperationInterface::on_MobanlujinEdit_editingFinished()
     strPath = strMoBanRootPath + "/" + strPath;
     SetDirPathComboByDirPath(strPath);
 
+}
+
+void OperationInterface::DataChanged(int num, QString key, double value)
+{
+    if(num<0||num>m_vRecvData.size()) return;
+    auto& item=m_vRecvData[num];
+    for(auto it=item.m_mMeasuredValue.begin();it!=item.m_mMeasuredValue.end();it++){
+        if(it.key() == key){
+            it.value().dActual=value;
+            //m_tempData->ShowData(item);
+        }
+    }
 }
 
 int OperationInterface::UiInit()

@@ -80,17 +80,18 @@ private slots:
     void on_ShowDataButton_clicked();
 
     void on_MobanlujinEdit_editingFinished();
+
+    void DataChanged(int num,QString key,double value);
 signals:
     void StartConnect(QString strIP,unsigned short usPort);
     void SendMessage(QString strMessage);
+
 private:
     Ui::OperationInterface *ui;
     QThread* m_pSocketThread  ;
     RecvFile *m_pRecvFileWorker ;
     QString m_strLocalIp;
-    QTableView *m_tableView;
     TempData *m_tempData;
-    QRadioButton * m_radioButton;
 
     // UI的相关初始化
     int UiInit();

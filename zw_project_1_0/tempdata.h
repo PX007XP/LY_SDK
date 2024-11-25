@@ -10,6 +10,11 @@
 #include <QDebug>
 #include "tablemodel.h"
 #include <QObject>
+#include <QRadioButton>
+#include "recvfile.h"
+#include <QQueue>
+#include <QMutex>
+#include <QWaitCondition>
 class MyItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
@@ -42,14 +47,20 @@ class TempData  : public QObject
     Q_OBJECT
 
 public:
-    TempData(QTableView *tv);
-    virtual ~TempData();
+     TempData(QTableView *tv);
+    ~TempData();
     bool LoadData(QString filename,int showrow=33);
     void WriteData(QString filename);
     QString ReadData(int row,int col);
     QColor standFont(float measure,float stand,float up,float down);
+    void ShowData(RecvFile::STDetailData datildata);
+    signals:
+        void dataChanged(int num,QString key,double value);
+        void pushData();
     public slots:
+        void dataClear();
         void modslot();
+        void getData();
         void SaveData(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
 private:
     //显示视图和模型
@@ -60,6 +71,10 @@ private:
     QAxObject *m_workbook;
     QAxObject *m_sheet;
     QString m_filepath;
+    QQueue<RecvFile::STDetailData> m_queue;
+    QMutex m_locker;
+    QWaitCondition m_cond;
+    QMap<QString,int> m_key;
 };
 
 #endif // TEMPDATA_H

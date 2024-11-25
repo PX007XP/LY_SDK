@@ -3,10 +3,13 @@
 #include "readpoint.h"
 #include <QDir>
 #include <logger.h>
+#include <excellprecess.h>
+#include <QtConcurrent/QtConcurrent>
 TempData::TempData(QTableView* tv) {
     m_tableView = tv;
     m_model = new TableModel;
     // 创建一个WPS 应用程序对象
+
     m_excel = new QAxObject("Ket.Application");
     if (!m_excel) {
         qDebug() << "无法启动 Excel 应用程序!";
@@ -33,6 +36,8 @@ TempData::TempData(QTableView* tv) {
 
     // 打开 Excel 文件
     m_workbooks = m_excel->querySubObject("Workbooks");
+    QtConcurrent::run(this,&TempData::getData);
+    connect(m_model,&QStandardItemModel::dataChanged,this,&TempData::SaveData);
 }
 
 TempData::~TempData()
@@ -43,21 +48,17 @@ TempData::~TempData()
     // 退出 Excel
     m_excel->dynamicCall("Quit()");
 
-    delete m_excel;
+    //delete m_excel;
 }
 bool TempData::LoadData(QString filename, int showrow){
     if(m_workbooks == nullptr){
         m_workbooks = m_excel->querySubObject("Workbooks");
     }
     QFile file(filename);
-    if(filename.isEmpty()||(!(file.exists()&& file.isReadable()))){
+    if(filename.isEmpty()||!((file.exists()))){
         filename="F:\\zw_project_1_0\\880-GNT022-03-00.xlsm";
     }
     m_filepath=filename;
-    if(m_workbook== nullptr){
-        m_workbook->dynamicCall("Save()");
-        m_workbook->dynamicCall("Close()");
-    }
     m_workbooks->querySubObject("Open(const QString&)", filename);
     if(nullptr == m_workbooks)
     {
@@ -65,8 +66,9 @@ bool TempData::LoadData(QString filename, int showrow){
     }
 
     // 获取第一个工作表（sheet）
-   // m_workbook= m_excel->querySubObject("ActiveWorkBook");
-    m_workbook= m_workbooks->querySubObject("ActiveWorkBook");
+    if(m_excel == nullptr) return false;
+    m_workbook= m_excel->querySubObject("ActiveWorkBook");
+    //m_workbook= m_workbooks->querySubObject("ActiveWorkBook");
     if(nullptr == m_workbook)
     {
         return false;
@@ -102,28 +104,37 @@ bool TempData::LoadData(QString filename, int showrow){
     QVariant value = cell->property("Value");
     // 使用 replace 方法删除所有换行符
     QString str=varRows[12].toList()[0].toString();
-    str.replace(QRegExp("[\r\n]"), "");
-    headList<<(str);
+    QList modlist=varRows[12].toList();
+    QStringList modString;
+    for(int i=0;i<4;i++){
+        if(i == 2)continue;
+        modString<<modlist[i].toString();
+    }
+    modlist=varRows[13].toList();
+    for(int i=4;i<7;i++){
+        modString<<modlist[i].toString();
+    }
+    for(int i=0;i<modString.size();i++){
+        //m_model->setItem(0,i,new QStandardItem(modString[i]));
+    }
+    //str.replace(QRegExp("[\r\n]"), "");
+    headList<<modString;
     //获取设置的显示行数或者默认的32行
     int row=160;
     QStringList numStr;
     int isvalue=9;
-    while(true){
-        if(!varRows[14].toList()[isvalue].isNull()){
-            headList<<QString::number(isvalue-8);
-        }else{
-            break;
-        }
-        isvalue++;
-    }
     if(m_model == nullptr){
         m_model = new TableModel(row,headList.size());
     }
-    m_model->setColumnCount(headList.size());
+    //m_model->setColumnCount(headList.size());
     if(showrow != 0){
         row=showrow;
     }
-    m_model->setRowCount(row);
+    for(int i=1;i<=row;i++){
+        headList<<QString::number(i);
+    }
+    m_model->setRowCount(varRows.size());
+    m_model->setColumnCount(row+6);
     m_model->setHorizontalHeaderLabels(headList);
 
     //points.clear();
@@ -147,8 +158,9 @@ bool TempData::LoadData(QString filename, int showrow){
         QVariant result = range->dynamicCall("Value");
         */
         // 输出整行数据
-        if(startRow >= varRows.size()|| startRow>= row+14)break;
+        if(startRow >= varRows.size())break;
         QVariantList rowData= varRows[startRow].toList() ;//result.toList();
+        if (rowData.size()<9) break;
         float stand=0,measure=0,ups=0,downs=0;
         if(rowData.size()>5){
             stand=rowData[4].toFloat();
@@ -159,39 +171,36 @@ bool TempData::LoadData(QString filename, int showrow){
         if(rowData.size()>7){
             downs=rowData[6].toFloat();
         }
-        if (rowData.size()>10){
-            if(rowData[9].isNull()){
-                startRow++;
-                continue;
-            }
-            measure=rowData[9].toFloat();
-        }
-        for (const QVariant &value : rowData) {
-            qDebug() << value.toString();
-        }
-        qDebug() << "A1 Cell Value:" << value.toString();  // 输出 A1 单元格的值
+        //qDebug() << "A1 Cell Value:" << value.toString();  // 输出 A1 单元格的值
         //QStandardItem *item=new QStandardItem(QString::number(measure));
         // 设置字体颜色为红色
         //item->setForeground(QBrush(standFont(measure,stand,ups,downs)));
-        m_model -> setItem(startRow-14,1,new QStandardItem(QString::number(modelcol++)));
+        m_model -> setItem(startRow-14,0,new QStandardItem(rowData[0].toString()));
+        m_model -> setItem(startRow-14,1,new QStandardItem(rowData[1].toString()));
+        m_key[rowData[1].toString()]=startRow-14;
+        m_model -> setItem(startRow-14,2,new QStandardItem(rowData[3].toString()));
+        m_model -> setItem(startRow-14,3,new QStandardItem(rowData[4].toString()));
+        m_model -> setItem(startRow-14,4,new QStandardItem(rowData[5].toString()));
+        m_model -> setItem(startRow-14,5,new QStandardItem(rowData[6].toString()));
+        //m_model -> setItem(startRow-14,6,new QStandardItem(rowData[0].toString()));
+        //m_model -> setItem(startRow-13,1,new QStandardItem(QString::number(modelcol++)));
         //m_model->setItem(startRow-14,2,item);
-        for (int i=9;i<rowData.size();i++){
+        /*for (int i=9;i<rowData.size();i++){
             if(rowData[i].isNull())break;
             measure=rowData[i].toFloat();
             QStandardItem *item=new QStandardItem(QString::number(measure));
             // 设置字体颜色为红色
             item->setForeground(QBrush(standFont(measure,stand,ups,downs)));
-            m_model->setItem(startRow-14,i-7,item);
-        }
+            //m_model->setItem(startRow-14,i-7,item);
+        }*/
         startRow++;
-        if(startRow-14>row){
-            break;
-        }
     }
 
     // 设置代理
     MyItemDelegate *delegate = new MyItemDelegate(m_tableView);
     m_tableView->setItemDelegate(delegate);
+    m_tableView->resizeColumnsToContents();  // 自动调整列宽以适应内容
+
 
     m_tableView->setModel(&*m_model);  // 将模型绑定到视图
 
@@ -267,6 +276,30 @@ QColor TempData::standFont(float measure,float stand, float up, float down)
     return res;
 }
 
+void TempData::ShowData(RecvFile::STDetailData datildata)
+{
+    QMutexLocker lock(&m_locker);
+    m_queue.enqueue(datildata);
+    m_cond.wakeOne();
+}
+
+void TempData::dataClear()
+{
+    if(m_model ==nullptr){
+        m_model = qobject_cast<TableModel*>(m_tableView->model());
+    }
+    //删除测试数据
+    int columnCount = m_model->columnCount();
+    int row=m_model->rowCount();
+
+    // 从指定列开始，删除后面的所有列
+    for (int col = columnCount - 1,i=0; col >= 6,i<row; --col,i++) {
+        //m_model->item(i,col)->setText(QString(""));
+        //m_model->removeColumn(col);  // 删除该列
+    }
+
+}
+
 void TempData::modslot()
 {
     QRadioButton *button = qobject_cast<QRadioButton *>(sender());
@@ -282,11 +315,90 @@ void TempData::modslot()
     }
 }
 
+void TempData::getData()
+{
+    static int j=6;
+    while(true){
+        QMutexLocker lock(&m_locker);
+        if(m_queue.isEmpty()){
+            m_cond.wait(&m_locker);
+        }
+        RecvFile::STDetailData datildata = m_queue.dequeue();
+        if (m_model==nullptr) {
+            g_pLogger->writeLog(1 ,("模型为空"));
+            if(m_tableView->model()!= nullptr){
+                m_model = qobject_cast<TableModel*>(m_tableView->model());
+            }else{
+                m_model = new TableModel;
+            }
+        }
+        //m_model->clear();
+        double stand=0,measure=0,ups=0,downs=0;
+        int i=0;
+        // 遍历并修改数据
+        int colCount=m_model->columnCount();
+        /*
+        for (int col = 0; col < colCount; ++col) {
+            QStandardItem *item = m_model->item(2, col);
+            if (item !=nullptr&&item->data().isNull()) {
+                // 修改数据
+                j=col;
+            }
+        }
+        */
+        QStringList headerlist;
+        for(auto item=datildata.m_mMeasuredValue.begin();item!=datildata.m_mMeasuredValue.end();item++){
+            QString name=item.key();
+            headerlist<<name;
+            //m_model->setItem(i,j,new QStandardItem(name));
+            QString mingcheng=item.value().strName;//名称
+            measure=item.value().dActual;//实测值
+            downs=item.value().dLowerLimit;//下偏差
+            ups=item.value().dUpperLimit;//上偏差
+            stand=item.value().dTheo;//理论值
+            QStandardItem *showitem=new QStandardItem(QString::number(measure));
+            // 设置字体颜色为红色
+            showitem->setForeground(QBrush(standFont(measure,stand,ups,downs)));
+            if(m_key.contains(name)){
+                i=m_key[name];
+                //continue;
+            }
+            m_model->setItem(i++,j,showitem);
+        }
+        j++;
+        //m_model->setVerticalHeaderLabels(headerlist);
+        // 设置代理
+        //MyItemDelegate *delegate = new MyItemDelegate(m_tableView);
+        //m_tableView->setItemDelegate(delegate);
+
+        //m_tableView->setModel(m_model);  // 将模型绑定到视图
+
+        // 显示表格
+        //m_tableView->show();
+        // 禁用所有编辑操作
+        //m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    }
+}
+
 void TempData::SaveData(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
 {
+    /*
     if (!m_sheet) return;
     QAxObject *cell = m_sheet->querySubObject("Cells(int, int)", topLeft.row()+14, topLeft.column()+9); // A1 单元格
     cell->setProperty("Value", m_model->data(topLeft));
     // 保存文件
     m_workbook->dynamicCall("Save()");
+    */
+    /*
+    *对修改内容进行保存，
+     */
+    //先获取参数内容进行显示设置
+    //再修改参数key
+    QStandardItem *keyitem=m_model->item(topLeft.row(),1);
+    if(keyitem == nullptr){
+        return;
+    }
+    QString key = keyitem->text();
+    double value = m_model->data(topLeft).toDouble();
+    emit dataChanged(topLeft.column()-6, key,value);
 }
