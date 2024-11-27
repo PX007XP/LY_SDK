@@ -542,7 +542,7 @@ void OperationInterface::on_MobanlujinEdit_editingFinished()
 
 void OperationInterface::DataChanged(int num, QString key, double value)
 {
-    if(num<0||num>m_vRecvData.size()) return;
+    if(num<0||num>=m_vRecvData.size()||m_vRecvData.empty()) return;
     auto& item=m_vRecvData[num];
     for(auto it=item.m_mMeasuredValue.begin();it!=item.m_mMeasuredValue.end();it++){
         if(it.key() == key){

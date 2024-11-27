@@ -5,6 +5,8 @@
 #include <logger.h>
 #include <excellprecess.h>
 #include <QtConcurrent/QtConcurrent>
+#include <QMessageBox>
+int TempData::m_showcol=6;
 TempData::TempData(QTableView* tv) {
     m_tableView = tv;
     m_model = new TableModel;
@@ -37,7 +39,6 @@ TempData::TempData(QTableView* tv) {
     // 打开 Excel 文件
     m_workbooks = m_excel->querySubObject("Workbooks");
     QtConcurrent::run(this,&TempData::getData);
-    connect(m_model,&QStandardItemModel::dataChanged,this,&TempData::SaveData);
 }
 
 TempData::~TempData()
@@ -59,6 +60,7 @@ bool TempData::LoadData(QString filename, int showrow){
         filename="F:\\zw_project_1_0\\880-GNT022-03-00.xlsm";
     }
     m_filepath=filename;
+    LOG_INFO("打开文件路径：%s",filename.toStdString().c_str());
     m_workbooks->querySubObject("Open(const QString&)", filename);
     if(nullptr == m_workbooks)
     {
@@ -133,8 +135,10 @@ bool TempData::LoadData(QString filename, int showrow){
     for(int i=1;i<=row;i++){
         headList<<QString::number(i);
     }
+    //结果列和判定列
+    headList<<"结果\n判定";
     m_model->setRowCount(varRows.size());
-    m_model->setColumnCount(row+6);
+    m_model->setColumnCount(row+6+1);
     m_model->setHorizontalHeaderLabels(headList);
 
     //points.clear();
@@ -279,6 +283,7 @@ QColor TempData::standFont(float measure,float stand, float up, float down)
 void TempData::ShowData(RecvFile::STDetailData datildata)
 {
     QMutexLocker lock(&m_locker);
+    LOG_INFO("数据放入队列");
     m_queue.enqueue(datildata);
     m_cond.wakeOne();
 }
@@ -289,15 +294,20 @@ void TempData::dataClear()
         m_model = qobject_cast<TableModel*>(m_tableView->model());
     }
     //删除测试数据
+    LOG_INFO("数据清理");
     int columnCount = m_model->columnCount();
     int row=m_model->rowCount();
 
     // 从指定列开始，删除后面的所有列
-    for (int col = columnCount - 1,i=0; col >= 6,i<row; --col,i++) {
-        //m_model->item(i,col)->setText(QString(""));
-        //m_model->removeColumn(col);  // 删除该列
+    for (int i=0;i<row;i++){
+        for (int col = columnCount - 1; col >= 6; --col) {
+            auto item=m_model->item(i,col);
+            if(item == nullptr) continue;
+            item->setText(QString(""));
+            //m_model->removeColumn(col);  // 删除该列
+        }
     }
-
+    m_showcol=6;
 }
 
 void TempData::modslot()
@@ -307,11 +317,12 @@ void TempData::modslot()
     if(button->isChecked()){
         m_tableView->setEditTriggers(QAbstractItemView::SelectedClicked);
         //修改数据
-        connect(m_model,&QAbstractItemModel::dataChanged,this,&TempData::SaveData);
+        //connect(m_model,&QStandardItemModel::dataChanged,this,&TempData::SaveData);
+        connect(m_model,&QStandardItemModel::dataChanged,this,&TempData::SaveData);
     }else{
         m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
         //修改数据
-        disconnect(m_model,&QAbstractItemModel::dataChanged,this,&TempData::SaveData);
+        disconnect(m_model,&QStandardItemModel::dataChanged,this,&TempData::SaveData);
     }
 }
 
@@ -319,11 +330,18 @@ void TempData::getData()
 {
     static int j=6;
     while(true){
-        QMutexLocker lock(&m_locker);
         if(m_queue.isEmpty()){
-            m_cond.wait(&m_locker);
+            QThread::msleep(100);
+        }
+        QMutexLocker lock(&m_locker);
+        m_cond.wait(&m_locker);
+        LOG_INFO("数据取出队列");
+        j=m_showcol;
+        if(j>=m_model->columnCount()){
+            QMessageBox::information(nullptr,"提示","显示列数已满");
         }
         RecvFile::STDetailData datildata = m_queue.dequeue();
+        //lock.unlock();
         if (m_model==nullptr) {
             g_pLogger->writeLog(1 ,("模型为空"));
             if(m_tableView->model()!= nullptr){
@@ -347,6 +365,8 @@ void TempData::getData()
         }
         */
         QStringList headerlist;
+        QVector<int> redvec;
+        QVector<int> allvec;
         for(auto item=datildata.m_mMeasuredValue.begin();item!=datildata.m_mMeasuredValue.end();item++){
             QString name=item.key();
             headerlist<<name;
@@ -358,14 +378,52 @@ void TempData::getData()
             stand=item.value().dTheo;//理论值
             QStandardItem *showitem=new QStandardItem(QString::number(measure));
             // 设置字体颜色为红色
-            showitem->setForeground(QBrush(standFont(measure,stand,ups,downs)));
+            QColor nc=standFont(measure,stand,ups,downs);
+            showitem->setForeground(QBrush(nc));
             if(m_key.contains(name)){
                 i=m_key[name];
                 //continue;
             }
+            if(nc==Qt::red){
+                redvec.append(i);
+            }
+            allvec.append(i);
             m_model->setItem(i++,j,showitem);
         }
+        //判定是否合格 遍历item
+        for(auto a : allvec){
+            if(redvec.contains(a)){
+                QStandardItem *showitem=new QStandardItem("NG");
+                // 设置字体颜色为红色
+                showitem->setForeground(QBrush(Qt::red));
+                m_model->setItem(a,m_model->columnCount()-1,showitem);
+            }else{
+                QStandardItem *showitem=new QStandardItem("OK");
+                // 设置字体颜色为红色
+                showitem->setForeground(QBrush(Qt::green));
+                m_model->setItem(a,m_model->columnCount()-1,showitem);
+            }
+        }
+        /*
+        for(int a=6;a<j;a++){
+            bool fn=true;
+            for(int b=0;b<i-1;b++){
+                auto it=m_model->item(b,a);
+                if(it==nullptr)continue;
+                if(it->foreground().color().name()==Qt::red){
+
+                    fn=false;
+                    break;
+                }
+                if(fn){
+
+                }
+            }
+
+        }*/
+        //m_model->setItem(i-1,m_model->columnCount()-1,new QStandardItem(datildata.m_cQualified));
         j++;
+        m_showcol=j;
         //m_model->setVerticalHeaderLabels(headerlist);
         // 设置代理
         //MyItemDelegate *delegate = new MyItemDelegate(m_tableView);
@@ -374,7 +432,7 @@ void TempData::getData()
         //m_tableView->setModel(m_model);  // 将模型绑定到视图
 
         // 显示表格
-        //m_tableView->show();
+        m_tableView->show();
         // 禁用所有编辑操作
         //m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     }
@@ -400,5 +458,15 @@ void TempData::SaveData(const QModelIndex &topLeft, const QModelIndex &bottomRig
     }
     QString key = keyitem->text();
     double value = m_model->data(topLeft).toDouble();
+    int row=topLeft.row();
+    if(m_model->columnCount() ==0 && m_model->rowCount()==0)return;
+    if(m_model->item(row,3)==nullptr) return;
+    if(m_model->item(row,4)==nullptr) return;
+    if(m_model->item(row,5)==nullptr) return;
+    QColor rc=standFont(value,m_model->item(row,3)->data().toFloat(),m_model->item(row,4)->data().toFloat(),m_model->item(row,5)->data().toFloat());
+    if(rc == Qt::red){
+        auto item=m_model->item(row,m_model->columnCount()-1);
+        item->setForeground(QBrush(rc));
+    }
     emit dataChanged(topLeft.column()-6, key,value);
 }

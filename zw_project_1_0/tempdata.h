@@ -75,6 +75,7 @@ private:
     QMutex m_locker;
     QWaitCondition m_cond;
     QMap<QString,int> m_key;
+    static int m_showcol;
 };
 
 #endif // TEMPDATA_H
