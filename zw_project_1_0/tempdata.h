@@ -54,14 +54,17 @@ public:
     QString ReadData(int row,int col);
     QColor standFont(float measure,float stand,float up,float down);
     void ShowData(RecvFile::STDetailData datildata);
+    void closefile();
     signals:
         void dataChanged(int num,QString key,double value);
         void pushData();
+        void setLaybelText(QString text);
     public slots:
         void dataClear();
         void modslot();
         void getData();
         void SaveData(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
+        void Setyangbenshuliang(int col);
 private:
     //显示视图和模型
     TableModel* m_model;

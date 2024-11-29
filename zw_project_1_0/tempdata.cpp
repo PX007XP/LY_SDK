@@ -6,6 +6,7 @@
 #include <excellprecess.h>
 #include <QtConcurrent/QtConcurrent>
 #include <QMessageBox>
+#include <QSet>
 int TempData::m_showcol=6;
 TempData::TempData(QTableView* tv) {
     m_tableView = tv;
@@ -47,7 +48,7 @@ TempData::~TempData()
     m_workbooks->dynamicCall("Close()");
 
     // 退出 Excel
-    m_excel->dynamicCall("Quit()");
+    //m_excel->dynamicCall("Quit()");
 
     //delete m_excel;
 }
@@ -81,6 +82,7 @@ bool TempData::LoadData(QString filename, int showrow){
     QVariant var = range->dynamicCall("Value");
     delete range;
     QVariantList varRows= var.toList();
+    //关闭文件
 
 
     //获取路径加载xml配置文件
@@ -102,8 +104,8 @@ bool TempData::LoadData(QString filename, int showrow){
     */
     // 设置表头 14行，数据是15行
     //m_model->setHorizontalHeaderLabels(QStringList() << "Name" << "Age" << "City");
-    QAxObject *cell = m_sheet->querySubObject("Cells(int, int)", 14, 1);  // 获取 A1 单元格
-    QVariant value = cell->property("Value");
+    //QAxObject *cell = m_sheet->querySubObject("Cells(int, int)", 14, 1);  // 获取 A1 单元格
+    //QVariant value = cell->property("Value");
     // 使用 replace 方法删除所有换行符
     QString str=varRows[12].toList()[0].toString();
     QList modlist=varRows[12].toList();
@@ -131,6 +133,8 @@ bool TempData::LoadData(QString filename, int showrow){
     //m_model->setColumnCount(headList.size());
     if(showrow != 0){
         row=showrow;
+    }else{
+        row=32;
     }
     for(int i=1;i<=row;i++){
         headList<<QString::number(i);
@@ -213,6 +217,7 @@ bool TempData::LoadData(QString filename, int showrow){
     // 禁用所有编辑操作
     m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     //m_tableView->setEditTriggers(QAbstractItemView::SelectedClicked);
+    closefile();
     return true;
 }
 
@@ -266,7 +271,7 @@ QColor TempData::standFont(float measure,float stand, float up, float down)
     }else{
         k=dv/down*100;
     }
-    if(k==100){
+    if(k>=100){
         res=Qt::red;
     }else if(k>=90){
         res=Qt::yellow;
@@ -286,6 +291,20 @@ void TempData::ShowData(RecvFile::STDetailData datildata)
     LOG_INFO("数据放入队列");
     m_queue.enqueue(datildata);
     m_cond.wakeOne();
+}
+
+void TempData::closefile()
+{
+    // 完成后保存文件
+    //m_workbook->dynamicCall("Save()");
+
+    // 关闭工作簿
+    //m_workbook->dynamicCall("Close()");
+    //m_workbooks->dynamicCall("Close()");
+    // 退出 Excel 应用程序
+    m_excel->dynamicCall("Quit()");
+
+    delete m_excel;  // 释放 Excel 对象
 }
 
 void TempData::dataClear()
@@ -308,6 +327,7 @@ void TempData::dataClear()
         }
     }
     m_showcol=6;
+    emit setLaybelText("OK");
 }
 
 void TempData::modslot()
@@ -329,6 +349,7 @@ void TempData::modslot()
 void TempData::getData()
 {
     static int j=6;
+    static int showrow=0;
     while(true){
         if(m_queue.isEmpty()){
             QThread::msleep(100);
@@ -365,45 +386,114 @@ void TempData::getData()
         }
         */
         QStringList headerlist;
-        QVector<int> redvec;
-        QVector<int> allvec;
+        QSet<int> redvec;
+        QSet<int> allvec;
         for(auto item=datildata.m_mMeasuredValue.begin();item!=datildata.m_mMeasuredValue.end();item++){
             QString name=item.key();
             headerlist<<name;
             //m_model->setItem(i,j,new QStandardItem(name));
             QString mingcheng=item.value().strName;//名称
-            measure=item.value().dActual;//实测值
-            downs=item.value().dLowerLimit;//下偏差
-            ups=item.value().dUpperLimit;//上偏差
-            stand=item.value().dTheo;//理论值
-            QStandardItem *showitem=new QStandardItem(QString::number(measure));
-            // 设置字体颜色为红色
-            QColor nc=standFont(measure,stand,ups,downs);
-            showitem->setForeground(QBrush(nc));
             if(m_key.contains(name)){
                 i=m_key[name];
                 //continue;
             }
-            if(nc==Qt::red){
-                redvec.append(i);
-            }
-            allvec.append(i);
+            measure=item.value().dActual;//实测值
+            /*
+            downs=item.value().dLowerLimit;//下偏差
+            ups=item.value().dUpperLimit;//上偏差
+            stand=item.value().dTheo;//理论值
+            */
+            QStandardItem *showitem=new QStandardItem(QString::number(measure));
+            /*
+            // 设置字体颜色为红色
+            if(m_model->item(i,3)!=nullptr&&m_model->item(i,4)!=nullptr&&(m_model->item(i,5)==nullptr)){
+                QColor rc=standFont(measure,m_model->item(i,3)->data().toFloat(),m_model->item(i,4)->data().toFloat(),m_model->item(i,5)->data().toFloat());
+                showitem->setForeground(QBrush(rc));
+                if(rc==Qt::red){
+                    redvec.append(i);
+                    //auto item=m_model->item(i,m_model->columnCount()-1);
+                    //item->setForeground(QBrush(rc));
+                }
+            }*/
+            //allvec.append(i);
+            if(i>showrow)showrow=i;
             m_model->setItem(i++,j,showitem);
         }
-        //判定是否合格 遍历item
+        //判定是否合格 遍历item 将model中所有的数据进行重新的颜色设置和结果判定列的更新和label的更新
+        for(int i=6;i<m_model->columnCount()-1;i++){
+            bool fn=false;
+            for(int j=0;j<=showrow;j++){
+                QStandardItem *showitem=m_model->item(j,i);
+                if(showitem ==nullptr)continue;
+                if(m_model->item(j,3)!=nullptr&&m_model->item(j,4)!=nullptr&&(m_model->item(j,5)!=nullptr)){
+                    float measure=showitem->text().toFloat();//实测值
+                    float downs=m_model->item(j,5)->text().toFloat();//下偏差
+                    float ups=m_model->item(j,4)->text().toFloat();//上偏差
+                    float stand=m_model->item(j,3)->text().toFloat();//理论值
+                    QColor rc=standFont(showitem->text().toFloat(),m_model->item(j,3)->text().toFloat(),m_model->item(j,4)->text().toFloat(),m_model->item(j,5)->text().toFloat());
+                    showitem->setForeground(QBrush(rc));
+                    if(rc==Qt::red){
+                        redvec.insert(j);
+                        fn=true;
+                        //auto item=m_model->item(i,m_model->columnCount()-1);
+                        //item->setForeground(QBrush(rc));
+                    }
+                    allvec.insert(j);
+                    m_model->setItem(j,i,showitem);
+                }
+            }
+        }
+        bool flabel=false;
+        for(int j:allvec){
+            auto showitem=m_model->item(j,m_model->columnCount()-1);
+            if(redvec.contains(j)){
+                showitem=m_model->item(j,m_model->columnCount()-1);
+                if(showitem == nullptr){
+                    showitem=new QStandardItem("NG");
+                }else{
+                    showitem->setText("NG");
+                }
+                // 设置字体颜色为红色
+                showitem->setForeground(QBrush(Qt::red));
+                flabel=true;
+                m_model->setItem(j,m_model->columnCount()-1,showitem);
+            }else{
+                showitem=m_model->item(j,m_model->columnCount()-1);
+                if(showitem == nullptr){
+                    showitem=new QStandardItem("OK");
+                }else{
+                    showitem->setText("OK");
+                }
+                // 设置字体颜色为红色
+                showitem->setForeground(QBrush(Qt::green));
+                m_model->setItem(j,m_model->columnCount()-1,showitem);
+            }
+        }
+        if (flabel){
+            emit setLaybelText("NG");
+        }else{
+            emit setLaybelText("OK");
+        }
+        /*
         for(auto a : allvec){
+            QStandardItem *showitem=m_model->item(a,m_model->columnCount()-1);
             if(redvec.contains(a)){
-                QStandardItem *showitem=new QStandardItem("NG");
+                if(showitem == nullptr){
+                    showitem=new QStandardItem("NG");
+                }
                 // 设置字体颜色为红色
                 showitem->setForeground(QBrush(Qt::red));
                 m_model->setItem(a,m_model->columnCount()-1,showitem);
             }else{
-                QStandardItem *showitem=new QStandardItem("OK");
+                if(showitem == nullptr){
+                    showitem=new QStandardItem("OK");
+                }
                 // 设置字体颜色为红色
                 showitem->setForeground(QBrush(Qt::green));
                 m_model->setItem(a,m_model->columnCount()-1,showitem);
             }
         }
+        */
         /*
         for(int a=6;a<j;a++){
             bool fn=true;
@@ -433,6 +523,8 @@ void TempData::getData()
 
         // 显示表格
         m_tableView->show();
+        m_tableView->update();
+        //m_tableView->repaint();
         // 禁用所有编辑操作
         //m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     }
@@ -452,21 +544,73 @@ void TempData::SaveData(const QModelIndex &topLeft, const QModelIndex &bottomRig
      */
     //先获取参数内容进行显示设置
     //再修改参数key
+    if(topLeft.column()==m_model->columnCount()-1)return;
     QStandardItem *keyitem=m_model->item(topLeft.row(),1);
     if(keyitem == nullptr){
         return;
     }
     QString key = keyitem->text();
-    double value = m_model->data(topLeft).toDouble();
+    float value = m_model->item(topLeft.row(),topLeft.column())->text().toFloat();
     int row=topLeft.row();
     if(m_model->columnCount() ==0 && m_model->rowCount()==0)return;
     if(m_model->item(row,3)==nullptr) return;
     if(m_model->item(row,4)==nullptr) return;
     if(m_model->item(row,5)==nullptr) return;
-    QColor rc=standFont(value,m_model->item(row,3)->data().toFloat(),m_model->item(row,4)->data().toFloat(),m_model->item(row,5)->data().toFloat());
+    QColor rc=standFont(value,m_model->item(row,3)->text().toFloat(),m_model->item(row,4)->text().toFloat(),m_model->item(row,5)->text().toFloat());
+    //判断自身的颜色
+    auto moditem=m_model->item(row,topLeft.column());
+    if(moditem == nullptr) return;
+    QColor oldcolor= moditem->foreground().color();
+    moditem->setForeground(QBrush(rc));
+    m_model->setItem(topLeft.row(),topLeft.column(),moditem);
     if(rc == Qt::red){
         auto item=m_model->item(row,m_model->columnCount()-1);
         item->setForeground(QBrush(rc));
+        m_model->setItem(row,m_model->columnCount()-1,item);
+        emit setLaybelText("NG");
+    }
+    //遍历当前行
+    bool fn=true;
+    for(int i=6;i<m_model->columnCount()-1;i++){
+        auto item=m_model->item(row,i);
+        if (item == nullptr) continue;
+        if(item->foreground().color()==Qt::red){
+            //说明当前行的结果不用修改
+            fn=false;
+            auto item=m_model->item(row,m_model->columnCount()-1);
+            item->setText("NG");
+            item->setForeground(QBrush(rc));
+            m_model->setItem(row,m_model->columnCount()-1,item);
+            emit setLaybelText("NG");
+        }else{
+            auto item=m_model->item(row,m_model->columnCount()-1);
+            item->setText("OK");
+            item->setForeground(QBrush(Qt::green));
+            m_model->setItem(row,m_model->columnCount()-1,item);
+        }
+    }
+    //遍历结果列，没有红色 则设置label为绿色
+    bool fs=false;
+    for (int i=0;i<m_model->rowCount();i++){
+        auto item=m_model->item(i,m_model->columnCount()-1);
+        if (item == nullptr) continue;
+        if(item->foreground().color()==Qt::red){
+            fs=true;
+        }
+    }
+    if (fs){
+        emit setLaybelText("NG");
+    }else{
+        emit setLaybelText("OK");
     }
     emit dataChanged(topLeft.column()-6, key,value);
+}
+
+void TempData::Setyangbenshuliang(int col)
+{
+    //更新表头和列数
+    int cols=m_model->columnCount();
+    if (cols >= col+6 ) return;
+    m_model->insertColumn(cols-2);
+    m_model->insertColumns(cols-2,col-(cols-6));
 }

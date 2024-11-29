@@ -51,6 +51,7 @@ public:
             QStandardItem *item = this->item(index.row(), index.column());
             if (item) {
                 // 直接修改该单元格的文本内容
+                if(value.toFloat() == item->text().toFloat()) return false;
                 item->setText(value.toString());
             }else {
                 //this->setData(index,value,role);
@@ -58,7 +59,7 @@ public:
 
 
             // 发出数据已更改的信号
-            emit dataChanged(index, index);
+            //emit dataChanged(index, index);
 
             return true;
         }
