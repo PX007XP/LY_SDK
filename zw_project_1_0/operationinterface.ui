@@ -193,7 +193,7 @@
      <item row="4" column="4" colspan="2">
       <widget class="QLabel" name="label_yangpingshuliang">
        <property name="text">
-        <string>5</string>
+        <string>请先输入mms子单号</string>
        </property>
       </widget>
      </item>

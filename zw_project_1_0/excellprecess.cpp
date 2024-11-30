@@ -86,11 +86,11 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
         return -2;
     }
     qDebug() << "文件路径：" << strFilePath;
-    if(IsFileOpen(strFilePath))
-    {
-        m_pOperationInterFace->ShowMessageBoxInfo("错误", "目标文件已打开");
-        return 1;
-    }
+   // if(IsFileOpen(strFilePath))
+   // {
+       // m_pOperationInterFace->ShowMessageBoxInfo("错误", "目标文件已打开");
+       // return 1;
+   // }
     QAxObject *pWorkbook = m_pWorkBooks->querySubObject("Open(const QString&)", strFilePath);
     if(nullptr == pWorkbook)
     {
@@ -199,6 +199,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
 
 int ExcellPrecess::FillBasicInfomation(QAxObject *pSheet)
 {
+     bool bInt = false;
     // 回填时间
     QString strBeginTime = m_pOperationInterFace->GetUiPointObject()->dateTimeEditStart->text();
     QAxObject *pCell = pSheet->querySubObject("Cells(int, int)", 6, 6);
@@ -219,9 +220,13 @@ int ExcellPrecess::FillBasicInfomation(QAxObject *pSheet)
 
     // 样品数量：
     QString strSampleNum =  m_pOperationInterFace->GetUiPointObject()->label_yangpingshuliang->text();
-    pCell = pSheet->querySubObject("Cells(int, int)",11, 6);
-    // QVariant cellValue = pCell->dynamicCall("Value()");
-    pCell->setProperty("Value", strSampleNum);
+    strSampleNum.toInt(&bInt);
+    if(bInt)
+    {
+        pCell = pSheet->querySubObject("Cells(int, int)",11, 6);
+        // QVariant cellValue = pCell->dynamicCall("Value()");
+        pCell->setProperty("Value", strSampleNum);
+    }
 
     QVariant cellValue = pCell->dynamicCall("Value()");
    // qDebug() << "basic infomation fill cell :  " << cellValue.toString();
