@@ -561,7 +561,7 @@ void TempData::SaveData(const QModelIndex &topLeft, const QModelIndex &bottomRig
     auto moditem=m_model->item(row,topLeft.column());
     if(moditem == nullptr) return;
     QColor oldcolor= moditem->foreground().color();
-    moditem->setForeground(QBrush(rc));
+    if(oldcolor != rc)moditem->setForeground(QBrush(rc));
     m_model->setItem(topLeft.row(),topLeft.column(),moditem);
     if(rc == Qt::red){
         auto item=m_model->item(row,m_model->columnCount()-1);
@@ -578,16 +578,18 @@ void TempData::SaveData(const QModelIndex &topLeft, const QModelIndex &bottomRig
             //说明当前行的结果不用修改
             fn=false;
             auto item=m_model->item(row,m_model->columnCount()-1);
-            item->setText("NG");
-            item->setForeground(QBrush(rc));
-            m_model->setItem(row,m_model->columnCount()-1,item);
+            if(item->text()!="NG") item->setText("NG");
+            if(item->foreground().color()!=Qt::red)item->setForeground(QBrush(Qt::red));
+            //m_model->setItem(row,m_model->columnCount()-1,item);
             emit setLaybelText("NG");
-        }else{
-            auto item=m_model->item(row,m_model->columnCount()-1);
-            item->setText("OK");
-            item->setForeground(QBrush(Qt::green));
-            m_model->setItem(row,m_model->columnCount()-1,item);
+            break;
         }
+    }
+    if(fn){
+        auto item=m_model->item(row,m_model->columnCount()-1);
+        item->setText("OK");
+        item->setForeground(QBrush(Qt::green));
+        m_model->setItem(row,m_model->columnCount()-1,item);
     }
     //遍历结果列，没有红色 则设置label为绿色
     bool fs=false;
@@ -596,6 +598,7 @@ void TempData::SaveData(const QModelIndex &topLeft, const QModelIndex &bottomRig
         if (item == nullptr) continue;
         if(item->foreground().color()==Qt::red){
             fs=true;
+            break;
         }
     }
     if (fs){

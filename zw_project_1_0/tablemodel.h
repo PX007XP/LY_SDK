@@ -45,6 +45,7 @@ public:
         return QVariant();
     }
     */
+    /*
     bool setData(const QModelIndex &index, const QVariant &value, int role) override {
         if (index.isValid() && role == Qt::EditRole) {
             // 获取现有的 QStandardItem
@@ -65,7 +66,7 @@ public:
         }
 
         return false;
-    }
+    }*/
 
     Qt::ItemFlags flags(const QModelIndex &index) const override {
         Qt::ItemFlags defaultFlags = QStandardItemModel::flags(index);
