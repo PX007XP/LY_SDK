@@ -45,7 +45,7 @@ TempData::TempData(QTableView* tv) {
 TempData::~TempData()
 {
     // 关闭工作簿
-    m_workbooks->dynamicCall("Close()");
+    //m_workbooks->dynamicCall("Close()");
 
     // 退出 Excel
     //m_excel->dynamicCall("Quit()");
@@ -218,6 +218,7 @@ bool TempData::LoadData(QString filename, int showrow){
     m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     //m_tableView->setEditTriggers(QAbstractItemView::SelectedClicked);
     closefile();
+    m_cond.wakeOne();
     return true;
 }
 
@@ -296,11 +297,11 @@ void TempData::ShowData(RecvFile::STDetailData datildata)
 void TempData::closefile()
 {
     // 完成后保存文件
-    //m_workbook->dynamicCall("Save()");
+    m_workbook->dynamicCall("Save()");
 
     // 关闭工作簿
-    //m_workbook->dynamicCall("Close()");
-    //m_workbooks->dynamicCall("Close()");
+    m_workbook->dynamicCall("Close()");
+    m_workbooks->dynamicCall("Close()");
     // 退出 Excel 应用程序
     m_excel->dynamicCall("Quit()");
 
@@ -358,9 +359,12 @@ void TempData::getData()
         m_cond.wait(&m_locker);
         LOG_INFO("数据取出队列");
         j=m_showcol;
-        if(j>=m_model->columnCount()){
-            QMessageBox::information(nullptr,"提示","显示列数已满");
+        if(j>=m_model->columnCount()&&m_model->columnCount()>0){
+            //QMessageBox::information(nullptr,"提示","显示列数已满");
+            return;
         }
+        if(m_model->columnCount()==0)continue;
+        if (m_queue.empty())continue;
         RecvFile::STDetailData datildata = m_queue.dequeue();
         //lock.unlock();
         if (m_model==nullptr) {

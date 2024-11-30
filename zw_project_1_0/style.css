@@ -1,0 +1,43 @@
+/* 设置整个应用的背景色 */
+QWidget {
+    background-color: #f0f0f0;
+}
+
+/* 设置按钮的样式 */
+QPushButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+QPushButton:hover {
+    background-color: #45a049;
+}
+
+QPushButton:pressed {
+    background-color: #397e39;
+}
+
+/* 设置输入框样式 */
+QLineEdit {
+    border: 2px solid #ccc;
+    padding: 5px;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+/* 设置标签的样式 */
+QLabel {
+    font-size: 18px;
+    color: #333;
+}
+
+/* 设置滑动条的样式 */
+QSlider::handle:horizontal {
+    background-color: #4CAF50;
+    border-radius: 5px;
+    width: 20px;
+}
