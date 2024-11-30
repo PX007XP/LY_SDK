@@ -82,6 +82,8 @@ private slots:
     void on_MobanlujinEdit_editingFinished();
 
     void DataChanged(int num,QString key,double value);
+
+    void LaybelText(QString text);
 signals:
     void StartConnect(QString strIP,unsigned short usPort);
     void SendMessage(QString strMessage);

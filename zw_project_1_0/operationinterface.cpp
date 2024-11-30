@@ -96,7 +96,7 @@ OperationInterface::OperationInterface(QWidget *parent)
     connect(m_tempData,&TempData::dataChanged,this,&OperationInterface::DataChanged);
     connect(ui->radioButton,&QRadioButton::clicked,m_tempData,&TempData::modslot);
     connect(ui->ClearDataButton,&QPushButton::clicked,m_tempData,&TempData::dataClear);
-
+    connect(m_tempData,&TempData::setLaybelText,this,&OperationInterface::LaybelText);
     UiInit();
     GetLocalIp();
 }
@@ -549,6 +549,19 @@ void OperationInterface::DataChanged(int num, QString key, double value)
             it.value().dActual=value;
             //m_tempData->ShowData(item);
         }
+    }
+}
+
+void OperationInterface::LaybelText(QString text)
+{
+    if(text == "OK"){
+        ui->label_21->setText(text);
+        // 设置字体颜色和字体大小
+        ui->label_21->setStyleSheet("color: green;");
+    }else if (text == "NG"){
+        ui->label_21->setText(text);
+        // 设置字体颜色和字体大小
+        ui->label_21->setStyleSheet("color: red;");
     }
 }
 
