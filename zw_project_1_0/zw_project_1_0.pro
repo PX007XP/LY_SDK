@@ -13,6 +13,7 @@ CONFIG += c++17
 
 SOURCES += \
     configobject.cpp \
+    datecommoninfo.cpp \
     excellprecess.cpp \
     globle.cpp \
     httpnetobject.cpp \
@@ -23,10 +24,12 @@ SOURCES += \
     operationinterface.cpp\
     tempdata.cpp\
     readpoint.cpp\
-    tablemodel.cpp
+    tablemodel.cpp \
+    zdatetimeedit.cpp
 
 HEADERS += \
     configobject.h \
+    datecommoninfo.h \
     excellprecess.h \
     globle.h \
     httpnetobject.h \
@@ -37,7 +40,8 @@ HEADERS += \
     ui_operationinterface.h \
     tempdata.h\
     readpoint.h\
-    tablemodel.h
+    tablemodel.h \
+    zdatetimeedit.h
 
 FORMS += \
     operationinterface.ui
@@ -51,3 +55,8 @@ msvc{
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES +=
+
+RESOURCES += \
+    css.qrc
