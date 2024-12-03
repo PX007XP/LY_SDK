@@ -183,6 +183,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
     if (!result.isValid() || result.isNull())
     {
         pWorkbook->dynamicCall("Close()");
+        LOG_ERROR("保存文件失败");
         return -9;
     }
     else
