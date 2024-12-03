@@ -12,7 +12,6 @@
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
-#include <QtWidgets/QDateTimeEdit>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
@@ -24,6 +23,7 @@
 #include <QtWidgets/QSplitter>
 #include <QtWidgets/QTableView>
 #include <QtWidgets/QWidget>
+#include "zdatetimeedit.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -49,7 +49,7 @@ public:
     QLineEdit *MobanlujinEdit;
     QComboBox *TypecomboBox;
     QFrame *line_2;
-    QDateTimeEdit *dateTimeEditEnd;
+    ZDateTimeEdit *dateTimeEditEnd;
     QLineEdit *lineEdit_2;
     QLabel *label;
     QSplitter *splitter_2;
@@ -127,7 +127,7 @@ public:
     QLabel *label_jiajubianhao;
     QLabel *label_35;
     QLabel *label_19;
-    QDateTimeEdit *dateTimeEditStart;
+    ZDateTimeEdit *dateTimeEditStart;
 
     void setupUi(QWidget *OperationInterface)
     {
@@ -227,9 +227,9 @@ public:
 
         gridLayout_3->addWidget(line_2, 0, 3, 9, 1);
 
-        dateTimeEditEnd = new QDateTimeEdit(OperationInterface);
+        dateTimeEditEnd = new ZDateTimeEdit(OperationInterface);
         dateTimeEditEnd->setObjectName(QString::fromUtf8("dateTimeEditEnd"));
-        dateTimeEditEnd->setCalendarPopup(true);
+        dateTimeEditEnd->setCalendarPopup(false);
 
         gridLayout_3->addWidget(dateTimeEditEnd, 5, 5, 1, 1);
 
@@ -653,9 +653,13 @@ public:
 
         gridLayout_3->addLayout(gridLayout, 2, 0, 6, 3);
 
-        dateTimeEditStart = new QDateTimeEdit(OperationInterface);
+        dateTimeEditStart = new ZDateTimeEdit(OperationInterface);
         dateTimeEditStart->setObjectName(QString::fromUtf8("dateTimeEditStart"));
-        dateTimeEditStart->setCalendarPopup(true);
+        dateTimeEditStart->setWrapping(false);
+        dateTimeEditStart->setAccelerated(false);
+        dateTimeEditStart->setKeyboardTracking(true);
+        dateTimeEditStart->setMaximumDateTime(QDateTime(QDate(9999, 12, 31), QTime(23, 59, 59)));
+        dateTimeEditStart->setCalendarPopup(false);
         dateTimeEditStart->setCurrentSectionIndex(0);
 
         gridLayout_3->addWidget(dateTimeEditStart, 4, 5, 1, 1);
@@ -769,6 +773,7 @@ public:
         label_jiajubianhao->setText(QCoreApplication::translate("OperationInterface", "\350\257\267\345\205\210\350\276\223\345\205\245mms\345\255\220\345\215\225\345\217\267", nullptr));
         label_35->setText(QCoreApplication::translate("OperationInterface", "\346\224\266\344\273\266\346\227\266\351\227\264:", nullptr));
         label_19->setText(QCoreApplication::translate("OperationInterface", "mm\345\255\220\345\215\225\345\217\267\357\274\232", nullptr));
+        dateTimeEditStart->setDisplayFormat(QCoreApplication::translate("OperationInterface", "yyyy-M-d H:mm", nullptr));
     } // retranslateUi
 
 };

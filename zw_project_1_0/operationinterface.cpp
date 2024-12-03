@@ -16,6 +16,7 @@
 #include "configobject.h"
 #include "tempdata.h"
 #include <QTableView>
+#include <QToolBar>
 
 
 OperationInterface::OperationInterface(QWidget *parent)
@@ -88,8 +89,6 @@ OperationInterface::OperationInterface(QWidget *parent)
     //connect(m_pSocket,SIGNAL(readyRead()),this,SLOT(RecieveData()));
 
     // HTTP测试
-
-    // 获取本机ip
 
     //数据显示逻辑
     m_tempData=new TempData(ui->ShowtableView);
@@ -567,12 +566,12 @@ void OperationInterface::LaybelText(QString text)
 
 int OperationInterface::UiInit()
 {
-    ui->dateTimeEditStart->setCalendarPopup(true);
-    ui->dateTimeEditStart->setDateTime(QDateTime::currentDateTime());  // 设置当前日期时间
-    ui->dateTimeEditStart->setDisplayFormat("yyyy-MM-dd HH:mm:ss");  // 设置显示格式
+    //ui->dateTimeEditStart->setCalendarPopup(true);
+    //ui->dateTimeEditStart->setDateTime(QDateTime::currentDateTime());  // 设置当前日期时间
+    //ui->dateTimeEditStart->setDisplayFormat("yyyy-MM-dd HH:mm:ss");  // 设置显示格式
 
-    ui->dateTimeEditEnd->setDateTime(QDateTime::currentDateTime());  // 设置当前日期时间
-    ui->dateTimeEditEnd->setDisplayFormat("yyyy-MM-dd HH:mm:ss");  // 设置显示格式
+    //ui->dateTimeEditEnd->setDateTime(QDateTime::currentDateTime());  // 设置当前日期时间
+    //ui->dateTimeEditEnd->setDisplayFormat("yyyy-MM-dd HH:mm:ss");  // 设置显示格式
     QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     ui->saveFilePathEdit->setText(desktopPath);
 

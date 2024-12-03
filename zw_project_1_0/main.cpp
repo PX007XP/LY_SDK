@@ -2,7 +2,7 @@
 
 #include <QApplication>
 #include <QFile>
-//#include <QTextCodec>
+#include <QTextCodec>
 
 int main(int argc, char *argv[])
 {
@@ -17,8 +17,9 @@ int main(int argc, char *argv[])
     QString styleSheet = QLatin1String(file.readAll());
     a.setStyleSheet(styleSheet);  // 应用样式表
     // 设置编码为“UTF-8”
-  //  QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
     OperationInterface w;
+
 
     w.show();
     return a.exec();

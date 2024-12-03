@@ -1,5 +1,11 @@
 <RCC>
     <qresource prefix="/">
         <file>style.css</file>
+        <file>zDateTimeEdit.qss</file>
+        <file>Resources/bk.png</file>
+        <file>Resources/ComboBoxArrow.png</file>
+        <file>Resources/DTNext.png</file>
+        <file>Resources/DTPrev.png</file>
+        <file>Resources/popupButton.png</file>
     </qresource>
 </RCC>

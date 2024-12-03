@@ -125,12 +125,12 @@
     </widget>
    </item>
    <item row="5" column="5">
-    <widget class="QDateTimeEdit" name="dateTimeEditEnd">
+    <widget class="ZDateTimeEdit" name="dateTimeEditEnd">
      <property name="displayFormat">
       <string>yyyy-M-d H:mm</string>
      </property>
      <property name="calendarPopup">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
     </widget>
    </item>
@@ -763,9 +763,31 @@
     </layout>
    </item>
    <item row="4" column="5">
-    <widget class="QDateTimeEdit" name="dateTimeEditStart">
-     <property name="calendarPopup">
+    <widget class="ZDateTimeEdit" name="dateTimeEditStart">
+     <property name="wrapping">
+      <bool>false</bool>
+     </property>
+     <property name="accelerated">
+      <bool>false</bool>
+     </property>
+     <property name="keyboardTracking">
       <bool>true</bool>
+     </property>
+     <property name="maximumDateTime">
+      <datetime>
+       <hour>23</hour>
+       <minute>59</minute>
+       <second>59</second>
+       <year>9999</year>
+       <month>12</month>
+       <day>31</day>
+      </datetime>
+     </property>
+     <property name="displayFormat">
+      <string>yyyy-M-d H:mm</string>
+     </property>
+     <property name="calendarPopup">
+      <bool>false</bool>
      </property>
      <property name="currentSectionIndex">
       <number>0</number>
@@ -774,6 +796,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ZDateTimeEdit</class>
+   <extends>QDateTimeEdit</extends>
+   <header>zdatetimeedit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
