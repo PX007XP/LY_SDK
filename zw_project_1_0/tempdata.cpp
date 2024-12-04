@@ -53,8 +53,13 @@ TempData::~TempData()
     //delete m_excel;
 }
 bool TempData::LoadData(QString filename, int showrow){
-    if(m_workbooks == nullptr){
+    bool setModel=true;
+    if (m_excel == nullptr){
+        m_excel = new QAxObject("Excel.Application");
+        // 打开 Excel 文件
         m_workbooks = m_excel->querySubObject("Workbooks");
+        //m_workbooks = m_excel->querySubObject("Workbooks");
+        setModel=false;
     }
     QFile file(filename);
     if(filename.isEmpty()||!((file.exists()))){
@@ -127,9 +132,15 @@ bool TempData::LoadData(QString filename, int showrow){
     int row=160;
     QStringList numStr;
     int isvalue=9;
+
     if(m_model == nullptr){
-        m_model = new TableModel(row,headList.size());
+        m_model=qobject_cast<TableModel*>(m_tableView->model());
+        setModel=true;
+        if(m_model == nullptr){
+            m_model = new TableModel(row,headList.size());
+        }
     }
+    m_model->clear();
     //m_model->setColumnCount(headList.size());
     if(showrow != 0){
         row=showrow;
@@ -204,16 +215,20 @@ bool TempData::LoadData(QString filename, int showrow){
         startRow++;
     }
 
-    // 设置代理
-    MyItemDelegate *delegate = new MyItemDelegate(m_tableView);
-    m_tableView->setItemDelegate(delegate);
-    m_tableView->resizeColumnsToContents();  // 自动调整列宽以适应内容
 
 
-    m_tableView->setModel(&*m_model);  // 将模型绑定到视图
+
+    if(setModel){
+        // 设置代理
+        MyItemDelegate *delegate = new MyItemDelegate(m_tableView);
+        m_tableView->setItemDelegate(delegate);
+        m_tableView->resizeColumnsToContents();  // 自动调整列宽以适应内容
+        m_tableView->setModel(&*m_model);  // 将模型绑定到视图
+    }
+
 
     // 显示表格
-    m_tableView->show();
+    m_tableView->update();
     // 禁用所有编辑操作
     m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     //m_tableView->setEditTriggers(QAbstractItemView::SelectedClicked);
@@ -306,6 +321,8 @@ void TempData::closefile()
     m_excel->dynamicCall("Quit()");
 
     delete m_excel;  // 释放 Excel 对象
+    m_excel=nullptr;
+    m_workbooks=nullptr;
 }
 
 void TempData::dataClear()
