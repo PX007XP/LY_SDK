@@ -96,6 +96,7 @@ OperationInterface::OperationInterface(QWidget *parent)
     connect(ui->radioButton,&QRadioButton::clicked,m_tempData,&TempData::modslot);
     connect(ui->ClearDataButton,&QPushButton::clicked,m_tempData,&TempData::dataClear);
     connect(m_tempData,&TempData::setLaybelText,this,&OperationInterface::LaybelText);
+    setLayout(ui->verticalLayout_2);
     UiInit();
     GetLocalIp();
 }
