@@ -17,6 +17,7 @@
 #include "tempdata.h"
 #include <QTableView>
 #include <QToolBar>
+#include <QMenuBar>
 
 
 OperationInterface::OperationInterface(QWidget *parent)
@@ -91,11 +92,23 @@ OperationInterface::OperationInterface(QWidget *parent)
     // HTTP测试
 
     //数据显示逻辑
+    // 创建菜单栏
+    QMenuBar *menuBar = new QMenuBar(this);
+
+
+    // 创建文件菜单
+    QMenu *fileMenu = menuBar->addMenu("设置");
+    // 创建菜单项
+    QAction *newAction = new QAction("子界面", this);
+    // 将菜单项添加到文件菜单
+    fileMenu->addAction(newAction);
+    ui->verticalLayout_2->setContentsMargins(0, 30, 0, 0); // 留出30像素的顶部空间给菜单栏
     m_tempData=new TempData(ui->ShowtableView);
     connect(m_tempData,&TempData::dataChanged,this,&OperationInterface::DataChanged);
     connect(ui->radioButton,&QRadioButton::clicked,m_tempData,&TempData::modslot);
     connect(ui->ClearDataButton,&QPushButton::clicked,m_tempData,&TempData::dataClear);
     connect(m_tempData,&TempData::setLaybelText,this,&OperationInterface::LaybelText);
+    setLayout(ui->verticalLayout_2);
     UiInit();
     GetLocalIp();
 
@@ -518,7 +531,7 @@ QFileInfo OperationInterface::FindLatestFile(const QString &strPath)
 
 int OperationInterface::InitWatcher()
 {
-    m_strListeningPath = ui->zhidongganzhi_lineEdit->text();
+    m_strListeningPath = ui->lineEdit_3->text();
     //
    // if(m_strListeningPath.isEmpty())
    // {
@@ -542,7 +555,7 @@ void OperationInterface::StartListening()
 {
     if(!m_bListening)
     {
-        m_strListeningPath = ui->zhidongganzhi_lineEdit->text();
+        m_strListeningPath = ui->lineEdit_3->text();
         if(m_strListeningPath.isEmpty())
         {
             QMessageBox::information(this,"提示","请输入路径");

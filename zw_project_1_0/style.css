@@ -1,0 +1,56 @@
+/* 设置整个应用的背景色 */
+QWidget#OperationInterface {
+    background-color: #f0f0f0;
+}
+QMenuBar {
+    background-color: #f0f0f0;
+    font-size: 14px;
+}
+
+/* 设置按钮的样式 */
+QPushButton#ClearDataButton,#ComCheckButton,#ShowDataButton,#WriteFilepushButton,#GetDataButton,#connectButton,#GetInfoButton,#LoginPushButton,#SavePasswordPushButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+QPushButton:hover#ClearDataButton,
+QPushButton:hover#ComCheckButton,
+QPushButton:hover#ShowDataButton,
+QPushButton:hover#WriteFilepushButton,
+QPushButton:hover#GetDataButton,
+QPushButton:hover#connectButton,
+QPushButton:hover#GetInfoButton,
+QPushButton:hover#LoginPushButton,
+QPushButton:hover#SavePasswordPushButton {
+    background-color: #45a049;
+}
+
+QPushButton:pressed#ClearDataButton,
+QPushButton:pressed#ComCheckButton,
+QPushButton:pressed#ShowDataButton,
+QPushButton:pressed#WriteFilepushButton,
+QPushButton:pressed#GetDataButton,
+QPushButton:pressed#connectButton,
+QPushButton:pressed#GetInfoButton,
+QPushButton:pressed#LoginPushButton,
+QPushButton:pressed#SavePasswordPushButton {
+    background-color: #397e39;
+}
+
+/* 设置输入框样式 */
+QLineEdit#lineEdit_3,#saveFilePathEdit,#IpEdit,#PortEdit,#NumberEdit,#MobanlujinEdit,#lineEdit,#lineEdit_2#UserEdit,#PasswordEdit{
+    border: 2px solid #ccc;
+    padding: 5px;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+/* 设置标签的样式 */
+QLabel#label_17,#label_6,#label_8,#label_21,#label_10,#label_5,#label_7,#label_11,#label_13,#label_19,#label_20,#label_23,#label_25,#label_26,#label_29,#label_30,#label_32,#label_35,#label_36,#label_38,#label_41,#label_42,#label_44,#label_47,#label_48,#label_beizhu,#label_gongxu,#label_jiajubianhao,#label_jiancexiangmu,#label_jianceyaoqiu,#label_jianyanleibie,#label_jitai,#label_muxuehao,#label_shenqingdanhao,#label_shenqingshijian,#label_shifoupohuai,#label_shoujianshijian,#label_songjiandanwei,#label_xiangmmumingchen,#label_yangpingshuliang,#lable_shenqingrenyuan,#line_5,#label,#label_12,#label_14,#label_15,#label_16,#label_2,#label_3,#label_4,#label_9,#label_17,#label_18 {
+    font-size: 18px;
+    color: #333;
+}

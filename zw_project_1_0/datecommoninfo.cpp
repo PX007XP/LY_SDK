@@ -787,7 +787,7 @@ void CalendarWidget::dateTimeRange(QDateTime &min, QDateTime &max)
  */
 void CalendarWidget::initWidget()
 {
-    this->setMinimumSize(350, 300);
+    this->setMinimumSize(400, 300);
     this->setObjectName("widgetCalendar");
 
     QGridLayout * qgridlayout = new QGridLayout(this);
