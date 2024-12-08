@@ -17,6 +17,7 @@
 #include "tempdata.h"
 #include <QTableView>
 #include <QToolBar>
+#include <QMenuBar>
 
 
 OperationInterface::OperationInterface(QWidget *parent)
@@ -91,6 +92,17 @@ OperationInterface::OperationInterface(QWidget *parent)
     // HTTP测试
 
     //数据显示逻辑
+    // 创建菜单栏
+    QMenuBar *menuBar = new QMenuBar(this);
+
+
+    // 创建文件菜单
+    QMenu *fileMenu = menuBar->addMenu("设置");
+    // 创建菜单项
+    QAction *newAction = new QAction("子界面", this);
+    // 将菜单项添加到文件菜单
+    fileMenu->addAction(newAction);
+    ui->verticalLayout_2->setContentsMargins(0, 30, 0, 0); // 留出30像素的顶部空间给菜单栏
     m_tempData=new TempData(ui->ShowtableView);
     connect(m_tempData,&TempData::dataChanged,this,&OperationInterface::DataChanged);
     connect(ui->radioButton,&QRadioButton::clicked,m_tempData,&TempData::modslot);

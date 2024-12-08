@@ -2,6 +2,11 @@
 QWidget#OperationInterface {
     background-color: #f0f0f0;
 }
+QMenuBar {
+    background-color: #f0f0f0;
+    font-size: 14px;
+}
+
 /* 设置按钮的样式 */
 QPushButton#ClearDataButton,#ComCheckButton,#ShowDataButton,#WriteFilepushButton,#GetDataButton,#connectButton,#GetInfoButton,#LoginPushButton,#SavePasswordPushButton {
     background-color: #4CAF50;
