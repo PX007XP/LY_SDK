@@ -10,6 +10,7 @@ Logger::Logger(const QString& strFileName):m_logFile(strFileName)
         return;
     }
     m_logStream.setDevice(&m_logFile);
+    m_logStream.setCodec("UTF-8");
     m_LogFlag[LOGGER_STATS] = "STATS";
     m_LogFlag[LOGGER_ERROR] = "ERROR";
     m_LogFlag[LOGGER_WARN] = "WARN";
@@ -39,6 +40,9 @@ void Logger::writeLog(int iLogLevel ,const char* format, ...)
 
     QString strMessage = QString::fromUtf8(buffer); // 将缓冲区内容转换为 QString
 
+    //QString strMessage = QString::fromLocal8Bit(buffer); // 将缓冲区内容转换为 QString
+    qDebug() << buffer ;
+   // m_logStream.setCodec(strMessage.toUtf8().constData());
     QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
     m_logStream << timestamp << " - " << m_LogFlag[iLogLevel] <<" - "<< strMessage << "\n";
     m_logStream.flush();

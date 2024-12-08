@@ -7,8 +7,35 @@
 #include "recvfile.h"
 #include "sheetfilldatarange.h"
 #include <QHash>
+#include <memory>
 
 class OperationInterface;
+using namespace std;
+
+class CExcellPointMgr
+{
+public:
+    CExcellPointMgr(QAxObject* pExcellWork,QAxObject* pWorkBooks)
+    {
+        m_pExcellWork = pExcellWork;
+        m_pWorkBooks = pWorkBooks;
+    }
+    ~CExcellPointMgr()
+    {
+        if(m_pExcellWork)
+        {
+            m_pWorkBooks->dynamicCall("Close()");
+            m_pExcellWork->dynamicCall("Quit()");
+            delete m_pExcellWork;
+            m_pExcellWork = nullptr;
+            qDebug()<< "销毁 excelK控件";
+
+        }
+    }
+public:
+    QAxObject* m_pExcellWork = nullptr;
+    QAxObject* m_pWorkBooks = nullptr;
+};
 class ExcellPrecess
 {
 public:
@@ -16,6 +43,9 @@ public:
     ~ExcellPrecess();
 
     int Init(OperationInterface* pOperationInterFace);
+
+    // 初始化excel控件
+    std::shared_ptr<CExcellPointMgr> InitExcellObject();
 
     int WriteData(QVector<RecvFile::STDetailData> *pVectorData, QString& strFilePath);
 
@@ -29,15 +59,22 @@ public:
     // 清空文件 的填写数据部分
     int CleanSheetData(QString &strFile);
 
-    // 显示表格内容
-    int ShowExeclData();
-
     // 加载文件完成后，更新模型内容
     bool LoadData();
 
+
+    // 数据感知部分
+    int ReadFileData(QString strFilePath , QVector<RecvFile::STDetailData> &VectorData,int iFileType);
+
+    // 读取兆丰的excel文件
+    int ReadExcelData(QString strFilePath , QVector<RecvFile::STDetailData> &VectorData);
+
+    // 读取MIV的 txt文件s
+    int ReadTxtData(QString strFilePath , QVector<RecvFile::STDetailData> &VectorData);
+
 private:
-    QAxObject* m_pAxObject = nullptr;
-    QAxObject* m_pWorkBooks = nullptr;
+   // shared_ptr<QAxObject> m_pAxObject = nullptr;
+   // QAxObject* m_pWorkBooks = nullptr;
 
     CSheetFillDataRange* m_pSheetInfo = nullptr;
 

@@ -3,6 +3,7 @@
 #include <QDomDocument>
 #include <QDebug>
 #include "logger.h"
+#include "globle.h""
 
 extern int g_iLogLevel;
 ConfigObject::ConfigObject() {}
@@ -36,7 +37,8 @@ void ConfigObject::ReadConfig()
         QString logLevel = commonElement.attribute("log_level", "1");
 
         g_iLogLevel = logLevel.toInt();
-        qDebug() << "log_level:" << logLevel;
+        g_strIpAddressKey = commonElement.attribute("ip_address_key" , "以太网");
+        LOG_STATS("log level is = %d ,ip_address_key[%s]",g_iLogLevel,g_strIpAddressKey.toStdString().c_str());
     }
     qDebug() << "log_level:" << g_iLogLevel;
 }

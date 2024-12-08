@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'operationinterface.ui'
 **
-** Created by: Qt User Interface Compiler version 5.15.2
+** Created by: Qt User Interface Compiler version 5.15.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -37,7 +37,7 @@ public:
     QLineEdit *UserEdit;
     QHBoxLayout *horizontalLayout_6;
     QLabel *label_6;
-    QLineEdit *lineEdit_3;
+    QLineEdit *zhidongganzhi_lineEdit;
     QHBoxLayout *horizontalLayout_7;
     QLabel *label_8;
     QLineEdit *saveFilePathEdit;
@@ -160,10 +160,10 @@ public:
 
         horizontalLayout_6->addWidget(label_6);
 
-        lineEdit_3 = new QLineEdit(OperationInterface);
-        lineEdit_3->setObjectName(QString::fromUtf8("lineEdit_3"));
+        zhidongganzhi_lineEdit = new QLineEdit(OperationInterface);
+        zhidongganzhi_lineEdit->setObjectName(QString::fromUtf8("zhidongganzhi_lineEdit"));
 
-        horizontalLayout_6->addWidget(lineEdit_3);
+        horizontalLayout_6->addWidget(zhidongganzhi_lineEdit);
 
 
         gridLayout_3->addLayout(horizontalLayout_6, 12, 0, 1, 1);
@@ -725,7 +725,7 @@ public:
         label_2->setText(QCoreApplication::translate("OperationInterface", "\346\235\220\346\226\231\345\220\215\347\247\260\357\274\232", nullptr));
         label_5->setText(QCoreApplication::translate("OperationInterface", "\351\207\207\351\233\206\346\226\271\345\274\217\357\274\232", nullptr));
         caijiTypecomboBox->setItemText(0, QCoreApplication::translate("OperationInterface", "\346\225\260\346\215\256\345\257\271\346\216\245", nullptr));
-        caijiTypecomboBox->setItemText(1, QCoreApplication::translate("OperationInterface", "\346\226\207\344\273\266\346\204\237\347\237\245", nullptr));
+        caijiTypecomboBox->setItemText(1, QCoreApplication::translate("OperationInterface", "\350\207\252\345\212\250\346\204\237\347\237\245", nullptr));
 
         label_7->setText(QCoreApplication::translate("OperationInterface", "\350\256\276\345\244\207\345\223\201\347\211\214\357\274\232", nullptr));
         sehbeicomboBox->setItemText(0, QCoreApplication::translate("OperationInterface", "\345\205\206\344\270\2601", nullptr));
@@ -749,7 +749,7 @@ public:
         label_29->setText(QCoreApplication::translate("OperationInterface", "\347\224\263\350\257\267\346\227\266\351\227\264:", nullptr));
         label_25->setText(QCoreApplication::translate("OperationInterface", "\351\200\201\346\243\200\345\215\225\344\275\215:", nullptr));
         label_20->setText(QCoreApplication::translate("OperationInterface", "\347\224\263\350\257\267\345\215\225\345\217\267\357\274\232", nullptr));
-        label_yangpingshuliang->setText(QCoreApplication::translate("OperationInterface", "5", nullptr));
+        label_yangpingshuliang->setText(QCoreApplication::translate("OperationInterface", "\350\257\267\345\205\210\350\276\223\345\205\245mms\345\255\220\345\215\225\345\217\267", nullptr));
         NumberEdit->setText(QCoreApplication::translate("OperationInterface", "mmsdCY12410231B2", nullptr));
         label_32->setText(QCoreApplication::translate("OperationInterface", "\346\240\267\345\223\201\346\225\260\351\207\217\357\274\232", nullptr));
         GetInfoButton->setText(QCoreApplication::translate("OperationInterface", "\346\237\245\350\257\242", nullptr));

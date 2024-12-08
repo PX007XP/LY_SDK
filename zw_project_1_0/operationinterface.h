@@ -9,6 +9,8 @@
 #include "httpnetobject.h"
 #include "tempdata.h"
 #include <QRadioButton>
+#include <QFileSystemWatcher>
+#include <QFileInfo>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -121,5 +123,31 @@ public:
 private:
     void GetLocalIp();
 
+// 自动感知相关功能
+private:
+    QFileSystemWatcher m_Watcher;
+    bool m_bListening = false;
+    QString m_strListeningPath;
+
+    QHash<QString ,qint64> m_mDealFile;
+
+    int GetSheBeiType();
+
+    bool RemoveRepetiton(QFileInfo fileInfo);
+public:
+    QFileInfo FindLatestFile(const QString &strPath);
+
+    bool isFileInUse(const QString &filePath);
+    // 数据感知相关初始化
+    int InitWatcher();
+   //
+    void StartListening();
+    void StopListening();
+private slots:
+    // 信号处理函数
+    void onDirectoryChanged(const QString &strPath);
+
+    void on_caijiTypecomboBox_activated(int index);
+    void on_zhidongganzhi_lineEdit_editingFinished();
 };
 #endif // OPERATIONINTERFACE_H

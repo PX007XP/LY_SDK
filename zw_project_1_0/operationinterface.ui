@@ -48,7 +48,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit_3"/>
+      <widget class="QLineEdit" name="zhidongganzhi_lineEdit"/>
      </item>
     </layout>
    </item>
@@ -396,7 +396,7 @@
        </item>
        <item>
         <property name="text">
-         <string>文件感知</string>
+         <string>自动感知</string>
         </property>
        </item>
       </widget>

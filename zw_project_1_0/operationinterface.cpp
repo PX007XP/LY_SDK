@@ -98,6 +98,9 @@ OperationInterface::OperationInterface(QWidget *parent)
     connect(m_tempData,&TempData::setLaybelText,this,&OperationInterface::LaybelText);
     UiInit();
     GetLocalIp();
+
+    // 数据感知初始化
+    InitWatcher();
 }
 
 OperationInterface::~OperationInterface()
@@ -459,20 +462,16 @@ void OperationInterface::GetLocalIp()
                 if (ip.protocol() == QAbstractSocket::IPv4Protocol && ip != QHostAddress::LocalHost)
                 {
                     qDebug() << "Interface efect:" << interface.humanReadableName() << "IP Address:" << ip.toString();
-                    if(interface.humanReadableName().contains("WLAN"))
+                    if(interface.humanReadableName().contains(g_strIpAddressKey))
                     {
                         m_strLocalIp = ip.toString();
                     }
-                }
-                // 如果没有WLAN接口，则选择以太网接口的IP地址
-                else if (interface.humanReadableName().contains("以太网") && m_strLocalIp.isEmpty())
-                {
-                    m_strLocalIp = ip.toString();
-                }
-                // 如果没有找到WLAN或以太网接口，则选择第一个符合条件的IP地址
-                else if (strLocalIp.isEmpty())
-                {
-                    strLocalIp = ip.toString();
+                    // 如果没有找到WLAN或以太网接口，则选择第一个符合条件的IP地址
+                    if (strLocalIp.isEmpty())
+                    {
+                        strLocalIp = ip.toString();
+                    }
+                    LOG_INFO("ip loop name:%s , ip:%s ",interface.humanReadableName().toStdString().c_str() , ip.toString().toStdString().c_str());
                 }
             }
         }
@@ -483,14 +482,168 @@ void OperationInterface::GetLocalIp()
         LOG_ERROR("选择第一个ip作为连接地址，%s",m_strLocalIp.toStdString().c_str());
     }
     ui->IpEdit->setText(m_strLocalIp);
+    LOG_STATS("ip chose name:%s , ip:%s ",m_strLocalIp.toStdString().c_str() , strLocalIp.toStdString().c_str());
 }
 
+QFileInfo OperationInterface::FindLatestFile(const QString &strPath)
+{
+    QDir directory(strPath);
+    if (!directory.exists())
+    {
+        LOG_ERROR("FindLatestFile path[%s] is null",strPath.toStdString().c_str());
+        return QString();
+    }
 
+    // 获取所有文件
+    QFileInfoList fileList = directory.entryInfoList(QDir::Files);
+
+    if (fileList.isEmpty())
+    {
+        LOG_ERROR("FindLatestFile path[%s] 目录中没有文件",strPath.toStdString().c_str());
+        return QString();
+    }
+
+    // 找出最新的文件
+    QFileInfo latestFile;
+    foreach (const QFileInfo &fileInfo, fileList)
+    {
+        if (!latestFile.exists() || fileInfo.lastModified() > latestFile.lastModified())
+        {
+            latestFile = fileInfo;
+        }
+    }
+
+    return latestFile;
+}
+
+int OperationInterface::InitWatcher()
+{
+    m_strListeningPath = ui->zhidongganzhi_lineEdit->text();
+    //
+   // if(m_strListeningPath.isEmpty())
+   // {
+   //     QMessageBox::information(this,"提示","请输入自动感知路径");
+    //    return -1;
+    //}
+    //QDir directory(m_strListeningPath);
+   // if(!directory.exists())
+   // {
+   //     QMessageBox::information(this,"提示","自动感知文件夹不存在");
+   //     return -2;
+   // }
+   // m_Watcher.addPath(m_strListeningPath);
+    m_bListening = false;
+
+    connect(&m_Watcher, &QFileSystemWatcher::directoryChanged, this, &OperationInterface::onDirectoryChanged);
+    return 0;
+}
+
+void OperationInterface::StartListening()
+{
+    if(!m_bListening)
+    {
+        m_strListeningPath = ui->zhidongganzhi_lineEdit->text();
+        if(m_strListeningPath.isEmpty())
+        {
+            QMessageBox::information(this,"提示","请输入路径");
+            LOG_ERROR("开始文件感知时 没有输入文件路径");
+            return ;
+        }
+        QDir directory(m_strListeningPath);
+        if(!directory.exists())
+        {
+            QMessageBox::information(this,"提示","文件夹不存在");
+            LOG_ERROR("开始文件感知时 路径不存在");
+            return ;
+        }
+        m_Watcher.addPath(m_strListeningPath);
+        m_bListening = true;
+        LOG_INFO("开始文件感知:%s",m_strListeningPath.toStdString().c_str());
+    }
+}
+
+void OperationInterface::StopListening()
+{
+    if(m_bListening)
+    {
+        m_Watcher.removePath(m_strListeningPath);
+        m_bListening = false;
+        m_strListeningPath.clear();
+        LOG_INFO("停止文件感知:%s",m_strListeningPath.toStdString().c_str());
+    }
+
+}
+#if 0
+bool isFileInUse(const QString &filePath) {
+    HANDLE handle = CreateFile(
+        filePath.toStdWString().c_str(),
+        GENERIC_READ,
+        FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+        NULL,
+        OPEN_EXISTING,
+        FILE_ATTRIBUTE_NORMAL,
+        NULL
+        );
+    if (handle == INVALID_HANDLE_VALUE) {
+        DWORD errorCode = GetLastError();
+        if (errorCode == ERROR_SHARING_VIOLATION) {
+            qDebug() << "文件被占用:" << filePath;
+            return true;
+        } else {
+            qWarning() << "无法打开文件:" << filePath << "错误码:" << errorCode;
+        }
+    } else {
+        CloseHandle(handle);
+    }
+
+    return false;
+}
+#endif
+void OperationInterface::onDirectoryChanged(const QString &strPath)
+{
+    LOG_DEBUG("感知到文件变化");
+    if(!m_bListening)
+    {
+        return;
+    }
+    QDir directory(strPath);
+    if(!directory.exists())
+    {
+        return ;
+    }
+    QFileInfo FileInfo =FindLatestFile(strPath);
+
+    // 检查文件是否被占用
+   // if (!isFileInUse(FileInfo.filePath()))
+   // {
+   //     LOG_ERROR("");
+   // }
+
+    // 去重
+    if(RemoveRepetiton(FileInfo))
+    {
+        return;
+    }
+    // 处理文件 todo
+    if(nullptr == m_pExcellWork)
+    {
+        LOG_ERROR("onDirectoryChanged m_pExcellWork is null");
+        return ;
+    }
+    int iFileType = GetSheBeiType();
+    if(0 == iFileType )
+    {
+        LOG_ERROR("onDirectoryChanged iFileType is error :%d",iFileType);
+        return;
+    }
+    //QString strFilePathName = FileInfo.filePath()
+    int iRet = m_pExcellWork->ReadFileData(FileInfo.absoluteFilePath() , m_vRecvData , iFileType);
+    LOG_INFO("自动感知到文件:%s,iFielType:%d ,iRet=%d",FileInfo.absoluteFilePath().toStdString().c_str(), iFileType,iRet);
+}
 
 
 void OperationInterface::on_ShowDataButton_clicked()
 {
-    //m_pExcellWork->ShowExeclData();
     QString strFilePath;
     int iRet = GetMobanFileName(strFilePath);
     if(0 == iRet)
@@ -642,5 +795,74 @@ void OperationInterface::on_TypecomboBox_activated(int index)
 void OperationInterface::on_FilecomboBox_activated(int index)
 {
 
+}
+
+
+void OperationInterface::on_caijiTypecomboBox_activated(int index)
+{
+    QString strText = ui->caijiTypecomboBox->currentText();
+    if(strText == "自动感知")
+    {
+        StartListening();
+    }
+    else
+    {
+        StopListening();
+    }
+
+}
+
+
+int OperationInterface::GetSheBeiType()
+{
+    QString strText = ui->sehbeicomboBox->currentText();
+    int iFileType = 0;
+    // 文件感知类型 1 老兆丰 2 新兆丰 3 MIV
+    if(strText == "兆丰1")
+    {
+        iFileType = 1;
+    }
+    else if(strText == "兆丰2")
+    {
+        iFileType = 2;
+    }
+    else if(strText == "MIV")
+    {
+        iFileType = 3;
+    }
+    //LOG_STATS("文件感知文件类型发生变化：%d",iFileType);
+    return iFileType;
+}
+
+bool OperationInterface::RemoveRepetiton(QFileInfo fileInfo)
+{
+    QString strFileName  = fileInfo.fileName();
+    auto it = m_mDealFile.find(strFileName);
+    if(it != m_mDealFile.end())
+    {
+        if(*it = fileInfo.size())
+        {
+            return true;
+        }
+    }
+    else
+    {
+        m_mDealFile[strFileName] = fileInfo.size();
+    }
+    return false;
+}
+
+
+void OperationInterface::on_zhidongganzhi_lineEdit_editingFinished()
+{
+    if(m_bListening)
+    {
+        StopListening();
+    }
+    QString strText = ui->caijiTypecomboBox->currentText();
+    if(strText == "自动感知")
+    {
+        StartListening();
+    }
 }
 

@@ -2,7 +2,7 @@
 
 <root>
 	<!-- log_level 日志级别 1 error  2 warn 3 info 4 debug -->
-    <common log_level="4" ip_address_key="WLAN"/>
+    <common log_level="4" ip_address_key="以太网"/>
 	<switches open="3" fork="123">
 		<dpi num="1"/>
 	</switches>

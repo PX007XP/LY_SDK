@@ -20,6 +20,7 @@ extern QString g_strSatageNo; // 夹具编号
 extern QString g_strOrgCode ; // 模穴号
 extern QString g_strRemark ; // 备注
 extern QString g_strRevArtTime; // 收件时间
+extern QString g_strIpAddressKey; // ip地址关键字
 
 int CheckDirectoryExists(QString strPath);
 

@@ -15,7 +15,7 @@
 #include <QAxBase>
 #include <QAxObject>
 #include <QAxWidget>
-#include <objbase.h>
+//#include <objbase.h>
 #include <QFileInfo>
 #include <QVariant>
 
@@ -25,36 +25,11 @@ ExcellPrecess::ExcellPrecess() {}
 
 ExcellPrecess::~ExcellPrecess()
 {
-    // 退出 Excel 应用
-    m_pAxObject->dynamicCall("Quit()");
-    delete m_pAxObject;
-    m_pAxObject = nullptr;
+
 }
 
 int ExcellPrecess::Init(OperationInterface* pOperationInterFace)
 {
-    m_pAxObject = new QAxObject("Excel.Application");
-    m_pAxObject->dynamicCall("SetVisible(bool)", false);
-
-
-    if (m_pAxObject->setControl("Excel.Application"))
-    {	// 加载 Microsoft Excel 控件
-        LOG_INFO("load Excel.Application success");
-    }
-    else if( m_pAxObject->setControl("KET.Application"))
-    {
-        LOG_INFO("load kET.Application success");
-    }
-    else
-    {
-        LOG_ERROR("加载excel控件失败");
-    }
-    m_pWorkBooks = m_pAxObject->querySubObject("Workbooks");
-    if(nullptr == m_pWorkBooks)
-    {
-        LOG_ERROR("get workbooks faild");
-        return -1;
-    }
 
     m_pSheetInfo = new CSheetFillDataRange();
 
@@ -69,12 +44,47 @@ int ExcellPrecess::Init(OperationInterface* pOperationInterFace)
     return 0;
 }
 
+std::shared_ptr<CExcellPointMgr> ExcellPrecess::InitExcellObject()
+{
+    QAxObject* pAxObject = new QAxObject("Excel.Application");
+    if (nullptr == pAxObject)
+    {
+        LOG_ERROR("创建 Excel QAxObject 失败");
+        return nullptr;
+    }
+    
+    pAxObject->dynamicCall("SetVisible(bool)", false);
+
+
+    if (pAxObject->setControl("Excel.Application"))
+    {	// 加载 Microsoft Excel 控件
+        LOG_INFO("load Excel.Application success");
+    }
+    else if( pAxObject->setControl("KET.Application"))
+    {
+        LOG_INFO("load kET.Application success");
+    }
+    else
+    {
+        LOG_ERROR("加载excel控件失败");
+    }
+    QAxObject* pWorkBooks = pAxObject->querySubObject("Workbooks");
+    if(nullptr == pWorkBooks)
+    {
+        pAxObject->dynamicCall("Quit()");
+        delete pAxObject;
+        pAxObject = nullptr;
+        LOG_ERROR("get workbooks faild");
+        return nullptr;
+    }
+
+    std::shared_ptr<CExcellPointMgr> pAxObjectMgr =  make_shared<CExcellPointMgr>(pAxObject , pWorkBooks);
+
+    return pAxObjectMgr;
+}
+
 int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QString &strFilePath)
 {
-    if(nullptr == m_pWorkBooks)
-    {
-        return -1;
-    }
     // 1. 打开文件
     qDebug() << "WriteData 1 : filepath" << strFilePath ;
     if(0 != CheckFileExists(strFilePath))
@@ -91,10 +101,16 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
        // m_pOperationInterFace->ShowMessageBoxInfo("错误", "目标文件已打开");
        // return 1;
    // }
-    QAxObject *pWorkbook = m_pWorkBooks->querySubObject("Open(const QString&)", strFilePath);
-    if(nullptr == pWorkbook)
+    shared_ptr<CExcellPointMgr> pExcellPtr = InitExcellObject();
+    if(nullptr == pExcellPtr || nullptr == pExcellPtr->m_pWorkBooks)
     {
         return -3;
+    }
+
+    QAxObject *pWorkbook = pExcellPtr->m_pWorkBooks->querySubObject("Open(const QString&)", strFilePath);
+    if(nullptr == pWorkbook)
+    {
+        return -4;
     }
 
     //新写文件
@@ -103,7 +119,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
     if(strSubNumber.isEmpty())
     {
         m_pOperationInterFace->ShowMessageBoxInfo("错误", "无法");
-        return -4;
+        return -5;
     }
 
     std::string strFileName = "/temporary/";
@@ -111,7 +127,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
     if(strSuffix.isEmpty())
     {
         pWorkbook->dynamicCall("Close()");
-        return -5;
+        return -6;
     }
     // 新文件名
     QString strNewFile = QString::fromStdString(strFileName);
@@ -121,7 +137,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
     {
         m_pOperationInterFace->ShowMessageBoxInfo("错误", "目标文件已打开");
         pWorkbook->dynamicCall("Close()");
-        return -6;
+        return -7;
     }
     //捕获异常
     m_pOperationInterFace->SetSlotExcelException(pWorkbook , strFilePath);
@@ -131,7 +147,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
     if(nullptr == pSheets)
     {
         pWorkbook->dynamicCall("Close()");
-        return -7;
+        return -8;
     }
     //3 . 打开工作簿
      qDebug() << "WriteData 3 : filepath" << strFilePath ;
@@ -139,7 +155,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
     if(nullptr == pSheet)
     {
         pWorkbook->dynamicCall("Close()");
-        return -8;
+        return -9;
     }
 
     QVariant sheetName = pSheet->dynamicCall("Name");
@@ -184,7 +200,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
     {
         pWorkbook->dynamicCall("Close()");
         LOG_ERROR("保存文件失败");
-        return -9;
+        return -10;
     }
     else
     {
@@ -208,7 +224,7 @@ int ExcellPrecess::FillBasicInfomation(QAxObject *pSheet)
     pCell->setProperty("Value", strBeginTime);
 
     // 结束时间
-    QString strEndTime = m_pOperationInterFace->GetUiPointObject()->dateTimeEditStart->text();
+    QString strEndTime = m_pOperationInterFace->GetUiPointObject()->dateTimeEditEnd->text();
     pCell = pSheet->querySubObject("Cells(int, int)", 7, 6);
     // QVariant cellValue = pCell->dynamicCall("Value()");
     pCell->setProperty("Value", strEndTime);
@@ -279,6 +295,7 @@ int ExcellPrecess::GetDataRow(QString strName)
 
 int ExcellPrecess::CleanSheetData(QString &strFile)
 {
+#if 0
     if(nullptr == m_pWorkBooks)
     {
         return -1;
@@ -315,7 +332,217 @@ int ExcellPrecess::CleanSheetData(QString &strFile)
      pWorkbook->dynamicCall("Save()");
      // 关闭工作簿
      pWorkbook->dynamicCall("Close()");
+#endif
      return 0;
+}
+
+int ExcellPrecess::ReadFileData(QString strFilePath, QVector<RecvFile::STDetailData> &VectorData, int iFileType)
+{
+    int iRet = 0;
+    if(0 != CheckFileExists(strFilePath))
+    {
+        // 模版文件不存在
+        QString strError = "没有文件:";
+        strError += strFilePath;
+        m_pOperationInterFace->MessageBoxInfomation("错误",strError);
+        return -1;
+    }
+    if(1 == iFileType)
+    {
+        // 验证文件后缀为 excel
+
+        iRet = ReadExcelData(strFilePath , VectorData);
+    }
+    else if(2 == iFileType)
+    {
+        iRet = ReadExcelData(strFilePath , VectorData);
+    }
+    else if(3 == iFileType)
+    {
+        // 验证文件后缀为 txt
+
+        iRet = ReadTxtData(strFilePath , VectorData);
+    }
+    else
+    {
+        LOG_ERROR("ReadFileData iFileType is error :%d" ,iFileType);
+        return -2;
+    }
+    LOG_INFO("ReadFileData return = %d ,iFileType=%d",iRet , iFileType);
+    return 0;
+}
+
+int ExcellPrecess::ReadExcelData(QString strFilePath, QVector<RecvFile::STDetailData> &VectorData)
+{
+    shared_ptr<CExcellPointMgr> pExcellPtr = InitExcellObject();
+    if(nullptr == pExcellPtr || nullptr == pExcellPtr->m_pWorkBooks)
+    {
+        return -1;
+    }
+
+    QAxObject *pWorkbook = pExcellPtr->m_pWorkBooks->querySubObject("Open(const QString&)", strFilePath);
+    if(nullptr == pWorkbook)
+    {
+        return -2;
+    }
+
+     //捕获异常
+    m_pOperationInterFace->SetSlotExcelException(pWorkbook , strFilePath);
+    //2 .获取所有工作簿
+     qDebug() << "read  : filepath" << strFilePath ;
+    QAxObject *pSheets = pWorkbook->querySubObject("Sheets");
+    if(nullptr == pSheets)
+    {
+        pWorkbook->dynamicCall("Close()");
+        return -3;
+    }
+    //3 . 打开工作簿
+    qDebug() << "WriteData 3 : filepath" << strFilePath ;
+    QAxObject *pSheet =pSheets->querySubObject("Item(int)", 1);
+    if(nullptr == pSheet)
+    {
+        pWorkbook->dynamicCall("Close()");
+        return -4;
+    }
+
+    // 4 .找出开始数据行列
+    int iColumn = 1 ; // 在第一类 查找关键字 "序号"
+    int iRow = 1;
+    QVariant cellValue;
+    while(true)
+    {
+        if(iRow > 100)
+        {
+            LOG_ERROR("获取 序号 关键字 失败 %d",iRow);
+            return -5;
+        }
+        QAxObject *pCell = pSheet->querySubObject("Cells(int, int)", iRow, iColumn);
+        if(nullptr == pCell)
+        {
+            ++iRow;
+            continue;
+        }
+        cellValue = pCell->dynamicCall("Value()");
+        QString strValue = cellValue.toString();
+        if(strValue.isEmpty())
+        {
+            ++iRow;
+            continue;
+        }
+        if (strValue == "序号")
+        {
+            LOG_INFO("找到关键字 序号 行：%d",iRow);
+            // 再找出数据开始列
+            for(iColumn = 2; iColumn < 100 ; ++iColumn )
+            {
+                QAxObject *pCellInfo = pSheet->querySubObject("Cells(int, int)", iRow, iColumn);
+                if (nullptr == pCell)
+                {
+                    continue;
+                }
+                cellValue = pCellInfo->dynamicCall("Value()");
+                QString strVauleData = cellValue.toString();
+                if (strVauleData.isEmpty())
+                {
+                    continue;
+                }
+                if(strVauleData == "1")
+                {
+                    LOG_INFO("找到数据列 row=%d , column=%d",iRow , iColumn);
+                    break;
+                }
+            }
+            break;
+        }
+        ++iRow;
+    }
+
+    LOG_DEBUG("开始读取关键字：[%d,%d]",iRow,iColumn);
+    // 5 开始读关键字
+    int iKeyColumn = 2 ; // key 所在列 固定第2列
+    QHash<int ,QString> m_mKeyHash;
+    int ikeyRow = iRow + 1;
+    while(true)
+    {
+        if(ikeyRow > 1000)
+        {
+            LOG_ERROR("获取关键key时 ikerrow error :%d",ikeyRow);
+            break;
+        }
+        QAxObject *pCell = pSheet->querySubObject("Cells(int, int)", ikeyRow, iKeyColumn);
+        if(nullptr == pCell)
+        {
+            continue;
+        }
+        cellValue = pCell->dynamicCall("Value()");
+        QString strValue = cellValue.toString();
+        if(strValue.isEmpty())
+        {
+            break;
+        }
+        m_mKeyHash[ikeyRow] = strValue;
+        ikeyRow++;
+    }
+    // 6 开始读数据
+    LOG_DEBUG("开始读取测量数据：[%d,%d]",iRow,iColumn);
+    int iValueCloumn = iColumn;
+    while(true)
+    {
+        QAxObject *pCell = pSheet->querySubObject("Cells(int, int)", iRow, iValueCloumn);
+        if (nullptr == pCell)
+        {
+            continue;
+        }
+        cellValue = pCell->dynamicCall("Value()");
+        QString strNum = cellValue.toString();
+        if (strNum.isEmpty())
+        {
+            break;
+        }
+
+        int iValueRow = iRow + 1;
+        RecvFile::STDetailData Value;
+        for (iValueRow = iRow + 1 ; iValueRow < iRow + m_mKeyHash.size() + 1; ++iValueRow)
+        {
+            QAxObject *pCell = pSheet->querySubObject("Cells(int, int)", iValueRow, iValueCloumn);
+            if (nullptr == pCell)
+            {
+                continue;
+            }
+            cellValue = pCell->dynamicCall("Value()");
+            QString strValue = cellValue.toString();
+            if (strValue.isEmpty())
+            {
+                break;
+            }
+            auto it = m_mKeyHash.find(iValueRow);
+            if(it == m_mKeyHash.end())
+            {
+                LOG_ERROR("获取key 错误 row:%d ,cloumn:%d,beginrow[%d,%d]",iValueRow, iValueCloumn,iRow,iColumn);
+                continue;
+            }
+            RecvFile::STDimenSionData data;
+            bool ok = false;
+            data.dActual = strValue.toDouble(&ok);
+            if(!ok)
+            {
+                LOG_ERROR("获取key 错误 row:%d ,cloumn:%d,beginrow[%d,%d],strvalue:%s",iValueRow, iValueCloumn,iRow,iColumn,strValue.toStdString().c_str());
+                continue;
+            }
+            Value.m_mMeasuredValue[*it] = data;
+            LOG_INFO("insert zhaofen data cell[%d,%d],%f",iValueRow, iValueCloumn,data.dActual);
+        }
+        VectorData.push_back(Value);
+        ++iValueCloumn;
+    }
+
+    return 0;
+}
+
+int ExcellPrecess::ReadTxtData(QString strFilePath, QVector<RecvFile::STDetailData> &VectorData)
+{
+
+    return 0;
 }
 
 
@@ -330,39 +557,6 @@ bool ExcellPrecess::IsFileOpen(QString strFile)
     file.close();
     return false;
 }
-
-
-int ExcellPrecess::ShowExeclData()
-{
-    /*
-   // QTableView tableView;
-    m_pOperationInterFace->GetUiPointObject()->ShowDataView->setWindowTitle("QTableView Example");
-
-   // QStandardItemModel model(3, 3); // 创建3行3列的数据模型
-    QStandardItemModel *model = new QStandardItemModel(3, 3);
-
-    QStringList headers = {"Column 1", "Column 2", "Column 3"};
-    //model->setHorizontalHeaderLabels(headers);
-    model->setVerticalHeaderLabels(headers);
-
-    for (int row = 0; row < 3; ++row) {
-        for (int col = 0; col < 3; ++col) {
-            QStandardItem *item = new QStandardItem(QString("Item %1-%2").arg(row+1).arg(col+1));
-            model->setItem(row, col, item);
-        }
-    }
-
-    //tableView.setModel(&model);
-   // tableView.show();
-    m_pOperationInterFace->GetUiPointObject()->ShowDataView->setModel(model);
-    m_pOperationInterFace->GetUiPointObject()->ShowDataView->show();
-*/
-    return 0;
-}
-
-
-
-
 
 
 int ExcellPrecess::CheckFileExists(QString strFile)
