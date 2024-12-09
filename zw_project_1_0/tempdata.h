@@ -26,6 +26,9 @@ public:
     {
         QStyleOptionViewItem options = option;
         initStyleOption(&options, index);
+        // 设置文本居中
+        QStyleOptionViewItem newOption(option);
+        newOption.displayAlignment = Qt::AlignCenter;
 
         // 选择性地修改字体颜色
         /*

@@ -86,6 +86,8 @@ private slots:
     void DataChanged(int num,QString key,double value);
 
     void LaybelText(QString text);
+
+    void sonWidget();
 signals:
     void StartConnect(QString strIP,unsigned short usPort);
     void SendMessage(QString strMessage);
@@ -96,6 +98,7 @@ private:
     RecvFile *m_pRecvFileWorker ;
     QString m_strLocalIp;
     TempData *m_tempData;
+    QWidget  *m_widget;//子界面
 
     // UI的相关初始化
     int UiInit();

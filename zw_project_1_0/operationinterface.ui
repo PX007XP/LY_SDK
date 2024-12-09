@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1290</width>
+    <width>1399</width>
     <height>720</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>OperationInterface</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>12</x>
      <y>-17</y>
-     <width>1321</width>
-     <height>688</height>
+     <width>1236</width>
+     <height>562</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -348,19 +348,6 @@
             </layout>
            </widget>
           </item>
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
          </layout>
         </item>
         <item>
@@ -369,38 +356,6 @@
            <string>网络</string>
           </property>
           <layout class="QGridLayout" name="gridLayout">
-           <item row="1" column="4" colspan="2">
-            <widget class="QLabel" name="label_7">
-             <property name="text">
-              <string>设备品牌：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_5">
-             <property name="text">
-              <string>采集方式：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="5" colspan="3">
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <item>
-              <widget class="QLabel" name="label_13">
-               <property name="text">
-                <string>端口：</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="PortEdit">
-               <property name="text">
-                <string>8889</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
            <item row="0" column="8">
             <layout class="QHBoxLayout" name="horizontalLayout_3">
              <item>
@@ -419,6 +374,44 @@
              </item>
             </layout>
            </item>
+           <item row="1" column="9">
+            <widget class="QRadioButton" name="radioButton">
+             <property name="text">
+              <string>修改数据</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>自动感知文件路径：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>采集方式：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="6" colspan="2">
+            <widget class="QComboBox" name="sehbeicomboBox">
+             <property name="currentIndex">
+              <number>0</number>
+             </property>
+             <item>
+              <property name="text">
+               <string>兆丰1</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>兆丰2</string>
+              </property>
+             </item>
+            </widget>
+           </item>
            <item row="1" column="1" colspan="3">
             <widget class="QComboBox" name="caijiTypecomboBox">
              <property name="currentIndex">
@@ -436,22 +429,43 @@
              </item>
             </widget>
            </item>
-           <item row="2" column="11">
-            <widget class="QPushButton" name="ComCheckButton">
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_8">
              <property name="text">
-              <string>完成检测</string>
+              <string>文件保存路径：</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="11">
-            <widget class="QPushButton" name="ClearDataButton">
+           <item row="2" column="10">
+            <widget class="QPushButton" name="WriteFilepushButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
-              <string>清空数据</string>
+              <string>上传数据</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="10">
+           <item row="2" column="9">
+            <widget class="QPushButton" name="ShowDataButton">
+             <property name="text">
+              <string>信息显示</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QLineEdit" name="saveFilePathEdit"/>
+           </item>
+           <item row="2" column="8">
             <widget class="QLabel" name="label_21">
+             <property name="font">
+              <font>
+               <pointsize>17</pointsize>
+              </font>
+             </property>
              <property name="acceptDrops">
               <bool>false</bool>
              </property>
@@ -460,20 +474,6 @@
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_6">
-             <property name="text">
-              <string>自动感知文件路径：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="9">
-            <widget class="QRadioButton" name="radioButton">
-             <property name="text">
-              <string>修改数据</string>
              </property>
             </widget>
            </item>
@@ -495,158 +495,47 @@
              </item>
             </layout>
            </item>
-           <item row="2" column="9">
-            <widget class="QPushButton" name="ShowDataButton">
+           <item row="2" column="11">
+            <widget class="QPushButton" name="ComCheckButton">
              <property name="text">
-              <string>信息显示</string>
+              <string>完成检测</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="6" colspan="2">
-            <widget class="QComboBox" name="sehbeicomboBox">
-             <property name="currentIndex">
-              <number>0</number>
-             </property>
-             <item>
-              <property name="text">
-               <string>兆丰1</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>兆丰2</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item row="2" column="10">
-            <widget class="QPushButton" name="WriteFilepushButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
+           <item row="1" column="4" colspan="2">
+            <widget class="QLabel" name="label_7">
              <property name="text">
-              <string>上传数据</string>
+              <string>设备品牌：</string>
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_8">
-             <property name="text">
-              <string>文件保存路径：</string>
-             </property>
-            </widget>
+           <item row="3" column="2">
+            <widget class="QLineEdit" name="lineEdit_3"/>
            </item>
-           <item row="3" column="8">
-            <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <item row="0" column="5" colspan="3">
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
-              <widget class="QLabel" name="label_10">
+              <widget class="QLabel" name="label_13">
                <property name="text">
-                <string>检查类别：</string>
+                <string>端口：</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QComboBox" name="jianceleibie_comboBox">
-               <property name="currentIndex">
-                <number>0</number>
+              <widget class="QLineEdit" name="PortEdit">
+               <property name="text">
+                <string>8889</string>
                </property>
-               <item>
-                <property name="text">
-                 <string>FAI</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>CIK</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>首件</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>巡件1</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>巡件2</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>巡件3</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>尾件</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>来料</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>CR&amp;R</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>出货</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>调机</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>指定尺寸</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>调机复测</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>架机首件</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>换刀首件</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>FAI+CPK</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>刀具尺寸</string>
-                </property>
-               </item>
               </widget>
              </item>
             </layout>
            </item>
-           <item row="2" column="1" colspan="5">
-            <widget class="QLineEdit" name="lineEdit_3"/>
-           </item>
-           <item row="3" column="1" colspan="5">
-            <widget class="QLineEdit" name="saveFilePathEdit"/>
+           <item row="1" column="11">
+            <widget class="QPushButton" name="ClearDataButton">
+             <property name="text">
+              <string>清空数据</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -659,24 +548,34 @@
          <string>文件选择</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_2">
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_4">
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_2">
            <property name="text">
-            <string>项目路径:</string>
+            <string>材料名称：</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="MobanlujinEdit">
+         <item row="7" column="0">
+          <widget class="QLabel" name="label_16">
            <property name="text">
-            <string>D:\</string>
+            <string>审核人员</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label">
+         <item row="7" column="1">
+          <widget class="QLineEdit" name="lineEdit_2"/>
+         </item>
+         <item row="3" column="1">
+          <widget class="QComboBox" name="FilecomboBox">
+           <property name="currentIndex">
+            <number>-1</number>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_12">
            <property name="text">
-            <string>项目名称:</string>
+            <string>开始时间</string>
            </property>
           </widget>
          </item>
@@ -693,17 +592,48 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_2">
+         <item row="5" column="0">
+          <widget class="QLabel" name="label_14">
            <property name="text">
-            <string>材料名称：</string>
+            <string>结束时间</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
-          <widget class="QComboBox" name="TypecomboBox">
-           <property name="currentIndex">
-            <number>-1</number>
+         <item row="5" column="1">
+          <widget class="ZDateTimeEdit" name="dateTimeEditEnd">
+           <property name="displayFormat">
+            <string>yyyy-M-d H:mm</string>
+           </property>
+           <property name="calendarPopup">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="label_15">
+           <property name="text">
+            <string>测量人员</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="MobanlujinEdit">
+           <property name="text">
+            <string>D:\</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>项目路径:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>项目名称:</string>
            </property>
           </widget>
          </item>
@@ -714,17 +644,10 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
-          <widget class="QComboBox" name="FilecomboBox">
+         <item row="2" column="1">
+          <widget class="QComboBox" name="TypecomboBox">
            <property name="currentIndex">
             <number>-1</number>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="label_12">
-           <property name="text">
-            <string>开始时间</string>
            </property>
           </widget>
          </item>
@@ -760,42 +683,107 @@
            </property>
           </widget>
          </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="label_14">
-           <property name="text">
-            <string>结束时间</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <widget class="ZDateTimeEdit" name="dateTimeEditEnd">
-           <property name="displayFormat">
-            <string>yyyy-M-d H:mm</string>
-           </property>
-           <property name="calendarPopup">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0">
-          <widget class="QLabel" name="label_15">
-           <property name="text">
-            <string>测量人员</string>
-           </property>
-          </widget>
-         </item>
          <item row="6" column="1">
           <widget class="QLineEdit" name="lineEdit"/>
          </item>
-         <item row="7" column="0">
-          <widget class="QLabel" name="label_16">
+         <item row="8" column="0">
+          <widget class="QLabel" name="label_10">
            <property name="text">
-            <string>审核人员</string>
+            <string>检查类别：</string>
            </property>
           </widget>
          </item>
-         <item row="7" column="1">
-          <widget class="QLineEdit" name="lineEdit_2"/>
+         <item row="8" column="1">
+          <widget class="QComboBox" name="jianceleibie_comboBox">
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <item>
+            <property name="text">
+             <string>FAI</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>CIK</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>首件</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>巡件1</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>巡件2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>巡件3</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>尾件</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>来料</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>CR&amp;R</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>出货</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>调机</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>指定尺寸</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>调机复测</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>架机首件</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>换刀首件</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>FAI+CPK</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>刀具尺寸</string>
+            </property>
+           </item>
+          </widget>
          </item>
         </layout>
        </widget>
