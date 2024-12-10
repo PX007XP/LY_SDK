@@ -350,17 +350,34 @@ int ExcellPrecess::ReadFileData(QString strFilePath, QVector<RecvFile::STDetailD
     if(1 == iFileType)
     {
         // 验证文件后缀为 excel
+        QString strSuffix = GetFileSuffix(strFilePath);
+        if(strSuffix != "xlsx" && strSuffix != "xls")
+        {
+            LOG_ERROR("自动感知文件后缀错误,file:%s,iFileType:%d",strFilePath.toStdString().c_str(),iFileType);
+            return -98;
+        }
 
         iRet = ReadExcelData(strFilePath , VectorData);
     }
     else if(2 == iFileType)
     {
+        QString strSuffix = GetFileSuffix(strFilePath);
+        if(strSuffix != "xlsx" && strSuffix != "xls")
+        {
+            LOG_ERROR("自动感知文件后缀错误,file:%s,iFileType:%d",strFilePath.toStdString().c_str(),iFileType);
+            return -98;
+        }
         iRet = ReadExcelData(strFilePath , VectorData);
     }
     else if(3 == iFileType)
     {
         // 验证文件后缀为 txt
-
+        QString strSuffix = GetFileSuffix(strFilePath);
+        if(strSuffix != "txt" )
+        {
+            LOG_ERROR("自动感知文件后缀错误,file:%s,iFileType:%d",strFilePath.toStdString().c_str(),iFileType);
+            return -98;
+        }
         iRet = ReadTxtData(strFilePath , VectorData);
     }
     else

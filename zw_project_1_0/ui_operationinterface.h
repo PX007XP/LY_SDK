@@ -32,7 +32,7 @@ QT_BEGIN_NAMESPACE
 class Ui_OperationInterface
 {
 public:
-    QWidget *widget;
+    QWidget *layoutWidget;
     QVBoxLayout *verticalLayout_2;
     QHBoxLayout *horizontalLayout_6;
     QVBoxLayout *verticalLayout;
@@ -128,9 +128,9 @@ public:
     QLabel *label_14;
     ZDateTimeEdit *dateTimeEditEnd;
     QLabel *label_15;
-    QLineEdit *lineEdit;
+    QLineEdit *celiangrenyuan_lineEdit;
     QLabel *label_16;
-    QLineEdit *lineEdit_2;
+    QLineEdit *shenherenyuan_lineEdit;
     QTableView *ShowtableView;
 
     void setupUi(QWidget *OperationInterface)
@@ -138,17 +138,17 @@ public:
         if (OperationInterface->objectName().isEmpty())
             OperationInterface->setObjectName(QString::fromUtf8("OperationInterface"));
         OperationInterface->resize(1290, 720);
-        widget = new QWidget(OperationInterface);
-        widget->setObjectName(QString::fromUtf8("widget"));
-        widget->setGeometry(QRect(12, -17, 1321, 688));
-        verticalLayout_2 = new QVBoxLayout(widget);
+        layoutWidget = new QWidget(OperationInterface);
+        layoutWidget->setObjectName(QString::fromUtf8("layoutWidget"));
+        layoutWidget->setGeometry(QRect(12, -17, 1321, 688));
+        verticalLayout_2 = new QVBoxLayout(layoutWidget);
         verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
         verticalLayout_2->setContentsMargins(0, 0, 0, 0);
         horizontalLayout_6 = new QHBoxLayout();
         horizontalLayout_6->setObjectName(QString::fromUtf8("horizontalLayout_6"));
         verticalLayout = new QVBoxLayout();
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-        groupBox_3 = new QGroupBox(widget);
+        groupBox_3 = new QGroupBox(layoutWidget);
         groupBox_3->setObjectName(QString::fromUtf8("groupBox_3"));
         horizontalLayout_4 = new QHBoxLayout(groupBox_3);
         horizontalLayout_4->setObjectName(QString::fromUtf8("horizontalLayout_4"));
@@ -195,7 +195,7 @@ public:
 
         horizontalLayout_5 = new QHBoxLayout();
         horizontalLayout_5->setObjectName(QString::fromUtf8("horizontalLayout_5"));
-        groupBox = new QGroupBox(widget);
+        groupBox = new QGroupBox(layoutWidget);
         groupBox->setObjectName(QString::fromUtf8("groupBox"));
         gridLayout_5 = new QGridLayout(groupBox);
         gridLayout_5->setObjectName(QString::fromUtf8("gridLayout_5"));
@@ -384,7 +384,7 @@ public:
 
         verticalLayout->addLayout(horizontalLayout_5);
 
-        groupBox_4 = new QGroupBox(widget);
+        groupBox_4 = new QGroupBox(layoutWidget);
         groupBox_4->setObjectName(QString::fromUtf8("groupBox_4"));
         gridLayout = new QGridLayout(groupBox_4);
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
@@ -552,7 +552,7 @@ public:
 
         horizontalLayout_6->addLayout(verticalLayout);
 
-        groupBox_2 = new QGroupBox(widget);
+        groupBox_2 = new QGroupBox(layoutWidget);
         groupBox_2->setObjectName(QString::fromUtf8("groupBox_2"));
         gridLayout_2 = new QGridLayout(groupBox_2);
         gridLayout_2->setObjectName(QString::fromUtf8("gridLayout_2"));
@@ -630,20 +630,20 @@ public:
 
         gridLayout_2->addWidget(label_15, 6, 0, 1, 1);
 
-        lineEdit = new QLineEdit(groupBox_2);
-        lineEdit->setObjectName(QString::fromUtf8("lineEdit"));
+        celiangrenyuan_lineEdit = new QLineEdit(groupBox_2);
+        celiangrenyuan_lineEdit->setObjectName(QString::fromUtf8("celiangrenyuan_lineEdit"));
 
-        gridLayout_2->addWidget(lineEdit, 6, 1, 1, 1);
+        gridLayout_2->addWidget(celiangrenyuan_lineEdit, 6, 1, 1, 1);
 
         label_16 = new QLabel(groupBox_2);
         label_16->setObjectName(QString::fromUtf8("label_16"));
 
         gridLayout_2->addWidget(label_16, 7, 0, 1, 1);
 
-        lineEdit_2 = new QLineEdit(groupBox_2);
-        lineEdit_2->setObjectName(QString::fromUtf8("lineEdit_2"));
+        shenherenyuan_lineEdit = new QLineEdit(groupBox_2);
+        shenherenyuan_lineEdit->setObjectName(QString::fromUtf8("shenherenyuan_lineEdit"));
 
-        gridLayout_2->addWidget(lineEdit_2, 7, 1, 1, 1);
+        gridLayout_2->addWidget(shenherenyuan_lineEdit, 7, 1, 1, 1);
 
 
         horizontalLayout_6->addWidget(groupBox_2);
@@ -651,7 +651,7 @@ public:
 
         verticalLayout_2->addLayout(horizontalLayout_6);
 
-        ShowtableView = new QTableView(widget);
+        ShowtableView = new QTableView(layoutWidget);
         ShowtableView->setObjectName(QString::fromUtf8("ShowtableView"));
 
         verticalLayout_2->addWidget(ShowtableView);

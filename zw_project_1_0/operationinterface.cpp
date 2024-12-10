@@ -46,7 +46,8 @@ OperationInterface::OperationInterface(QWidget *parent)
 
     // 读取配置文件
     ConfigObject config;
-    config.ReadConfig();
+    config.ReadConfig(this);
+
 
     //创建子线程
     QThread* m_pSocketThread = new QThread;
@@ -154,6 +155,11 @@ void OperationInterface::RecvSocketMessage(QByteArray szMessage)
 
 void OperationInterface::ShowDetailMesage(RecvFile::STDetailData stResult)
 {
+    // 开关检查 如果是自动感知 则不进行操作
+    if(IsFileWorkType())
+    {
+        return;
+    }
     QVector<QColor> colors = {Qt::red , Qt::blue ,Qt::black,Qt::cyan ,Qt::magenta ,Qt::darkRed,Qt::green};
     QString strParid = "partid:" + stResult.m_strPartID;
    // ui->showdataEdit->append(strParid);
@@ -205,6 +211,10 @@ void OperationInterface::ShowMessageBoxInfo(QString strMessageType, QString strS
 
 void OperationInterface::on_connectButton_clicked()
 {
+    if( false == CheckWorkCondition())
+    {
+        return;
+    }
     QString strIp = ui->IpEdit->text();
     QString strPort = ui->PortEdit->text();
 
@@ -271,6 +281,10 @@ void OperationInterface::on_WriteFilepushButton_clicked()
 
 void OperationInterface::on_LoginPushButton_clicked()
 {
+    if( false == CheckWorkCondition())
+    {
+        return;
+    }
     QString strPassword = ui->PasswordEdit->text();
     QString strUserName = ui->UserEdit->text();
     if(strPassword.isEmpty() || strUserName.isEmpty() )
@@ -350,6 +364,8 @@ void OperationInterface::on_ComCheckButton_clicked()
         m_strPushFilePath.clear();
 
         //todo  调用清空显示界面数据接口
+
+        m_bFileReading = false;
 
         LOG_INFO("complete check return=%d , filepath=%s ,%s",iRet,strNewFilePath.toStdString().c_str());
     }
@@ -444,6 +460,7 @@ void OperationInterface::on_ClearDataButton_clicked()
     m_pExcellWork->CleanSheetData(strFile);
     QMessageBox::information(this,"提示","清理成功");
     m_vRecvData.clear();
+    m_bFileReading = false;
 }
 
 void OperationInterface::handleExcelException(int code, const QString &source, const QString &desc, const QString &help)
@@ -546,7 +563,7 @@ int OperationInterface::InitWatcher()
    // }
    // m_Watcher.addPath(m_strListeningPath);
     m_bListening = false;
-
+    m_bFileReadtype = false;
     connect(&m_Watcher, &QFileSystemWatcher::directoryChanged, this, &OperationInterface::onDirectoryChanged);
     return 0;
 }
@@ -657,6 +674,10 @@ void OperationInterface::onDirectoryChanged(const QString &strPath)
 
 void OperationInterface::on_ShowDataButton_clicked()
 {
+    if( false == CheckWorkCondition())
+    {
+        return;
+    }
     QString strFilePath;
     int iRet = GetMobanFileName(strFilePath);
     if(0 == iRet)
@@ -702,6 +723,17 @@ void OperationInterface::on_MobanlujinEdit_editingFinished()
     QString strPath = ui->PathcomboBox->currentText();
     strPath = strMoBanRootPath + "/" + strPath;
     SetDirPathComboByDirPath(strPath);
+
+    // 保存
+    ConfigObject config;
+    QString strText = ui->MobanlujinEdit->text();
+    int iRet = config.SaveConfigData("mubanpath" , strText);
+    if(iRet < 0)
+    {
+        LOG_ERROR("OperationInterface save faild :%d ,%s ",iRet , strText.toStdString().c_str());
+        return ;
+    }
+    LOG_INFO("OperationInterface save mubanpath :%d ,%s ",iRet , strText.toStdString().c_str());
 
 }
 
@@ -811,16 +843,19 @@ void OperationInterface::on_FilecomboBox_activated(int index)
 }
 
 
+// 数据感知槽函数
 void OperationInterface::on_caijiTypecomboBox_activated(int index)
 {
     QString strText = ui->caijiTypecomboBox->currentText();
     if(strText == "自动感知")
     {
         StartListening();
+        m_bFileReadtype = true;
     }
     else
     {
         StopListening();
+        m_bFileReadtype = false;
     }
 
 }
@@ -849,6 +884,7 @@ int OperationInterface::GetSheBeiType()
 
 bool OperationInterface::RemoveRepetiton(QFileInfo fileInfo)
 {
+#if 0
     QString strFileName  = fileInfo.fileName();
     auto it = m_mDealFile.find(strFileName);
     if(it != m_mDealFile.end())
@@ -863,6 +899,9 @@ bool OperationInterface::RemoveRepetiton(QFileInfo fileInfo)
         m_mDealFile[strFileName] = fileInfo.size();
     }
     return false;
+#endif
+    // 方式2 强制规定 第一个文件读取完成后 需要完成检测 或者清除数据后 才能继续读 期间的文件不感知
+    return m_bFileReading;
 }
 
 
@@ -877,5 +916,84 @@ void OperationInterface::on_zhidongganzhi_lineEdit_editingFinished()
     {
         StartListening();
     }
+}
+
+bool OperationInterface::CheckWorkCondition()
+{
+    QString strValue = ui->celiangrenyuan_lineEdit->text();
+    if(strValue.isEmpty())
+    {
+        QMessageBox::information(this,"提示","请先填写测量人员");
+        return false;
+    }
+
+    QString strshenhe = ui->shenherenyuan_lineEdit->text();
+    if(strshenhe.isEmpty())
+    {
+        QMessageBox::information(this,"提示","请先填写审核人员");
+        return false;
+    }
+
+    return true;
+}
+
+
+void OperationInterface::on_UserEdit_editingFinished()
+{
+    ConfigObject config;
+    QString strText = ui->UserEdit->text();
+    int iRet = config.SaveConfigData("user" , strText);
+    if(iRet < 0)
+    {
+        LOG_ERROR("OperationInterface save faild :%d ,%s ",iRet , strText.toStdString().c_str());
+        return ;
+    }
+    LOG_INFO("OperationInterface save user :%d ,%s ",iRet , strText.toStdString().c_str());
+}
+
+
+void OperationInterface::on_PasswordEdit_editingFinished()
+{
+    ConfigObject config;
+    QString strText = ui->PasswordEdit->text();
+    int iRet = config.SaveConfigData("password" , strText);
+    if(iRet < 0)
+    {
+        LOG_ERROR("OperationInterface save faild :%d ,%s ",iRet , strText.toStdString().c_str());
+        return ;
+    }
+    LOG_INFO("OperationInterface save password :%d ,%s ",iRet , strText.toStdString().c_str());
+}
+
+
+
+
+void OperationInterface::on_celiangrenyuan_lineEdit_editingFinished()
+{
+    // 保存
+    ConfigObject config;
+    QString strText = ui->celiangrenyuan_lineEdit->text();
+    int iRet = config.SaveConfigData("celiangrenyuan" , strText);
+    if(iRet < 0)
+    {
+        LOG_ERROR("OperationInterface save faild :%d ,%s ",iRet , strText.toStdString().c_str());
+        return ;
+    }
+    LOG_INFO("OperationInterface save celiangrenyuan :%d ,%s ",iRet , strText.toStdString().c_str());
+}
+
+
+void OperationInterface::on_shenherenyuan_lineEdit_editingFinished()
+{
+    // 保存
+    ConfigObject config;
+    QString strText = ui->shenherenyuan_lineEdit->text();
+    int iRet = config.SaveConfigData("shenherenyuan" , strText);
+    if(iRet < 0)
+    {
+        LOG_ERROR("OperationInterface save faild :%d ,%s ",iRet , strText.toStdString().c_str());
+        return ;
+    }
+    LOG_INFO("OperationInterface save shenherenyuan :%d ,%s ",iRet , strText.toStdString().c_str());
 }
 

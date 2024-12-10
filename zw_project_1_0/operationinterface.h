@@ -119,15 +119,22 @@ private:
     int GetMobanFileName(QString& strFilePath);
 
 public:
+    bool IsFileWorkType()
+    {
+        return m_bFileReadtype;
+    }
 
 private:
     void GetLocalIp();
+
+    bool m_bFileReadtype = false ; // false 数据对接  true文件感知
 
 // 自动感知相关功能
 private:
     QFileSystemWatcher m_Watcher;
     bool m_bListening = false;
     QString m_strListeningPath;
+    bool m_bFileReading = false;  // 读取中 设为true  完成检查 或者清除数据后 置回 false
 
     QHash<QString ,qint64> m_mDealFile;
 
@@ -149,5 +156,17 @@ private slots:
 
     void on_caijiTypecomboBox_activated(int index);
     void on_zhidongganzhi_lineEdit_editingFinished();
+
+    void on_UserEdit_editingFinished();
+
+    void on_PasswordEdit_editingFinished();
+
+
+    void on_celiangrenyuan_lineEdit_editingFinished();
+
+    void on_shenherenyuan_lineEdit_editingFinished();
+
+public:
+    bool CheckWorkCondition();
 };
 #endif // OPERATIONINTERFACE_H

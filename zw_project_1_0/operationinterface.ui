@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>OperationInterface</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>12</x>
@@ -785,7 +785,7 @@
           </widget>
          </item>
          <item row="6" column="1">
-          <widget class="QLineEdit" name="lineEdit"/>
+          <widget class="QLineEdit" name="celiangrenyuan_lineEdit"/>
          </item>
          <item row="7" column="0">
           <widget class="QLabel" name="label_16">
@@ -795,7 +795,7 @@
           </widget>
          </item>
          <item row="7" column="1">
-          <widget class="QLineEdit" name="lineEdit_2"/>
+          <widget class="QLineEdit" name="shenherenyuan_lineEdit"/>
          </item>
         </layout>
        </widget>
