@@ -103,6 +103,23 @@ OperationInterface::OperationInterface(QWidget *parent)
     QAction *newAction = new QAction("子界面", this);
     // 将菜单项添加到文件菜单
     fileMenu->addAction(newAction);
+    m_widget=new QWidget();
+    m_widget->hide();
+    ui->radioButton->setParent(m_widget);
+    ui->label_6->setParent(m_widget);
+    ui->lineEdit_3->setParent(m_widget);
+    // 创建一个栅格布局
+    QGridLayout *layout = new QGridLayout(this);
+    layout->addWidget(ui->radioButton,0,0);
+    layout->addWidget(ui->label_6,1,0);
+    layout->addWidget(ui->lineEdit_3,1,1);
+    // 设置窗口的布局
+    m_widget->setLayout(layout);
+    m_widget->setWindowModality(Qt::ApplicationModal);
+
+    // 连接信号和槽
+    connect(newAction, &QAction::triggered, this, &OperationInterface::sonWidget);
+
     ui->verticalLayout_2->setContentsMargins(0, 30, 0, 0); // 留出30像素的顶部空间给菜单栏
     m_tempData=new TempData(ui->ShowtableView);
     connect(m_tempData,&TempData::dataChanged,this,&OperationInterface::DataChanged);
@@ -760,6 +777,11 @@ void OperationInterface::LaybelText(QString text)
         // 设置字体颜色和字体大小
         ui->label_21->setStyleSheet("color: red;");
     }
+}
+
+void OperationInterface::sonWidget()
+{
+    m_widget->show();
 }
 
 int OperationInterface::UiInit()

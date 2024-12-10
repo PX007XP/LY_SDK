@@ -148,12 +148,12 @@ bool TempData::LoadData(QString filename, int showrow){
         row=32;
     }
     for(int i=1;i<=row;i++){
-        headList<<QString::number(i);
+        //headList<<QString::number(i);
     }
     //结果列和判定列
     headList<<"结果\n判定";
     m_model->setRowCount(varRows.size());
-    m_model->setColumnCount(row+6+1);
+    m_model->setColumnCount(6+1);
     m_model->setHorizontalHeaderLabels(headList);
 
     //points.clear();
@@ -204,14 +204,9 @@ bool TempData::LoadData(QString filename, int showrow){
         //m_model -> setItem(startRow-14,6,new QStandardItem(rowData[0].toString()));
         //m_model -> setItem(startRow-13,1,new QStandardItem(QString::number(modelcol++)));
         //m_model->setItem(startRow-14,2,item);
-        /*for (int i=9;i<rowData.size();i++){
-            if(rowData[i].isNull())break;
-            measure=rowData[i].toFloat();
-            QStandardItem *item=new QStandardItem(QString::number(measure));
-            // 设置字体颜色为红色
-            item->setForeground(QBrush(standFont(measure,stand,ups,downs)));
-            //m_model->setItem(startRow-14,i-7,item);
-        }*/
+        for (int i=0;i<6;i++){
+            m_model->item(startRow-14,i)->setTextAlignment(Qt::AlignCenter);
+        }
         startRow++;
     }
 
@@ -220,10 +215,11 @@ bool TempData::LoadData(QString filename, int showrow){
 
     if(setModel){
         // 设置代理
+        m_tableView->setModel(&*m_model);  // 将模型绑定到视图
         MyItemDelegate *delegate = new MyItemDelegate(m_tableView);
         m_tableView->setItemDelegate(delegate);
-        m_tableView->resizeColumnsToContents();  // 自动调整列宽以适应内容
-        m_tableView->setModel(&*m_model);  // 将模型绑定到视图
+        //m_tableView->resizeColumnsToContents();  // 自动调整列宽以适应内容
+
     }
 
 
@@ -232,6 +228,8 @@ bool TempData::LoadData(QString filename, int showrow){
     // 禁用所有编辑操作
     m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     //m_tableView->setEditTriggers(QAbstractItemView::SelectedClicked);
+    // 隐藏最后一列
+    m_tableView->setColumnHidden(m_model->columnCount() - 1, true);
     closefile();
     m_cond.wakeOne();
     return true;
@@ -353,7 +351,7 @@ void TempData::modslot()
     QRadioButton *button = qobject_cast<QRadioButton *>(sender());
     if(!m_tableView) return;
     if(button->isChecked()){
-        m_tableView->setEditTriggers(QAbstractItemView::SelectedClicked);
+        m_tableView->setEditTriggers(QAbstractItemView::DoubleClicked);
         //修改数据
         //connect(m_model,&QStandardItemModel::dataChanged,this,&TempData::SaveData);
         connect(m_model,&QStandardItemModel::dataChanged,this,&TempData::SaveData);
@@ -375,13 +373,23 @@ void TempData::getData()
         QMutexLocker lock(&m_locker);
         m_cond.wait(&m_locker);
         LOG_INFO("数据取出队列");
-        j=m_showcol;
+
+        /*
         if(j>=m_model->columnCount()&&m_model->columnCount()>0){
             //QMessageBox::information(nullptr,"提示","显示列数已满");
             return;
         }
+        */
         if(m_model->columnCount()==0)continue;
         if (m_queue.empty())continue;
+        // 获取当前列数
+        int columnCount = m_model->columnCount();
+
+        // 在最后一列之前插入一列（即插入位置 columnCount-1）
+        m_model->insertColumn(columnCount - 1);
+        j=columnCount-1;
+        // 插入列后，更新表头
+        m_model->setHorizontalHeaderItem(columnCount - 1, new QStandardItem(QString::number(m_model->columnCount()-7)));
         RecvFile::STDetailData datildata = m_queue.dequeue();
         //lock.unlock();
         if (m_model==nullptr) {
@@ -438,6 +446,7 @@ void TempData::getData()
             }*/
             //allvec.append(i);
             if(i>showrow)showrow=i;
+            showitem->setTextAlignment(Qt::AlignCenter);
             m_model->setItem(i++,j,showitem);
         }
         //判定是否合格 遍历item 将model中所有的数据进行重新的颜色设置和结果判定列的更新和label的更新
@@ -476,6 +485,7 @@ void TempData::getData()
                 }
                 // 设置字体颜色为红色
                 showitem->setForeground(QBrush(Qt::red));
+                showitem->setTextAlignment(Qt::AlignCenter);
                 flabel=true;
                 m_model->setItem(j,m_model->columnCount()-1,showitem);
             }else{
@@ -487,6 +497,7 @@ void TempData::getData()
                 }
                 // 设置字体颜色为红色
                 showitem->setForeground(QBrush(Qt::green));
+                showitem->setTextAlignment(Qt::AlignCenter);
                 m_model->setItem(j,m_model->columnCount()-1,showitem);
             }
         }
@@ -542,6 +553,8 @@ void TempData::getData()
 
         //m_tableView->setModel(m_model);  // 将模型绑定到视图
 
+        // 显示最后一列
+        m_tableView->setColumnHidden(m_model->columnCount() - 1, false);
         // 显示表格
         m_tableView->show();
         m_tableView->update();

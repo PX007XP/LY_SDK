@@ -859,6 +859,12 @@ void CalendarWidget::initWidget()
     comboBox_sec->setObjectName("comboBox_Sec");
     label_splite->setObjectName("label_splite");
 
+    comboBox_Year->setMinimumWidth(60);;
+    comboBox_Month->setMinimumWidth(60);;
+    comboBox_Hour->setMinimumWidth(60);;
+    comboBox_min->setMinimumWidth(60);;
+    comboBox_sec->setMinimumWidth(60);;
+
     comboBox_Year->setItemDelegate(new QStyledItemDelegate());
     comboBox_Month->setItemDelegate(new QStyledItemDelegate());
     comboBox_Hour->setItemDelegate(new QStyledItemDelegate());
