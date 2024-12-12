@@ -49,6 +49,13 @@ public:
             m_strUnits.clear();
             m_mMeasuredValue.clear();
         }
+        void RestData()
+        {
+            m_strPartID.clear();
+            m_strDateTime.clear();
+            m_strUnits.clear();
+            m_mMeasuredValue.clear();
+        }
         QString m_strPartID;  // 工件ID
         QString m_strDateTime;   // 测量时间
         QChar m_cQualified;  // 是否合格  G代表合格,B代表不合格

@@ -385,7 +385,7 @@ int ExcellPrecess::ReadFileData(QString strFilePath, QVector<RecvFile::STDetailD
         LOG_ERROR("ReadFileData iFileType is error :%d" ,iFileType);
         return -2;
     }
-    LOG_INFO("ReadFileData return = %d ,iFileType=%d",iRet , iFileType);
+    LOG_INFO("ReadFileData return = %d ,iFileType=%d ,file:%s",iRet , iFileType, strFilePath.toStdString().c_str());
     return 0;
 }
 
@@ -540,6 +540,7 @@ int ExcellPrecess::ReadExcelData(QString strFilePath, QVector<RecvFile::STDetail
             }
             RecvFile::STDimenSionData data;
             bool ok = false;
+            data.strName = *it;
             data.dActual = strValue.toDouble(&ok);
             if(!ok)
             {
@@ -558,6 +559,54 @@ int ExcellPrecess::ReadExcelData(QString strFilePath, QVector<RecvFile::STDetail
 
 int ExcellPrecess::ReadTxtData(QString strFilePath, QVector<RecvFile::STDetailData> &VectorData)
 {
+    QFile file(strFilePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        LOG_ERROR("ReadTxtData open file faild %s",strFilePath.toStdString().c_str()) ;
+        return -1 ;
+    }
+
+    QTextStream in(&file);
+    QString line;
+
+    enum State { Idle, InBlock };
+    State state = Idle;
+    RecvFile::STDetailData TempData;
+    while (!in.atEnd())
+    {
+        line = in.readLine().trimmed();
+
+        if (line == ":BEGIN")
+        {
+            TempData.RestData();
+            state = InBlock;
+        } else if (line == ":END")
+        {
+            state = Idle;
+            VectorData.push_back(TempData);
+            LOG_INFO("txt data 测量一件样本完成");
+        } else if (state == InBlock)
+        {
+            if (line.startsWith("FAI"))
+            {
+                RecvFile::STDimenSionData TemCeLiangValue;
+                QStringList parts = line.split(QRegExp("\\s+")); // 正则匹配 空格 一个或多个
+                if (parts.size() >= 2)
+                {
+                    QString faiKey = parts[0];
+                    QString faiValue = parts[1];
+                    qDebug() << "FAI Key:" << faiKey << "FAI Value:" << faiValue;
+                    double dActual = faiValue.toDouble();
+                    TemCeLiangValue.dActual = dActual;
+                    TemCeLiangValue.strName = faiKey;
+                    TempData.m_mMeasuredValue[faiKey] = TemCeLiangValue;
+                    LOG_DEBUG("txt insert data key:%s ,value:%f",faiKey.toStdString().c_str(),TemCeLiangValue.dActual);
+                }
+            }
+        }
+    }
+
+    file.close();
 
     return 0;
 }

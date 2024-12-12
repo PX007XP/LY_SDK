@@ -210,7 +210,8 @@ void OperationInterface::ShowDetailMesage(RecvFile::STDetailData stResult)
     }
 
     m_vRecvData.push_back(stResult);
-    if(m_tempData){
+    if(m_tempData)
+    {
         m_tempData->ShowData(stResult);
     }
 }
@@ -686,6 +687,19 @@ void OperationInterface::onDirectoryChanged(const QString &strPath)
     //QString strFilePathName = FileInfo.filePath()
     int iRet = m_pExcellWork->ReadFileData(FileInfo.absoluteFilePath() , m_vRecvData , iFileType);
     LOG_INFO("自动感知到文件:%s,iFielType:%d ,iRet=%d",FileInfo.absoluteFilePath().toStdString().c_str(), iFileType,iRet);
+
+    // 显示数据
+    if(m_tempData)
+    {
+        for(auto& it: m_vRecvData)
+        {
+            for(auto& it_value : it.m_mMeasuredValue)
+            {
+                LOG_DEBUG("show data :%s ,%f",it_value.strName.toStdString().c_str(),it_value.dActual);
+            }
+            m_tempData->ShowData(it);
+        }
+    }
 }
 
 
@@ -1018,4 +1032,5 @@ void OperationInterface::on_shenherenyuan_lineEdit_editingFinished()
     }
     LOG_INFO("OperationInterface save shenherenyuan :%d ,%s ",iRet , strText.toStdString().c_str());
 }
+
 

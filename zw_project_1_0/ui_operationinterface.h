@@ -414,6 +414,7 @@ public:
         sehbeicomboBox = new QComboBox(groupBox_4);
         sehbeicomboBox->addItem(QString());
         sehbeicomboBox->addItem(QString());
+        sehbeicomboBox->addItem(QString());
         sehbeicomboBox->setObjectName(QString::fromUtf8("sehbeicomboBox"));
 
         gridLayout->addWidget(sehbeicomboBox, 1, 6, 1, 2);
@@ -713,10 +714,11 @@ public:
         label_6->setText(QCoreApplication::translate("OperationInterface", "\350\207\252\345\212\250\346\204\237\347\237\245\346\226\207\344\273\266\350\267\257\345\276\204\357\274\232", nullptr));
         label_5->setText(QCoreApplication::translate("OperationInterface", "\351\207\207\351\233\206\346\226\271\345\274\217\357\274\232", nullptr));
         sehbeicomboBox->setItemText(0, QCoreApplication::translate("OperationInterface", "\345\205\206\344\270\2601", nullptr));
-        sehbeicomboBox->setItemText(1, QCoreApplication::translate("OperationInterface", "\345\205\206\344\270\2602", nullptr));
+        sehbeicomboBox->setItemText(1, QCoreApplication::translate("OperationInterface", "MIV", nullptr));
+        sehbeicomboBox->setItemText(2, QCoreApplication::translate("OperationInterface", "\345\205\206\344\270\2602", nullptr));
 
         caijiTypecomboBox->setItemText(0, QCoreApplication::translate("OperationInterface", "\346\225\260\346\215\256\345\257\271\346\216\245", nullptr));
-        caijiTypecomboBox->setItemText(1, QCoreApplication::translate("OperationInterface", "\346\226\207\344\273\266\346\204\237\347\237\245", nullptr));
+        caijiTypecomboBox->setItemText(1, QCoreApplication::translate("OperationInterface", "\350\207\252\345\212\250\346\204\237\347\237\245", nullptr));
 
         label_8->setText(QCoreApplication::translate("OperationInterface", "\346\226\207\344\273\266\344\277\235\345\255\230\350\267\257\345\276\204\357\274\232", nullptr));
         WriteFilepushButton->setText(QCoreApplication::translate("OperationInterface", "\344\270\212\344\274\240\346\225\260\346\215\256", nullptr));
