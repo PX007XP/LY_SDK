@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'operationinterface.ui'
 **
-** Created by: Qt User Interface Compiler version 5.15.0
+** Created by: Qt User Interface Compiler version 5.15.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -96,7 +96,6 @@ public:
     QLabel *label_8;
     QPushButton *WriteFilepushButton;
     QPushButton *ShowDataButton;
-    QLineEdit *saveFilePathEdit;
     QLabel *label_21;
     QHBoxLayout *horizontalLayout;
     QLabel *label_11;
@@ -108,6 +107,7 @@ public:
     QLabel *label_13;
     QLineEdit *PortEdit;
     QPushButton *ClearDataButton;
+    QLineEdit *saveFilePathEdit;
     QGroupBox *groupBox_2;
     QGridLayout *gridLayout_2;
     QLabel *label_2;
@@ -137,7 +137,7 @@ public:
         OperationInterface->resize(1399, 720);
         layoutWidget = new QWidget(OperationInterface);
         layoutWidget->setObjectName(QString::fromUtf8("layoutWidget"));
-        layoutWidget->setGeometry(QRect(12, -17, 1236, 562));
+        layoutWidget->setGeometry(QRect(12, -17, 1236, 584));
         verticalLayout_2 = new QVBoxLayout(layoutWidget);
         verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
         verticalLayout_2->setContentsMargins(0, 0, 0, 0);
@@ -446,11 +446,6 @@ public:
 
         gridLayout->addWidget(ShowDataButton, 2, 9, 1, 1);
 
-        saveFilePathEdit = new QLineEdit(groupBox_4);
-        saveFilePathEdit->setObjectName(QString::fromUtf8("saveFilePathEdit"));
-
-        gridLayout->addWidget(saveFilePathEdit, 2, 2, 1, 1);
-
         label_21 = new QLabel(groupBox_4);
         label_21->setObjectName(QString::fromUtf8("label_21"));
         QFont font;
@@ -510,6 +505,11 @@ public:
         ClearDataButton->setObjectName(QString::fromUtf8("ClearDataButton"));
 
         gridLayout->addWidget(ClearDataButton, 1, 11, 1, 1);
+
+        saveFilePathEdit = new QLineEdit(groupBox_4);
+        saveFilePathEdit->setObjectName(QString::fromUtf8("saveFilePathEdit"));
+
+        gridLayout->addWidget(saveFilePathEdit, 2, 2, 1, 6);
 
 
         verticalLayout->addWidget(groupBox_4);

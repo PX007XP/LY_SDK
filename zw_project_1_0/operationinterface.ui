@@ -19,7 +19,7 @@
      <x>12</x>
      <y>-17</y>
      <width>1236</width>
-     <height>562</height>
+     <height>584</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -461,9 +461,6 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="2">
-            <widget class="QLineEdit" name="saveFilePathEdit"/>
-           </item>
            <item row="2" column="8">
             <widget class="QLabel" name="label_21">
              <property name="font">
@@ -541,6 +538,9 @@
               <string>清空数据</string>
              </property>
             </widget>
+           </item>
+           <item row="2" column="2" colspan="6">
+            <widget class="QLineEdit" name="saveFilePathEdit"/>
            </item>
           </layout>
          </widget>
