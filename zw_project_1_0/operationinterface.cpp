@@ -108,6 +108,7 @@ OperationInterface::OperationInterface(QWidget *parent)
     ui->radioButton->setParent(m_widget);
     ui->label_6->setParent(m_widget);
     ui->lineEdit_3->setParent(m_widget);
+    ui->lineEdit_3->setMinimumWidth(500);
     // 创建一个栅格布局
     QGridLayout *layout = new QGridLayout(this);
     layout->addWidget(ui->radioButton,0,0);
