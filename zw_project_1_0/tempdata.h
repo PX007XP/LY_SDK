@@ -58,6 +58,7 @@ public:
     QColor standFont(float measure,float stand,float up,float down);
     void ShowData(RecvFile::STDetailData datildata);
     void closefile();
+    void recShowData(RecvFile::STDetailData datildata);
     signals:
         void dataChanged(int num,QString key,double value);
         void pushData();
