@@ -439,12 +439,15 @@ void TempData::dataClear()
     if(m_model ==nullptr){
         m_model = qobject_cast<TableModel*>(m_tableView->model());
     }
+    // 隐藏最后一列
+    m_tableView->setColumnHidden(m_model->columnCount()-1, true);
     //删除测试数据
     LOG_INFO("数据清理");
     int columnCount = m_model->columnCount();
     int row=m_model->rowCount();
 
     // 从指定列开始，删除后面的所有列
+    /*
     for (int i=0;i<row;i++){
         for (int col = columnCount - 1; col >= 6; --col) {
             auto item=m_model->item(i,col);
@@ -452,7 +455,12 @@ void TempData::dataClear()
             item->setText(QString(""));
             //m_model->removeColumn(col);  // 删除该列
         }
+    }*/
+    for (int i=6;i<columnCount-1;i++){
+        m_model->removeColumn(6);
+        m_tableView->update();
     }
+    m_tableView->update();
     m_showcol=6;
     emit setLaybelText("OK");
 }
