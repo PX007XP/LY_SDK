@@ -432,6 +432,14 @@ void TempData::recShowData(RecvFile::STDetailData datildata)
     m_showcol=j;
     // 显示表格
     m_tableView->update();
+    qDebug()<<modelNumber();
+}
+
+int TempData::modelNumber()
+{
+    if(m_model == nullptr) m_model= qobject_cast<TableModel*>(m_tableView->model());
+    if(m_model == nullptr) return 0;
+    return m_model->columnCount()-7;
 }
 
 void TempData::dataClear()

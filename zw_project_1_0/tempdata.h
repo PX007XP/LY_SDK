@@ -59,6 +59,7 @@ public:
     void ShowData(RecvFile::STDetailData datildata);
     void closefile();
     void recShowData(RecvFile::STDetailData datildata);
+    int modelNumber();
     signals:
         void dataChanged(int num,QString key,double value);
         void pushData();

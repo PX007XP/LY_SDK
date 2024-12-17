@@ -3,10 +3,72 @@
 #include <QApplication>
 #include <QFile>
 #include <QTextCodec>
+#include <QString>
+#include <QMap>
 
+// 加密函数：数字 -> 字母
+// 声明并初始化 QMap
+QMap<QChar, QChar> numbermap={
+    {'0','b'},{'1','c'},{'2','d'},{'3','e'},{'4','f'},
+{'5','g'},{'6','h'},{'7','i'},{'8','j'},{'9','k'}
+    };
+QMap<QChar, QChar> charmap={
+    {'b','0'},{'c','1'},{'d','2'},{'e','3'},{'f','4'},
+    {'g','5'},{'h','6'},{'i','7'},{'j','8'},{'k','9'}
+};
+QString encrypt(QString number) {
+    // 'a' 的 ASCII 值是 97，所以可以通过 number + 96 来得到对应字母的 ASCII 值
+    QString letter;
+    for(QChar ch : number){
+        letter.append(numbermap[ch]);
+    }
+
+    return letter;
+}
+
+// 解密函数：字母 -> 数字
+QString decrypt(QString &letter) {
+    // 'a' 的 ASCII 值是 97，所以字母的 ASCII 值减去 96 得到对应的数字
+    QString rec;
+    for(QChar ch : letter){
+        rec.append(charmap[ch]);
+    }
+
+    return rec;
+}
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    //加密解密
+    // 打开文件
+    QFile setfile("F:/git/LY_SDK/zw_project_1_0/encrypt.txt");  // 替换为实际的文件路径
+
+    if (!setfile.open(QIODevice::ReadOnly)) {
+        qDebug() << "无加密文件";
+        return -1;
+    }
+
+    // 使用 QTextStream 读取文件内容
+    QTextStream in(&setfile);
+    QString content = in.readAll();  // 读取文件的所有内容
+    content.remove('\n');
+    //QString c= encrypt(content);
+    QString b= decrypt(content);
+    int year =b.left(4).toInt();
+    int mon = b.mid(4,2).toInt();
+    int day = b.right(2).toInt();
+    QDate dedate = QDate(year,mon,day);
+    // 获取当前系统的日期
+    QDate currentDate = QDateTime::currentDateTime().date();
+    if(currentDate>dedate){
+        return -1;
+    }
+
+    // 输出文件内容
+    qDebug() << "文件内容：\n" << b;
+
+    // 关闭文件
+    setfile.close();
 
     // 设置统一的样式表
     QFile file(":/style.css");  // 样式表文件路径
