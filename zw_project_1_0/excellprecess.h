@@ -1,4 +1,4 @@
-#ifndef EXCELLPRECESS_H
+﻿#ifndef EXCELLPRECESS_H
 #define EXCELLPRECESS_H
 
 #include <QObject>
@@ -49,7 +49,7 @@ public:
 
     int WriteData(QVector<RecvFile::STDetailData> *pVectorData, QString& strFilePath);
 
-    int FillBasicInfomation(QAxObject *pshell);
+    int FillBasicInfomation(QAxObject *pshell ,int iCloumuNum);
     // 从模版文件中读取数据 建立数据与行号的映射关系
     int ReadCellKey(QAxObject *pCell);
 

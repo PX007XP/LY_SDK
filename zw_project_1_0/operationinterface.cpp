@@ -336,7 +336,8 @@ void OperationInterface::on_pushFileButton_clicked()
         QMessageBox::information(this,"提示","没有生成文件");
         return ;
     }
-    m_pHttpNetObject->PostFileToNet(m_strPushFilePath);
+    int iRet = m_pHttpNetObject->PostFileToNet(m_strPushFilePath);
+    LOG_INFO("PostFileToNet return :%d ,filename:%s",iRet , m_strPushFilePath.toStdString().c_str());
 }
 
 int OperationInterface::GetMobanFileName(QString& strFilePath)
@@ -688,7 +689,7 @@ void OperationInterface::onDirectoryChanged(const QString &strPath)
     //QString strFilePathName = FileInfo.filePath()
     int iRet = m_pExcellWork->ReadFileData(FileInfo.absoluteFilePath() , m_vRecvData , iFileType);
     LOG_INFO("自动感知到文件:%s,iFielType:%d ,iRet=%d",FileInfo.absoluteFilePath().toStdString().c_str(), iFileType,iRet);
-
+    m_bFileReading = true;
     // 显示数据
     if(m_tempData)
     {

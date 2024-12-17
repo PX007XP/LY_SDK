@@ -1,4 +1,4 @@
-#include "excellprecess.h"
+﻿#include "excellprecess.h"
 #include <QVariant>
 #include <QVariantList>
 #include <QDebug>
@@ -18,6 +18,7 @@
 //#include <objbase.h>
 #include <QFileInfo>
 #include <QVariant>
+#include <QThread>
 
 
 
@@ -162,7 +163,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
     qDebug() << "Sheet Name:" << sheetName.toString();
 
     // 读取位置信息
-    FillBasicInfomation(pSheet);
+    FillBasicInfomation(pSheet , pVectorData->size());
     ReadCellKey(pSheet);
     int iNowColumn = m_pSheetInfo->GetNowColumn();
     for(auto& it : *pVectorData)
@@ -214,7 +215,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
     return 0;
 }
 
-int ExcellPrecess::FillBasicInfomation(QAxObject *pSheet)
+int ExcellPrecess::FillBasicInfomation(QAxObject *pSheet,int iCloumNum)
 {
      bool bInt = false;
     // 回填时间
@@ -236,9 +237,10 @@ int ExcellPrecess::FillBasicInfomation(QAxObject *pSheet)
     pCell->setProperty("Value", strCheckType);
 
     // 样品数量：
-    QString strSampleNum =  m_pOperationInterFace->GetUiPointObject()->label_yangpingshuliang->text();
-    strSampleNum.toInt(&bInt);
-    if(bInt)
+   // QString strSampleNum =  m_pOperationInterFace->GetUiPointObject()->label_yangpingshuliang->text();
+   // strSampleNum.toInt(&bInt);
+    QString strSampleNum = QString::number(iCloumNum);
+    //if(bInt)
     {
         pCell = pSheet->querySubObject("Cells(int, int)",11, 6);
         // QVariant cellValue = pCell->dynamicCall("Value()");
@@ -338,6 +340,7 @@ int ExcellPrecess::CleanSheetData(QString &strFile)
 
 int ExcellPrecess::ReadFileData(QString strFilePath, QVector<RecvFile::STDetailData> &VectorData, int iFileType)
 {
+    QThread::sleep(1);
     int iRet = 0;
     if(0 != CheckFileExists(strFilePath))
     {
