@@ -1,4 +1,4 @@
-#include "httpnetobject.h"
+﻿#include "httpnetobject.h"
 #include <QHttpMultiPart>
 #include <QFile>
 #include <QJsonArray>
@@ -228,6 +228,8 @@ int HttpNetObject::SubmitForView()
     // 发送POST请求
     qDebug() <<"get data: " <<jsonData ;
     QNetworkReply *pReply = m_pManager->post(request, jsonData);
+
+    // 提交审核后重置测量数据
 
     m_iStatus = 3;
 }
