@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     //加密解密
     // 打开文件
-    QFile setfile("F:/git/LY_SDK/zw_project_1_0/encrypt.txt");  // 替换为实际的文件路径
+    QFile setfile(":/encrypt.txt");  // 替换为实际的文件路径
 
     if (!setfile.open(QIODevice::ReadOnly)) {
         qDebug() << "无加密文件";
