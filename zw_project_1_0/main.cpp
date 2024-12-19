@@ -52,6 +52,17 @@ int main(int argc, char *argv[])
     QTextStream in(&setfile);
     QString content = in.readAll();  // 读取文件的所有内容
     content.remove('\n');
+    //判断是否是英文字符
+    // 定义正则表达式，匹配只包含小写字母的字符串
+    /*
+    QRegExp regex("^[b-k]+$");
+    if (!regex.exactMatch(content)) {
+        return -1;
+    }
+    if (content.size()!=8){
+        return -1;
+    }
+    */
     //QString c= encrypt(content);
     QString b= decrypt(content);
     int year =b.left(4).toInt();

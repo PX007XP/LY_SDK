@@ -54,6 +54,9 @@ TempData::~TempData()
 }
 bool TempData::LoadData(QString filename, int showrow){
     bool setModel=true;
+    if(m_model!=nullptr){
+        if(m_model->columnCount()>6) return false;
+    }
     if (m_excel == nullptr){
         m_excel = new QAxObject("Excel.Application");
         // 打开 Excel 文件
@@ -112,6 +115,7 @@ bool TempData::LoadData(QString filename, int showrow){
     //QAxObject *cell = m_sheet->querySubObject("Cells(int, int)", 14, 1);  // 获取 A1 单元格
     //QVariant value = cell->property("Value");
     // 使用 replace 方法删除所有换行符
+    if(varRows.size()<14) return false;
     QString str=varRows[12].toList()[0].toString();
     QList modlist=varRows[12].toList();
     QStringList modString;
