@@ -1,4 +1,4 @@
-#ifndef OPERATIONINTERFACE_H
+﻿#ifndef OPERATIONINTERFACE_H
 #define OPERATIONINTERFACE_H
 
 #include <QWidget>
@@ -171,5 +171,8 @@ private slots:
 
 public:
     bool CheckWorkCondition();
+
+private:
+    void closeEvent(QCloseEvent *event) override;
 };
 #endif // OPERATIONINTERFACE_H

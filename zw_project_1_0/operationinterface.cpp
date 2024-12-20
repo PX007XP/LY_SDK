@@ -1,4 +1,4 @@
-#include "operationinterface.h"
+﻿#include "operationinterface.h"
 #include "ui_operationinterface.h"
 #include <QThread>
 #include <QMessageBox>
@@ -672,6 +672,7 @@ void OperationInterface::onDirectoryChanged(const QString &strPath)
     // 去重
     if(RemoveRepetiton(FileInfo))
     {
+        LOG_ERROR("文件读取中");
         return;
     }
     // 处理文件 todo
@@ -689,7 +690,15 @@ void OperationInterface::onDirectoryChanged(const QString &strPath)
     //QString strFilePathName = FileInfo.filePath()
     int iRet = m_pExcellWork->ReadFileData(FileInfo.absoluteFilePath() , m_vRecvData , iFileType);
     LOG_INFO("自动感知到文件:%s,iFielType:%d ,iRet=%d",FileInfo.absoluteFilePath().toStdString().c_str(), iFileType,iRet);
-    m_bFileReading = true;
+    if(0 == iRet)
+    {
+        m_bFileReading = true;
+    }
+    else
+    {
+        m_bFileReading = false;
+    }
+    
     // 显示数据
     if(m_tempData)
     {
@@ -973,6 +982,16 @@ bool OperationInterface::CheckWorkCondition()
     }
 
     return true;
+}
+
+void OperationInterface::closeEvent(QCloseEvent *event)
+{
+    QWidget::closeEvent(event);
+    if(g_pLogger)
+    {
+        delete g_pLogger;
+    }
+
 }
 
 
