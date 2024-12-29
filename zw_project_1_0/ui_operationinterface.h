@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'operationinterface.ui'
 **
-** Created by: Qt User Interface Compiler version 5.15.2
+** Created by: Qt User Interface Compiler version 5.15.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -45,7 +45,6 @@ public:
     QLineEdit *PasswordEdit;
     QSplitter *splitter_3;
     QPushButton *LoginPushButton;
-    QPushButton *SavePasswordPushButton;
     QHBoxLayout *horizontalLayout_5;
     QGroupBox *groupBox;
     QGridLayout *gridLayout_5;
@@ -170,7 +169,7 @@ public:
         PasswordEdit = new QLineEdit(splitter_2);
         PasswordEdit->setObjectName(QString::fromUtf8("PasswordEdit"));
         PasswordEdit->setEnabled(true);
-        PasswordEdit->setEchoMode(QLineEdit::Normal);
+        PasswordEdit->setEchoMode(QLineEdit::Password);
         splitter_2->addWidget(PasswordEdit);
 
         horizontalLayout_4->addWidget(splitter_2);
@@ -181,9 +180,6 @@ public:
         LoginPushButton = new QPushButton(splitter_3);
         LoginPushButton->setObjectName(QString::fromUtf8("LoginPushButton"));
         splitter_3->addWidget(LoginPushButton);
-        SavePasswordPushButton = new QPushButton(splitter_3);
-        SavePasswordPushButton->setObjectName(QString::fromUtf8("SavePasswordPushButton"));
-        splitter_3->addWidget(SavePasswordPushButton);
 
         horizontalLayout_4->addWidget(splitter_3);
 
@@ -671,7 +667,6 @@ public:
         label_18->setText(QCoreApplication::translate("OperationInterface", "\345\257\206\347\240\201\357\274\232", nullptr));
         PasswordEdit->setText(QCoreApplication::translate("OperationInterface", "Qwer.12345", nullptr));
         LoginPushButton->setText(QCoreApplication::translate("OperationInterface", "\347\231\273\345\275\225", nullptr));
-        SavePasswordPushButton->setText(QCoreApplication::translate("OperationInterface", "\350\256\276\347\275\256", nullptr));
         groupBox->setTitle(QCoreApplication::translate("OperationInterface", "\345\217\202\346\225\260", nullptr));
         GetInfoButton->setText(QCoreApplication::translate("OperationInterface", "\346\237\245\350\257\242", nullptr));
         label_jitai->setText(QCoreApplication::translate("OperationInterface", "\350\257\267\345\205\210\350\276\223\345\205\245mms\345\255\220\345\215\225\345\217\267", nullptr));
@@ -700,7 +695,7 @@ public:
         label_yangpingshuliang->setText(QCoreApplication::translate("OperationInterface", "5", nullptr));
         label_30->setText(QCoreApplication::translate("OperationInterface", "\351\241\271\347\233\256\345\220\215\347\247\260\357\274\232", nullptr));
         label_jianceyaoqiu->setText(QCoreApplication::translate("OperationInterface", "\350\257\267\345\205\210\350\276\223\345\205\245mms\345\255\220\345\215\225\345\217\267", nullptr));
-        NumberEdit->setText(QCoreApplication::translate("OperationInterface", "mmsdCY12410231B2", nullptr));
+        NumberEdit->setText(QCoreApplication::translate("OperationInterface", "mmsdCY12412160C6", nullptr));
         label_36->setText(QCoreApplication::translate("OperationInterface", "\346\243\200\346\265\213\350\246\201\346\261\202\357\274\232", nullptr));
         label_48->setText(QCoreApplication::translate("OperationInterface", "\345\267\245\345\272\217\357\274\232", nullptr));
         lable_shenqingrenyuan->setText(QCoreApplication::translate("OperationInterface", "\350\257\267\345\205\210\350\276\223\345\205\245mms\345\255\220\345\215\225\345\217\267", nullptr));
@@ -745,7 +740,7 @@ public:
         dateTimeEditStart->setDisplayFormat(QCoreApplication::translate("OperationInterface", "yyyy-M-d H:mm", nullptr));
         label_10->setText(QCoreApplication::translate("OperationInterface", "\346\243\200\346\237\245\347\261\273\345\210\253\357\274\232", nullptr));
         jianceleibie_comboBox->setItemText(0, QCoreApplication::translate("OperationInterface", "FAI", nullptr));
-        jianceleibie_comboBox->setItemText(1, QCoreApplication::translate("OperationInterface", "CIK", nullptr));
+        jianceleibie_comboBox->setItemText(1, QCoreApplication::translate("OperationInterface", "CPK", nullptr));
         jianceleibie_comboBox->setItemText(2, QCoreApplication::translate("OperationInterface", "\351\246\226\344\273\266", nullptr));
         jianceleibie_comboBox->setItemText(3, QCoreApplication::translate("OperationInterface", "\345\267\241\344\273\2661", nullptr));
         jianceleibie_comboBox->setItemText(4, QCoreApplication::translate("OperationInterface", "\345\267\241\344\273\2662", nullptr));

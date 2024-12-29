@@ -11,6 +11,7 @@
 #include <QRadioButton>
 #include <QFileSystemWatcher>
 #include <QFileInfo>
+#include <QSet>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -33,6 +34,9 @@ public:
 
     // 信号接收函数 所有的消息显示
     void RecvSocketMessage(QByteArray szMessage);
+
+    // 处理数据，对数据进行分析 融合数据 返回数据插入的列数下标 从0 开始
+    int DealMerageMessage(RecvFile::STDetailData& stResult);
     // 信号接收函数 解析后的数据
     void ShowDetailMesage(RecvFile::STDetailData stResult);
 
@@ -132,6 +136,8 @@ private:
 
     bool m_bFileReadtype = false ; // false 数据对接  true文件感知
 
+    int m_iLastInsertDataColumn = 0; // 记录上一次插入数据的列数
+
 // 自动感知相关功能
 private:
     QFileSystemWatcher m_Watcher;
@@ -139,13 +145,13 @@ private:
     QString m_strListeningPath;
     bool m_bFileReading = false;  // 读取中 设为true  完成检查 或者清除数据后 置回 false
 
-    QHash<QString ,qint64> m_mDealFile;
+    QSet<QString> m_sSetOldFiles; // 不需要处理的文件
 
     int GetSheBeiType();
 
     bool RemoveRepetiton(QFileInfo fileInfo);
 public:
-    QFileInfo FindLatestFile(const QString &strPath);
+    void FindLatestFile(const QString &strPath , QVector<QFileInfo>& vNewFiles);
 
     bool isFileInUse(const QString &filePath);
     // 数据感知相关初始化
@@ -172,7 +178,9 @@ private slots:
 public:
     bool CheckWorkCondition();
 
+#if 0
 private:
     void closeEvent(QCloseEvent *event) override;
+#endif
 };
 #endif // OPERATIONINTERFACE_H

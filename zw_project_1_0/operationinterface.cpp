@@ -19,6 +19,7 @@
 #include <QToolBar>
 #include <QMenuBar>
 
+QMenuBar *menuBar = nullptr;
 
 OperationInterface::OperationInterface(QWidget *parent)
     : QWidget(parent)
@@ -94,7 +95,7 @@ OperationInterface::OperationInterface(QWidget *parent)
 
     //数据显示逻辑
     // 创建菜单栏
-    QMenuBar *menuBar = new QMenuBar(this);
+    menuBar = new QMenuBar(this);
 
 
     // 创建文件菜单
@@ -142,10 +143,22 @@ OperationInterface::~OperationInterface()
     //m_pSocketThread->deleteLater();
    // m_pRecvFileWorker->deleteLater();
 
+   if(g_pLogger)
+   {
+       delete g_pLogger;
+   }
    if(m_pExcellWork)
    {
        delete m_pExcellWork;
        m_pExcellWork = nullptr;
+   }
+   if(menuBar)
+   {
+       delete menuBar;
+   }
+   if(m_tempData)
+   {
+       delete m_tempData;
    }
     delete ui;
 }
@@ -171,6 +184,64 @@ void OperationInterface::RecvSocketMessage(QByteArray szMessage)
   //  ui->showdataEdit->append(strText1);
 }
 
+int OperationInterface::DealMerageMessage(RecvFile::STDetailData &stResult)
+{
+    int iNowTestCount = m_vRecvData.size(); // 现有的测量件的数量
+    if(0 == iNowTestCount)
+    {
+        m_vRecvData.push_back(stResult);
+        LOG_DEBUG("插入第一条数据");
+        return 0;
+    }
+    // 判断这次的数据是否需要新开一列
+    if(m_vRecvData.size() == m_iLastInsertDataColumn + 1)
+    {
+        //1. 数据和最后一列重复 继续新增列
+        //2.数据部重复 代表是新的数据 需要从第0 列开始 融合
+        RecvFile::STDetailData &LastData = m_vRecvData.last();
+        // 验证一个指标就可以了
+        auto it_insert_first = stResult.m_mMeasuredValue.begin();
+        auto it = LastData.m_mMeasuredValue.find(it_insert_first.key());
+        if(it == LastData.m_mMeasuredValue.end())
+        {
+            auto it_first =  m_vRecvData.begin();
+            if(it_first == m_vRecvData.end())
+            {
+                LOG_ERROR("插入数据时  数据发生错乱，结束插入");
+                return -1;
+            }
+            for(auto it_insert= stResult.m_mMeasuredValue.begin(); it_insert != stResult.m_mMeasuredValue.end();++it_insert )
+            {
+                it_first->m_mMeasuredValue[it_insert.key()] = it_insert.value();
+            }
+
+            m_iLastInsertDataColumn = 0;
+            LOG_DEBUG("新的数据开始融合[%d]",m_iLastInsertDataColumn);
+        }
+        else
+        {
+            m_vRecvData.push_back(stResult);
+            m_iLastInsertDataColumn++;
+            LOG_DEBUG("插入新的列数据[%d]",m_iLastInsertDataColumn);
+        }
+    }
+    else if(m_vRecvData.size() > m_iLastInsertDataColumn + 1)
+    {
+        auto& it_data = m_vRecvData[ m_iLastInsertDataColumn + 1];
+        for(auto it_insert= stResult.m_mMeasuredValue.begin(); it_insert != stResult.m_mMeasuredValue.end();++it_insert )
+        {
+            it_data.m_mMeasuredValue[it_insert.key()] = it_insert.value();
+        }
+        m_iLastInsertDataColumn++;
+        LOG_DEBUG("新的数据融合插入[%d]",m_iLastInsertDataColumn);
+    }
+    else
+    {
+        LOG_ERROR("插入数据时上次插入的记录错误:%d ,%d，结束插入",m_iLastInsertDataColumn , m_vRecvData.size());
+    }
+    return m_iLastInsertDataColumn;
+}
+
 void OperationInterface::ShowDetailMesage(RecvFile::STDetailData stResult)
 {
     // 开关检查 如果是自动感知 则不进行操作
@@ -178,6 +249,7 @@ void OperationInterface::ShowDetailMesage(RecvFile::STDetailData stResult)
     {
         return;
     }
+#if 0
     QVector<QColor> colors = {Qt::red , Qt::blue ,Qt::black,Qt::cyan ,Qt::magenta ,Qt::darkRed,Qt::green};
     QString strParid = "partid:" + stResult.m_strPartID;
    // ui->showdataEdit->append(strParid);
@@ -209,11 +281,21 @@ void OperationInterface::ShowDetailMesage(RecvFile::STDetailData stResult)
      //   ui->showdataEdit->setTextColor(colors[iRandId]);
       //  ui->showdataEdit->append(strShow);
     }
-
-    m_vRecvData.push_back(stResult);
-    if(m_tempData)
+#endif
+    // 对数据做处理 确认是新增列数 还是在原有数据里面补足数据
+   // m_vRecvData.push_back(stResult);
+    int iCloum = DealMerageMessage(stResult);  // iCloum 是写入数据列数 从0 开始
+    int iSize = m_vRecvData.size();
+    if(iCloum > 0)
     {
-        m_tempData->ShowData(stResult);
+        if(m_tempData)
+        {
+           // m_tempData->ShowData(stResult);
+        }
+    }
+    else
+    {
+
     }
 }
 
@@ -385,7 +467,7 @@ void OperationInterface::on_ComCheckButton_clicked()
 
         //todo  调用清空显示界面数据接口
 
-        m_bFileReading = false;
+       // m_bFileReading = false;
 
         LOG_INFO("complete check return=%d , filepath=%s ,%s",iRet,strNewFilePath.toStdString().c_str());
     }
@@ -478,9 +560,11 @@ void OperationInterface::on_ClearDataButton_clicked()
     QString currentPath = QDir::currentPath();
     QString strFile = currentPath + "/template/880-GNT022-03-003.xlsm";
     m_pExcellWork->CleanSheetData(strFile);
-    QMessageBox::information(this,"提示","清理成功");
+
     m_vRecvData.clear();
-    m_bFileReading = false;
+   // m_bFileReading = false;
+    m_iLastInsertDataColumn = 0;
+    QMessageBox::information(this,"提示","清理成功");
 }
 
 void OperationInterface::handleExcelException(int code, const QString &source, const QString &desc, const QString &help)
@@ -535,13 +619,13 @@ void OperationInterface::GetLocalIp()
     LOG_STATS("ip chose name:%s , ip:%s ",m_strLocalIp.toStdString().c_str() , strLocalIp.toStdString().c_str());
 }
 
-QFileInfo OperationInterface::FindLatestFile(const QString &strPath)
+void OperationInterface::FindLatestFile(const QString &strPath , QVector<QFileInfo>& vNewFiles)
 {
     QDir directory(strPath);
     if (!directory.exists())
     {
         LOG_ERROR("FindLatestFile path[%s] is null",strPath.toStdString().c_str());
-        return QString();
+        return ;
     }
 
     // 获取所有文件
@@ -550,10 +634,11 @@ QFileInfo OperationInterface::FindLatestFile(const QString &strPath)
     if (fileList.isEmpty())
     {
         LOG_ERROR("FindLatestFile path[%s] 目录中没有文件",strPath.toStdString().c_str());
-        return QString();
+        return ;
     }
 
-    // 找出最新的文件
+#if 0
+    // 找出更新的文件
     QFileInfo latestFile;
     foreach (const QFileInfo &fileInfo, fileList)
     {
@@ -562,8 +647,19 @@ QFileInfo OperationInterface::FindLatestFile(const QString &strPath)
             latestFile = fileInfo;
         }
     }
+#endif
 
-    return latestFile;
+    foreach (const QFileInfo &fileInfo, fileList)
+    {
+        auto it = m_sSetOldFiles.find(fileInfo.fileName());
+        if(it == m_sSetOldFiles.end())
+        {
+            vNewFiles.push_back(fileInfo);
+            LOG_INFO("感知到文件 :%s",fileInfo.fileName().toStdString().c_str());
+        }
+    }
+
+  //  return latestFile;
 }
 
 int OperationInterface::InitWatcher()
@@ -606,9 +702,22 @@ void OperationInterface::StartListening()
             LOG_ERROR("开始文件感知时 路径不存在");
             return ;
         }
+
+        // 记录文件夹下面的所有文件
+        m_sSetOldFiles.clear();
+        const QStringList& listFiles = directory.entryList(QDir::Files);
+        for(auto it_list = listFiles.begin() ; it_list != listFiles.end() ; ++it_list)
+        {
+            m_sSetOldFiles.insert(*it_list);
+            LOG_DEBUG("OperationInterface::StartListening dir:%s , filename:%s",m_strListeningPath.toStdString().c_str(), it_list->toStdString().c_str());
+        }
+
         m_Watcher.addPath(m_strListeningPath);
         m_bListening = true;
         LOG_INFO("开始文件感知:%s",m_strListeningPath.toStdString().c_str());
+
+
+
     }
 }
 
@@ -661,8 +770,14 @@ void OperationInterface::onDirectoryChanged(const QString &strPath)
     {
         return ;
     }
-    QFileInfo FileInfo =FindLatestFile(strPath);
 
+    QVector<QFileInfo> vNewFiles;
+    FindLatestFile(strPath,vNewFiles);
+
+    if(vNewFiles.isEmpty())
+    {
+        return;
+    }
     // 检查文件是否被占用
    // if (!isFileInUse(FileInfo.filePath()))
    // {
@@ -670,11 +785,11 @@ void OperationInterface::onDirectoryChanged(const QString &strPath)
    // }
 
     // 去重
-    if(RemoveRepetiton(FileInfo))
-    {
-        LOG_ERROR("文件读取中");
-        return;
-    }
+    //if(RemoveRepetiton(FileInfo))
+   // {
+    //    LOG_ERROR("文件读取中");
+    //    return;
+   // }
     // 处理文件 todo
     if(nullptr == m_pExcellWork)
     {
@@ -688,27 +803,31 @@ void OperationInterface::onDirectoryChanged(const QString &strPath)
         return;
     }
     //QString strFilePathName = FileInfo.filePath()
-    int iRet = m_pExcellWork->ReadFileData(FileInfo.absoluteFilePath() , m_vRecvData , iFileType);
-    LOG_INFO("自动感知到文件:%s,iFielType:%d ,iRet=%d",FileInfo.absoluteFilePath().toStdString().c_str(), iFileType,iRet);
-    if(0 == iRet)
+
+    QVector<RecvFile::STDetailData> VRecvData;
+    foreach (QFileInfo FileInfo , vNewFiles)
     {
-        m_bFileReading = true;
+        int iRet = m_pExcellWork->ReadFileData(FileInfo.absoluteFilePath() , VRecvData , iFileType);
+        m_sSetOldFiles.insert(FileInfo.fileName());
+        LOG_INFO("自动感知到文件完成读取:%s,iFielType:%d ,iRet=%d",FileInfo.absoluteFilePath().toStdString().c_str(), iFileType,iRet);
     }
-    else
+
+    foreach (RecvFile::STDetailData stResult, VRecvData)
     {
-        m_bFileReading = false;
+        DealMerageMessage(stResult);
     }
-    
+
     // 显示数据
     if(m_tempData)
     {
+        // 这里需要调用 重新全部显示的按钮
         for(auto& it: m_vRecvData)
         {
             for(auto& it_value : it.m_mMeasuredValue)
             {
                 LOG_DEBUG("show data :%s ,%f",it_value.strName.toStdString().c_str(),it_value.dActual);
             }
-            m_tempData->ShowData(it);
+           // m_tempData->ShowData(it);
         }
     }
 }
@@ -931,22 +1050,7 @@ int OperationInterface::GetSheBeiType()
 
 bool OperationInterface::RemoveRepetiton(QFileInfo fileInfo)
 {
-#if 0
-    QString strFileName  = fileInfo.fileName();
-    auto it = m_mDealFile.find(strFileName);
-    if(it != m_mDealFile.end())
-    {
-        if(*it = fileInfo.size())
-        {
-            return true;
-        }
-    }
-    else
-    {
-        m_mDealFile[strFileName] = fileInfo.size();
-    }
-    return false;
-#endif
+
     // 方式2 强制规定 第一个文件读取完成后 需要完成检测 或者清除数据后 才能继续读 期间的文件不感知
     return m_bFileReading;
 }
@@ -984,6 +1088,8 @@ bool OperationInterface::CheckWorkCondition()
     return true;
 }
 
+# if 0
+
 void OperationInterface::closeEvent(QCloseEvent *event)
 {
     QWidget::closeEvent(event);
@@ -993,7 +1099,7 @@ void OperationInterface::closeEvent(QCloseEvent *event)
     }
 
 }
-
+#endif
 
 void OperationInterface::on_UserEdit_editingFinished()
 {
