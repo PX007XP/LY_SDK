@@ -60,6 +60,8 @@ public:
     void closefile();
     void recShowData(RecvFile::STDetailData datildata);
     int modelNumber();
+    void showalldata(QVector<RecvFile::STDetailData> data);
+    void showcoldata(RecvFile::STDetailData datildata,int col);
     signals:
         void dataChanged(int num,QString key,double value);
         void pushData();
@@ -70,6 +72,7 @@ public:
         void getData();
         void SaveData(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
         void Setyangbenshuliang(int col);
+        void onFileChanged(const QString &filePath);
 private:
     //显示视图和模型
     TableModel* m_model;
