@@ -68,7 +68,7 @@
                <string>Qwer.12345</string>
               </property>
               <property name="echoMode">
-               <enum>QLineEdit::Normal</enum>
+               <enum>QLineEdit::Password</enum>
               </property>
              </widget>
             </widget>
@@ -81,11 +81,6 @@
              <widget class="QPushButton" name="LoginPushButton">
               <property name="text">
                <string>登录</string>
-              </property>
-             </widget>
-             <widget class="QPushButton" name="SavePasswordPushButton">
-              <property name="text">
-               <string>设置</string>
               </property>
              </widget>
             </widget>
@@ -710,7 +705,7 @@
            </item>
            <item>
             <property name="text">
-             <string>CIK</string>
+             <string>CPK</string>
             </property>
            </item>
            <item>

@@ -340,7 +340,7 @@ int ExcellPrecess::CleanSheetData(QString &strFile)
 
 int ExcellPrecess::ReadFileData(QString strFilePath, QVector<RecvFile::STDetailData> &VectorData, int iFileType)
 {
-    QThread::sleep(1);
+    QThread::sleep(2);
     int iRet = 0;
     if(0 != CheckFileExists(strFilePath))
     {
