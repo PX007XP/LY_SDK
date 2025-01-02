@@ -175,6 +175,8 @@ private slots:
 
     void on_shenherenyuan_lineEdit_editingFinished();
 
+    void on_DownLoadFileButton_clicked();
+
 public:
     bool CheckWorkCondition();
 

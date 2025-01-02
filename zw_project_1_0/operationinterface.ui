@@ -537,6 +537,16 @@
            <item row="2" column="2" colspan="6">
             <widget class="QLineEdit" name="saveFilePathEdit"/>
            </item>
+           <item row="1" column="10">
+            <widget class="QPushButton" name="DownLoadFileButton">
+             <property name="styleSheet">
+              <string notr="true">background-color: green;</string>
+             </property>
+             <property name="text">
+              <string>下载文件</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>

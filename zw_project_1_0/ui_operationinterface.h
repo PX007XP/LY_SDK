@@ -107,6 +107,7 @@ public:
     QLineEdit *PortEdit;
     QPushButton *ClearDataButton;
     QLineEdit *saveFilePathEdit;
+    QPushButton *DownLoadFileButton;
     QGroupBox *groupBox_2;
     QGridLayout *gridLayout_2;
     QLabel *label_2;
@@ -507,6 +508,12 @@ public:
 
         gridLayout->addWidget(saveFilePathEdit, 2, 2, 1, 6);
 
+        DownLoadFileButton = new QPushButton(groupBox_4);
+        DownLoadFileButton->setObjectName(QString::fromUtf8("DownLoadFileButton"));
+        DownLoadFileButton->setStyleSheet(QString::fromUtf8("background-color: green;"));
+
+        gridLayout->addWidget(DownLoadFileButton, 1, 10, 1, 1);
+
 
         verticalLayout->addWidget(groupBox_4);
 
@@ -726,6 +733,7 @@ public:
         label_13->setText(QCoreApplication::translate("OperationInterface", "\347\253\257\345\217\243\357\274\232", nullptr));
         PortEdit->setText(QCoreApplication::translate("OperationInterface", "8889", nullptr));
         ClearDataButton->setText(QCoreApplication::translate("OperationInterface", "\346\270\205\347\251\272\346\225\260\346\215\256", nullptr));
+        DownLoadFileButton->setText(QCoreApplication::translate("OperationInterface", "\344\270\213\350\275\275\346\226\207\344\273\266", nullptr));
         groupBox_2->setTitle(QCoreApplication::translate("OperationInterface", "\346\226\207\344\273\266\351\200\211\346\213\251", nullptr));
         label_2->setText(QCoreApplication::translate("OperationInterface", "\346\235\220\346\226\231\345\220\215\347\247\260\357\274\232", nullptr));
         label_16->setText(QCoreApplication::translate("OperationInterface", "\345\256\241\346\240\270\344\272\272\345\221\230", nullptr));

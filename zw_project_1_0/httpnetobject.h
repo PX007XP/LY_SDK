@@ -1,4 +1,4 @@
-#ifndef HTTPNETOBJECT_H
+﻿#ifndef HTTPNETOBJECT_H
 #define HTTPNETOBJECT_H
 
 #include <QObject>
@@ -29,6 +29,8 @@ public:
     int CompeleteCheck( );
     // 提交审核
     int SubmitForView();
+    // 下载文件
+    int DownloadFile(QString strMmsID);
 private:
     void DealWithLoginResponse(QJsonObject& json);
     void DealWithPageListResponse(QJsonObject& json);

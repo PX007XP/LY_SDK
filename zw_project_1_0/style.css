@@ -8,7 +8,7 @@ QMenuBar {
 }
 
 /* 设置按钮的样式 */
-QPushButton#ClearDataButton,#ComCheckButton,#ShowDataButton,#WriteFilepushButton,#GetDataButton,#connectButton,#GetInfoButton,#LoginPushButton,#SavePasswordPushButton {
+QPushButton#ClearDataButton,#ComCheckButton,#ShowDataButton,#WriteFilepushButton,#GetDataButton,#connectButton,#GetInfoButton,#LoginPushButton,#SavePasswordPushButton,DownLoadFileButton {
     background-color: #4CAF50;
     color: white;
     border: none;
@@ -25,7 +25,8 @@ QPushButton:hover#GetDataButton,
 QPushButton:hover#connectButton,
 QPushButton:hover#GetInfoButton,
 QPushButton:hover#LoginPushButton,
-QPushButton:hover#SavePasswordPushButton {
+QPushButton:hover#SavePasswordPushButton
+QPushButton:hover#DownLoadFileButton {
     background-color: #45a049;
 }
 
@@ -37,7 +38,8 @@ QPushButton:pressed#GetDataButton,
 QPushButton:pressed#connectButton,
 QPushButton:pressed#GetInfoButton,
 QPushButton:pressed#LoginPushButton,
-QPushButton:pressed#SavePasswordPushButton {
+QPushButton:pressed#SavePasswordPushButton
+QPushButton:pressed#DownLoadFileButton {
     background-color: #397e39;
 }
 

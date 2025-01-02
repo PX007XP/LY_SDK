@@ -1161,3 +1161,16 @@ void OperationInterface::on_shenherenyuan_lineEdit_editingFinished()
 }
 
 
+
+void OperationInterface::on_DownLoadFileButton_clicked()
+{
+    qDebug()<< " 下载文件开始";
+    QString strNumberEdit = ui->NumberEdit->text();
+    if(strNumberEdit.isEmpty())
+    {
+        QMessageBox::information(this,"提示","请输入单号");
+        return ;
+    }
+    m_pHttpNetObject->DownloadFile(ui->NumberEdit->text());
+}
+

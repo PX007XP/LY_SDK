@@ -202,6 +202,38 @@ int HttpNetObject::CompeleteCheck()
     return 0;
 }
 
+
+int HttpNetObject::DownloadFile(QString strMmsID)
+{
+    //QUrl url("http://100.0.4.37:8080/Quality/MMS_QCChkSummary/GetQCCPKFAIExcel");
+    QUrl url("http://mom.lingyiitech.com:8080/Quality/MMS_QCChkSummary/GetQCCPKFAIExcel");
+    QNetworkRequest request(url);
+
+    request.setRawHeader("Authorization", QString("Bearer %1").arg(m_strToken).toUtf8());
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
+
+    QJsonObject jsonObject;
+    jsonObject["Type"] = 1;
+
+    QJsonArray reqDetailNoArray;
+    reqDetailNoArray.append(strMmsID);
+    jsonObject["ReqDetailNo"] = reqDetailNoArray;
+
+    QJsonDocument jsonDocument(jsonObject);
+    QByteArray jsonData = jsonDocument.toJson();
+
+    //QNetworkReply *reply = networkManager->post(request, jsonData);
+    qDebug() << jsonData;
+    LOG_INFO("Http DownLoadFile request : %s",jsonData.data());
+    QNetworkReply *pReply = m_pManager->post(request, jsonData);
+    if(NULL == pReply)
+    {
+        LOG_ERROR("DownloadFile post error :%s",strMmsID.toStdString().c_str());
+    }
+    return 0;
+
+}
+
 int HttpNetObject::SubmitForView()
 {
     if(2 != m_iStatus)
@@ -323,6 +355,7 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
         strResponse = pReplay->readAll();
         qDebug() << "Error:" << pReplay->errorString();
         LOG_ERROR("http response error %d , %s", pReplay->error(),strResponse.toUtf8().data());
+        return ;
     }
 
     QJsonObject json;
