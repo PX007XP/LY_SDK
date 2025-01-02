@@ -342,6 +342,7 @@ void TempData::closefile()
 
 void TempData::recShowData(RecvFile::STDetailData datildata)
 {
+    showcoldata(datildata,2);
     // 显示最后一列
     m_tableView->setColumnHidden(m_model->columnCount()-1, false);
     // 获取当前列数
@@ -357,15 +358,6 @@ void TempData::recShowData(RecvFile::STDetailData datildata)
     // 遍历并修改数据
     int showrow=j;
     int colCount=m_model->columnCount();
-    /*
-            for (int col = 0; col < colCount; ++col) {
-                QStandardItem *item = m_model->item(2, col);
-                if (item !=nullptr&&item->data().isNull()) {
-                    // 修改数据
-                    j=col;
-                }
-            }
-            */
     QStringList headerlist;
     QSet<int> redvec;
     QSet<int> allvec;
@@ -377,6 +369,8 @@ void TempData::recShowData(RecvFile::STDetailData datildata)
         if(m_key.contains(name)){
             i=m_key[name];
             //continue;
+        }else{
+            LOG_DEBUG("参数 %s 不存在",name.toStdString().c_str());
         }
         measure=item.value().dActual;//实测值
         QStandardItem *showitem=new QStandardItem(QString::number(measure));
@@ -470,8 +464,8 @@ void TempData::showcoldata(RecvFile::STDetailData datildata, int col)
     m_tableView->setColumnHidden(m_model->columnCount()-1, false);
     // 获取当前列数
     int columnCount = m_model->columnCount();
-    if(columnCount< col+6){
-        int i=col+6-columnCount;
+    if(columnCount< col+7){
+        int i=col+7-columnCount;
         while(i){
             // 在最后一列之前插入一列（即插入位置 columnCount-1）
             columnCount = m_model->columnCount();
@@ -481,22 +475,13 @@ void TempData::showcoldata(RecvFile::STDetailData datildata, int col)
             i--;
         }
     }
-    int j=col;
+    int j=col+5;
 
     double stand=0,measure=0,ups=0,downs=0;
     int i=0;
     // 遍历并修改数据
     int showrow=j;
     int colCount=m_model->columnCount();
-    /*
-            for (int col = 0; col < colCount; ++col) {
-                QStandardItem *item = m_model->item(2, col);
-                if (item !=nullptr&&item->data().isNull()) {
-                    // 修改数据
-                    j=col;
-                }
-            }
-            */
     QStringList headerlist;
     QSet<int> redvec;
     QSet<int> allvec;
@@ -508,6 +493,8 @@ void TempData::showcoldata(RecvFile::STDetailData datildata, int col)
         if(m_key.contains(name)){
             i=m_key[name];
             //continue;
+        }else{
+            LOG_DEBUG("参数 %s 不存在",name.toStdString().c_str());
         }
         measure=item.value().dActual;//实测值
         QStandardItem *showitem=new QStandardItem(QString::number(measure));
