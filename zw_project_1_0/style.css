@@ -1,4 +1,4 @@
-/* 设置整个应用的背景色 */
+﻿/* 设置整个应用的背景色 */
 QWidget#OperationInterface {
     background-color: #f0f0f0;
 }
@@ -8,7 +8,7 @@ QMenuBar {
 }
 
 /* 设置按钮的样式 */
-QPushButton#ClearDataButton,#ComCheckButton,#ShowDataButton,#WriteFilepushButton,#GetDataButton,#connectButton,#GetInfoButton,#LoginPushButton,#SavePasswordPushButton,DownLoadFileButton {
+QPushButton#ClearDataButton,#ComCheckButton,#ShowDataButton,#WriteFilepushButton,#GetDataButton,#connectButton,#GetInfoButton,#LoginPushButton,#SavePasswordPushButton,#DownLoadFileButton {
     background-color: #4CAF50;
     color: white;
     border: none;

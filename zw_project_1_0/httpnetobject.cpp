@@ -206,11 +206,11 @@ int HttpNetObject::CompeleteCheck()
 int HttpNetObject::DownloadFile(QString strMmsID)
 {
     //QUrl url("http://100.0.4.37:8080/Quality/MMS_QCChkSummary/GetQCCPKFAIExcel");
-    QUrl url("http://mom.lingyiitech.com:8080/Quality/MMS_QCChkSummary/GetQCCPKFAIExcel");
+    QUrl url("https://mom.lingyiitech.com:8092/api/Quality/MMS_QCChkSummary/GetQCCPKFAIExcel");
     QNetworkRequest request(url);
 
     request.setRawHeader("Authorization", QString("Bearer %1").arg(m_strToken).toUtf8());
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json;charset=UTF-8");
 
     QJsonObject jsonObject;
     jsonObject["Type"] = 1;
@@ -230,6 +230,7 @@ int HttpNetObject::DownloadFile(QString strMmsID)
     {
         LOG_ERROR("DownloadFile post error :%s",strMmsID.toStdString().c_str());
     }
+    m_iFileData = 1;
     return 0;
 
 }
@@ -345,9 +346,12 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
     if (pReplay->error() == QNetworkReply::NoError)
     {
         // 处理成功响应
-        strResponse = pReplay->readAll();
+        if(1 != m_iFileData)
+        {
+            strResponse = pReplay->readAll();
+        }
         qDebug() << "Response:" << strResponse;
-        LOG_INFO("httpnet response is :%s ",strResponse.toUtf8().data());
+        LOG_INFO("httpnet response is :%s ",strResponse.toStdString().c_str());
     }
     else
     {
@@ -356,6 +360,27 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
         qDebug() << "Error:" << pReplay->errorString();
         LOG_ERROR("http response error %d , %s", pReplay->error(),strResponse.toUtf8().data());
         return ;
+    }
+    if(1 == m_iFileData)
+    {
+        QByteArray fileData = pReplay->readAll();
+        QString filePath = "./123file.xlsx" ;
+        QFile file(filePath);
+        if (file.open(QIODevice::WriteOnly))
+        {
+            qint64 bytesWritten = file.write(fileData);
+            file.close();
+            LOG_INFO("File downloaded and saved to [%d,%d]", fileData.size(),bytesWritten);
+
+            if (file.error()) {
+                LOG_ERROR("Unable to close file - Error: %s", file.errorString().toStdString().c_str());
+            } else {
+                LOG_INFO("File  downloaded and saved to " );
+            }
+        } else {
+           // LOG_ERROR("Unable to save file %s", strMmsID.toStdString().c_str());
+        }
+        return;
     }
 
     QJsonObject json;

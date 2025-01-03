@@ -50,6 +50,8 @@ private:
     bool m_bLoginStatus = false;
 
     int m_iStatus = 0;  // 单号状态  1 上传文件  2 完成检测 3 提交审核
+
+    int m_iFileData = 0; // 文件接收
 public slots:
     void SlotsRecvReplayData(QNetworkReply* pReplay);
 

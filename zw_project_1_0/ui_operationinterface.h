@@ -510,7 +510,6 @@ public:
 
         DownLoadFileButton = new QPushButton(groupBox_4);
         DownLoadFileButton->setObjectName(QString::fromUtf8("DownLoadFileButton"));
-        DownLoadFileButton->setStyleSheet(QString::fromUtf8("background-color: green;"));
 
         gridLayout->addWidget(DownLoadFileButton, 1, 10, 1, 1);
 
