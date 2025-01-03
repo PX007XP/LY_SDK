@@ -342,7 +342,7 @@ void TempData::closefile()
 
 void TempData::recShowData(RecvFile::STDetailData datildata)
 {
-    showcoldata(datildata,2);
+    //showcoldata(datildata,2);
     // 显示最后一列
     m_tableView->setColumnHidden(m_model->columnCount()-1, false);
     // 获取当前列数
