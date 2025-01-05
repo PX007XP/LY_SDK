@@ -1,4 +1,4 @@
-#include "configobject.h"
+﻿#include "configobject.h"
 #include <QFile>
 #include <QDomDocument>
 #include <QDebug>
@@ -50,6 +50,8 @@ void ConfigObject::ReadConfig(OperationInterface* pObjcet)
         QString logLevel = commonElement.attribute("log_level", "1");
 
         g_iLogLevel = logLevel.toInt();
+        QString filesave = commonElement.attribute("file_save", "0");
+        g_iFileSaveFlag = filesave.toInt();
         g_strIpAddressKey = commonElement.attribute("ip_address_key" , "以太网");
         LOG_STATS("log level is = %d ,ip_address_key[%s]",g_iLogLevel,g_strIpAddressKey.toStdString().c_str());
     }

@@ -364,7 +364,10 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
     if(1 == m_iFileData)
     {
         QByteArray fileData = pReplay->readAll();
-        QString filePath = "./123file.xlsx" ;
+       // QString filePath = "./123file.xlsx" ;
+        QString filePath =  m_pOperationObject->GetUiPointObject()->saveFilePathEdit->text();
+        QString fileName = m_pOperationObject->GetUiPointObject()->NumberEdit->text();
+        filePath = filePath + "/" + fileName + ".xlsm";
         QFile file(filePath);
         if (file.open(QIODevice::WriteOnly))
         {
@@ -372,14 +375,13 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
             file.close();
             LOG_INFO("File downloaded and saved to [%d,%d]", fileData.size(),bytesWritten);
 
-            if (file.error()) {
-                LOG_ERROR("Unable to close file - Error: %s", file.errorString().toStdString().c_str());
-            } else {
-                LOG_INFO("File  downloaded and saved to " );
-            }
-        } else {
+            m_pOperationObject->MessageBoxInfomation("提示", "下载成功");
+        }
+        else
+        {
            // LOG_ERROR("Unable to save file %s", strMmsID.toStdString().c_str());
         }
+        m_iFileData = 0;
         return;
     }
 

@@ -1,4 +1,4 @@
-#include "globle.h"
+﻿#include "globle.h"
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
@@ -25,6 +25,7 @@ Logger* g_pLogger = nullptr;
 
 int g_iLogLevel = 5;
 QString g_strIpAddressKey = "以太网";
+int g_iFileSaveFlag = 0;
 
 int CheckDirectoryExists(QString strPath)
 {

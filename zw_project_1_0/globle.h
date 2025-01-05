@@ -1,4 +1,4 @@
-#ifndef GLOBLE_H
+﻿#ifndef GLOBLE_H
 #define GLOBLE_H
 #include<QString>
 
@@ -21,6 +21,8 @@ extern QString g_strOrgCode ; // 模穴号
 extern QString g_strRemark ; // 备注
 extern QString g_strRevArtTime; // 收件时间
 extern QString g_strIpAddressKey; // ip地址关键字
+
+extern int g_iFileSaveFlag ; // 上传文件后是否保存文件  0 不保存 1 保存
 
 int CheckDirectoryExists(QString strPath);
 

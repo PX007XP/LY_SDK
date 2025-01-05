@@ -287,16 +287,16 @@ void OperationInterface::ShowDetailMesage(RecvFile::STDetailData stResult)
    // m_vRecvData.push_back(stResult);
     int iCloum = DealMerageMessage(stResult);  // iCloum 是写入数据列数 从0 开始
     int iSize = m_vRecvData.size();
-    if(iCloum > 0)
+    if(iCloum < iSize + 1)
     {
         if(m_tempData)
         {
-           // m_tempData->ShowData(stResult);
+           m_tempData->showcoldata(stResult,iCloum + 1);
         }
     }
     else
     {
-
+        LOG_ERROR("DealMerageMessage return error :%d > %d",iCloum, iSize);
     }
 }
 
@@ -463,9 +463,17 @@ void OperationInterface::on_ComCheckButton_clicked()
         QString strFileName = m_strPushFilePath.mid(iLastIndexName+1);
         qDebug() << "file name is :" << strFileName;
         QString strNewFilePath = ui->saveFilePathEdit->text() + "/" + strFileName;
-        file.rename(strNewFilePath);
-        m_strPushFilePath.clear();
 
+        if(1 == g_iFileSaveFlag)
+        {
+            file.rename(strNewFilePath);
+        }
+        else
+        {
+            QFile::remove(m_strPushFilePath);
+        }
+
+        m_strPushFilePath.clear();
         //todo  调用清空显示界面数据接口
 
        // m_bFileReading = false;
@@ -729,6 +737,7 @@ void OperationInterface::StopListening()
         m_Watcher.removePath(m_strListeningPath);
         m_bListening = false;
         m_strListeningPath.clear();
+        m_sSetOldFiles.clear();
         LOG_INFO("停止文件感知:%s",m_strListeningPath.toStdString().c_str());
     }
 
@@ -821,15 +830,7 @@ void OperationInterface::onDirectoryChanged(const QString &strPath)
     // 显示数据
     if(m_tempData)
     {
-        // 这里需要调用 重新全部显示的按钮
-        for(auto& it: m_vRecvData)
-        {
-            for(auto& it_value : it.m_mMeasuredValue)
-            {
-                LOG_DEBUG("show data :%s ,%f",it_value.strName.toStdString().c_str(),it_value.dActual);
-            }
-           // m_tempData->ShowData(it);
-        }
+        m_tempData->showalldata(m_vRecvData);
     }
 }
 
