@@ -88,6 +88,12 @@ int main(int argc, char *argv[])
         return -1;
     }
     QString styleSheet = QLatin1String(file.readAll());
+    int index = styleSheet.indexOf("QWidget");
+    if (index != -1) {
+        // 删除子字符串之前的所有字符
+        styleSheet.remove(0, index);  // 从位置0开始，删除到子字符串出现位置的所有字符
+        qDebug() << "Result: " << styleSheet;
+    }
     a.setStyleSheet(styleSheet);  // 应用样式表
     // 设置编码为“UTF-8”
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
