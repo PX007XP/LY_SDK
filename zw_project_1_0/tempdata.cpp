@@ -7,6 +7,7 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QMessageBox>
 #include <QSet>
+#include <QFileSystemWatcher>
 int TempData::m_showcol=6;
 TempData::TempData(QTableView* tv) {
     m_tableView = tv;
@@ -36,6 +37,14 @@ TempData::TempData(QTableView* tv) {
     }
     // 设置 Excel 为不可见
     m_excel->setProperty("Visible", false);
+    //读取配置文件-修改文件
+    QFileSystemWatcher watcher;
+    QString filePath=QCoreApplication::applicationDirPath();
+    QDir dir(filePath);
+    QString fullPath = dir.filePath("setbutton.txt");
+    watcher.addPath(fullPath);
+    connect(&watcher, &QFileSystemWatcher::fileChanged, this, &TempData::onFileChanged);
+    onFileChanged(fullPath);
 
     // 打开 Excel 文件
     m_workbooks = m_excel->querySubObject("Workbooks");
@@ -230,7 +239,7 @@ bool TempData::LoadData(QString filename, int showrow){
     // 显示表格
     m_tableView->update();
     // 禁用所有编辑操作
-    m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    //m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     //m_tableView->setEditTriggers(QAbstractItemView::SelectedClicked);
     // 隐藏最后一列
     m_tableView->setColumnHidden(m_model->columnCount() - 1, true);
@@ -333,6 +342,7 @@ void TempData::closefile()
 
 void TempData::recShowData(RecvFile::STDetailData datildata)
 {
+    //showcoldata(datildata,2);
     // 显示最后一列
     m_tableView->setColumnHidden(m_model->columnCount()-1, false);
     // 获取当前列数
@@ -348,15 +358,6 @@ void TempData::recShowData(RecvFile::STDetailData datildata)
     // 遍历并修改数据
     int showrow=j;
     int colCount=m_model->columnCount();
-    /*
-            for (int col = 0; col < colCount; ++col) {
-                QStandardItem *item = m_model->item(2, col);
-                if (item !=nullptr&&item->data().isNull()) {
-                    // 修改数据
-                    j=col;
-                }
-            }
-            */
     QStringList headerlist;
     QSet<int> redvec;
     QSet<int> allvec;
@@ -368,6 +369,8 @@ void TempData::recShowData(RecvFile::STDetailData datildata)
         if(m_key.contains(name)){
             i=m_key[name];
             //continue;
+        }else{
+            LOG_DEBUG("参数 %s 不存在",name.toStdString().c_str());
         }
         measure=item.value().dActual;//实测值
         QStandardItem *showitem=new QStandardItem(QString::number(measure));
@@ -444,6 +447,123 @@ int TempData::modelNumber()
     if(m_model == nullptr) m_model= qobject_cast<TableModel*>(m_tableView->model());
     if(m_model == nullptr) return 0;
     return m_model->columnCount()-7;
+}
+
+void TempData::showalldata(QVector<RecvFile::STDetailData> data)
+{
+    //数据清理
+    dataClear();
+    for(auto d: data){
+        recShowData(d);
+    }
+}
+
+void TempData::showcoldata(RecvFile::STDetailData datildata, int col)
+{
+    // 显示最后一列
+    m_tableView->setColumnHidden(m_model->columnCount()-1, false);
+    // 获取当前列数
+    int columnCount = m_model->columnCount();
+    if(columnCount< col+7){
+        int i=col+7-columnCount;
+        while(i){
+            // 在最后一列之前插入一列（即插入位置 columnCount-1）
+            columnCount = m_model->columnCount();
+            m_model->insertColumn(columnCount - 1);
+            // 插入列后，更新表头
+            m_model->setHorizontalHeaderItem(columnCount - 1, new QStandardItem(QString::number(m_model->columnCount()-7)));
+            i--;
+        }
+    }
+    int j=col+5;
+
+    double stand=0,measure=0,ups=0,downs=0;
+    int i=0;
+    // 遍历并修改数据
+    int showrow=j;
+    int colCount=m_model->columnCount();
+    QStringList headerlist;
+    QSet<int> redvec;
+    QSet<int> allvec;
+    for(auto item=datildata.m_mMeasuredValue.begin();item!=datildata.m_mMeasuredValue.end();item++){
+        QString name=item.key();
+        headerlist<<name;
+        //m_model->setItem(i,j,new QStandardItem(name));
+        QString mingcheng=item.value().strName;//名称
+        if(m_key.contains(name)){
+            i=m_key[name];
+            //continue;
+        }else{
+            LOG_DEBUG("参数 %s 不存在",name.toStdString().c_str());
+        }
+        measure=item.value().dActual;//实测值
+        QStandardItem *showitem=new QStandardItem(QString::number(measure));
+        if(i>showrow)showrow=i;
+        showitem->setTextAlignment(Qt::AlignCenter);
+        m_model->setItem(i++,j,showitem);
+    }
+    //判定是否合格 遍历item 将model中所有的数据进行重新的颜色设置和结果判定列的更新和label的更新
+    for(int i=6;i<m_model->columnCount()-1;i++){
+        bool fn=false;
+        for(int j=0;j<=showrow;j++){
+            QStandardItem *showitem=m_model->item(j,i);
+            if(showitem ==nullptr)continue;
+            if(m_model->item(j,3)!=nullptr&&m_model->item(j,4)!=nullptr&&(m_model->item(j,5)!=nullptr)){
+                float measure=showitem->text().toFloat();//实测值
+                float downs=m_model->item(j,5)->text().toFloat();//下偏差
+                float ups=m_model->item(j,4)->text().toFloat();//上偏差
+                float stand=m_model->item(j,3)->text().toFloat();//理论值
+                QColor rc=standFont(showitem->text().toFloat(),m_model->item(j,3)->text().toFloat(),m_model->item(j,4)->text().toFloat(),m_model->item(j,5)->text().toFloat());
+                showitem->setForeground(QBrush(rc));
+                if(rc==Qt::red){
+                    redvec.insert(j);
+                    fn=true;
+                    //auto item=m_model->item(i,m_model->columnCount()-1);
+                    //item->setForeground(QBrush(rc));
+                }
+                allvec.insert(j);
+                m_model->setItem(j,i,showitem);
+            }
+        }
+    }
+    bool flabel=false;
+    for(int j:allvec){
+        auto showitem=m_model->item(j,m_model->columnCount()-1);
+        if(redvec.contains(j)){
+            showitem=m_model->item(j,m_model->columnCount()-1);
+            if(showitem == nullptr){
+                showitem=new QStandardItem("NG");
+            }else{
+                showitem->setText("NG");
+            }
+            // 设置字体颜色为红色
+            showitem->setForeground(QBrush(Qt::red));
+            showitem->setTextAlignment(Qt::AlignCenter);
+            flabel=true;
+            m_model->setItem(j,m_model->columnCount()-1,showitem);
+        }else{
+            showitem=m_model->item(j,m_model->columnCount()-1);
+            if(showitem == nullptr){
+                showitem=new QStandardItem("OK");
+            }else{
+                showitem->setText("OK");
+            }
+            // 设置字体颜色为红色
+            showitem->setForeground(QBrush(Qt::green));
+            showitem->setTextAlignment(Qt::AlignCenter);
+            m_model->setItem(j,m_model->columnCount()-1,showitem);
+        }
+    }
+    if (flabel){
+        emit setLaybelText("NG");
+    }else{
+        emit setLaybelText("OK");
+    }
+    j++;
+    m_showcol=j;
+    // 显示表格
+    m_tableView->update();
+    qDebug()<<modelNumber();
 }
 
 void TempData::dataClear()
@@ -794,3 +914,22 @@ void TempData::Setyangbenshuliang(int col)
     m_model->insertColumn(cols-2);
     m_model->insertColumns(cols-2,col-(cols-6));
 }
+
+void TempData::onFileChanged(const QString &filePath)
+{
+    QFile file(filePath);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream in(&file);
+        QString content = in.readAll();
+        if(content == "true"){
+            m_tableView->setEditTriggers(QAbstractItemView::DoubleClicked);
+        }else{
+            m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        }
+        qDebug() << "File content:" << content;
+        file.close();
+    } else {
+        qDebug() << "Failed to open file:" << filePath;
+    }
+}
+

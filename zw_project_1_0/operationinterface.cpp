@@ -107,6 +107,7 @@ OperationInterface::OperationInterface(QWidget *parent)
     m_widget=new QWidget();
     m_widget->hide();
     ui->radioButton->setParent(m_widget);
+    ui->radioButton->hide();
     ui->label_6->setParent(m_widget);
     ui->lineEdit_3->setParent(m_widget);
     ui->lineEdit_3->setMinimumWidth(500);

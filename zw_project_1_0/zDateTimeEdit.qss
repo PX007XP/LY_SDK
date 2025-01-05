@@ -2,14 +2,14 @@ QPushButton#popupButton{
         border-image: url(:/Resources/popupButton.png);min-height:15px;max-height:15px;min-width:15px;max-width:15px;
 }
 
-QLabel{color:#cadfff; font-size:12px;}
+QLabel{color:#000000; font-size:12px;}
 QLabel#labelWeekend{color:#00caff;}
 QLable#label_splite{font: bold 14px;}
 
-QWidget#widgetTitle{background-color:#061f65;}
-QWidget#baseWidget{background-color:#EE013B6B;border-radius: 11px;}
+QWidget#widgetTitle{background-color:#f0f0f0;}
+QWidget#baseWidget{background-color:#f0f0f0;border-radius: 11px;}
 
-QComboBox{background-color: transparent; selection-background-color: transparent; color:#ffffff; font-size: 14px; min-height: 20px; selection-text-align: right;border:0px solid}
+QComboBox{background-color: transparent; selection-background-color: transparent; color:#000000; font-size: 14px; min-height: 20px; selection-text-align: right;border:0px solid}
 QComboBox::down-arrow{ image:url(:/Resources/ComboBoxArrow.png); }
 QComboBox::down-arrow:on{ top: 1px; left: 1px; } QComboBox::drop-down{ width: 26px; border:none; }
 QComboBox QAbstractItemView {border: none; outline:0px;} QComboBox QAbstractItemView::item{ height: 26px; min-height:26px;}
