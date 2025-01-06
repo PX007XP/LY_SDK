@@ -1,4 +1,4 @@
-#include "tempdata.h"
+﻿#include "tempdata.h"
 #include <QAxBase>
 #include "readpoint.h"
 #include <QDir>
@@ -7,7 +7,7 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QMessageBox>
 #include <QSet>
-#include <QFileSystemWatcher>
+#include "logger.h"
 int TempData::m_showcol=6;
 TempData::TempData(QTableView* tv) {
     m_tableView = tv;
@@ -38,8 +38,9 @@ TempData::TempData(QTableView* tv) {
     // 设置 Excel 为不可见
     m_excel->setProperty("Visible", false);
     //读取配置文件-修改文件
-    QFileSystemWatcher watcher;
+    //QFileSystemWatcher watcher;
     QString filePath=QCoreApplication::applicationDirPath();
+    LOG_INFO("File content change1 %s" , filePath.toStdString().c_str());
     QDir dir(filePath);
     QString fullPath = dir.filePath("setbutton.txt");
     watcher.addPath(fullPath);
@@ -918,17 +919,24 @@ void TempData::Setyangbenshuliang(int col)
 void TempData::onFileChanged(const QString &filePath)
 {
     QFile file(filePath);
+    LOG_INFO("File content change2 %s" , filePath.toStdString().c_str());
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QTextStream in(&file);
         QString content = in.readAll();
         if(content == "true"){
             m_tableView->setEditTriggers(QAbstractItemView::DoubleClicked);
-        }else{
+        }
+        else
+        {
             m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
         }
         qDebug() << "File content:" << content;
+        LOG_INFO("File content change %s" , content.toStdString().c_str());
         file.close();
-    } else {
+    }
+    else
+    {
+        m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
         qDebug() << "Failed to open file:" << filePath;
     }
 }

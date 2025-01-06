@@ -1,4 +1,4 @@
-#ifndef TEMPDATA_H
+﻿#ifndef TEMPDATA_H
 #define TEMPDATA_H
 #include <QTableView>
 #include <QStandardItemModel>
@@ -15,6 +15,7 @@
 #include <QQueue>
 #include <QMutex>
 #include <QWaitCondition>
+#include <QFileSystemWatcher>
 class MyItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
@@ -87,6 +88,7 @@ private:
     QWaitCondition m_cond;
     QMap<QString,int> m_key;
     static int m_showcol;
+    QFileSystemWatcher watcher;
 };
 
 #endif // TEMPDATA_H
