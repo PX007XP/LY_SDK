@@ -849,6 +849,7 @@ void TempData::SaveData(const QModelIndex &topLeft, const QModelIndex &bottomRig
     }
     QString key = keyitem->text();
     float value = m_model->item(topLeft.row(),topLeft.column())->text().toFloat();
+    if(topLeft.column()<6)return;
     int row=topLeft.row();
     if(m_model->columnCount() ==0 && m_model->rowCount()==0)return;
     if(m_model->item(row,3)==nullptr) return;
@@ -863,6 +864,7 @@ void TempData::SaveData(const QModelIndex &topLeft, const QModelIndex &bottomRig
     m_model->setItem(topLeft.row(),topLeft.column(),moditem);
     if(rc == Qt::red){
         auto item=m_model->item(row,m_model->columnCount()-1);
+        if(item == nullptr)return;
         item->setForeground(QBrush(rc));
         m_model->setItem(row,m_model->columnCount()-1,item);
         emit setLaybelText("NG");
@@ -925,10 +927,12 @@ void TempData::onFileChanged(const QString &filePath)
         QString content = in.readAll();
         if(content == "true"){
             m_tableView->setEditTriggers(QAbstractItemView::DoubleClicked);
+            connect(m_model,&QStandardItemModel::dataChanged,this,&TempData::SaveData);
         }
         else
         {
             m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+            disconnect(m_model,&QStandardItemModel::dataChanged,this,&TempData::SaveData);
         }
         qDebug() << "File content:" << content;
         LOG_INFO("File content change %s" , content.toStdString().c_str());
