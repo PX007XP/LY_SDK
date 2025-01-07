@@ -65,7 +65,7 @@ TempData::~TempData()
 bool TempData::LoadData(QString filename, int showrow){
     bool setModel=true;
     if(m_model!=nullptr){
-        if(m_model->columnCount()>6) return false;
+        //if(m_model->columnCount()>6) return false;
     }
     if (m_excel == nullptr){
         m_excel = new QAxObject("Excel.Application");
