@@ -331,8 +331,8 @@ void OperationInterface::on_GetDataButton_clicked()
 {
     //m_pSocket->write("mResult");
     //QString strMessage = "msResult";
-    QString strMessage = g_strPacketHeader;
-    emit SendMessage(strMessage);
+   // QString strMessage = g_strPacketHeader;
+   // emit SendMessage(strMessage);
 }
 
 // 接收消息的信号函数
@@ -940,6 +940,8 @@ int OperationInterface::UiInit()
     //ui->dateTimeEditEnd->setDisplayFormat("yyyy-MM-dd HH:mm:ss");  // 设置显示格式
     QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     ui->saveFilePathEdit->setText(desktopPath);
+    ui->GetDataButton->setVisible(false);
+    ui->GetDataButton->setEnabled(false);
 
     return 0;
 }

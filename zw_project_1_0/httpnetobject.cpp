@@ -211,6 +211,7 @@ int HttpNetObject::DownloadFile(QString strMmsID)
 
     request.setRawHeader("Authorization", QString("Bearer %1").arg(m_strToken).toUtf8());
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json;charset=UTF-8");
+    //request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
     QJsonObject jsonObject;
     jsonObject["Type"] = 1;
