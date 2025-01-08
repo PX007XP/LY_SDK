@@ -821,7 +821,10 @@ void OperationInterface::onDirectoryChanged(const QString &strPath)
         m_sSetOldFiles.insert(FileInfo.fileName());
         LOG_INFO("自动感知到文件完成读取:%s,iFielType:%d ,iRet=%d",FileInfo.absoluteFilePath().toStdString().c_str(), iFileType,iRet);
     }
-
+    if(VRecvData.isEmpty())
+    {
+        return;
+    }
     foreach (RecvFile::STDetailData stResult, VRecvData)
     {
         DealMerageMessage(stResult);

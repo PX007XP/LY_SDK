@@ -347,7 +347,7 @@ int ExcellPrecess::ReadFileData(QString strFilePath, QVector<RecvFile::STDetailD
         // 模版文件不存在
         QString strError = "没有文件:";
         strError += strFilePath;
-        m_pOperationInterFace->MessageBoxInfomation("错误",strError);
+       // m_pOperationInterFace->MessageBoxInfomation("错误",strError);
         return -1;
     }
     if(1 == iFileType)
@@ -356,7 +356,7 @@ int ExcellPrecess::ReadFileData(QString strFilePath, QVector<RecvFile::STDetailD
         QString strSuffix = GetFileSuffix(strFilePath);
         if(strSuffix != "xlsx" && strSuffix != "xls")
         {
-            LOG_ERROR("自动感知文件后缀错误,file:%s,iFileType:%d",strFilePath.toStdString().c_str(),iFileType);
+            LOG_DEBUG("自动感知文件后缀错误,file:%s,iFileType:%d",strFilePath.toStdString().c_str(),iFileType);
             return -98;
         }
 
@@ -367,7 +367,7 @@ int ExcellPrecess::ReadFileData(QString strFilePath, QVector<RecvFile::STDetailD
         QString strSuffix = GetFileSuffix(strFilePath);
         if(strSuffix != "xlsx" && strSuffix != "xls")
         {
-            LOG_ERROR("自动感知文件后缀错误,file:%s,iFileType:%d",strFilePath.toStdString().c_str(),iFileType);
+            LOG_DEBUG("自动感知文件后缀错误,file:%s,iFileType:%d",strFilePath.toStdString().c_str(),iFileType);
             return -98;
         }
         iRet = ReadExcelData(strFilePath , VectorData);
@@ -378,7 +378,7 @@ int ExcellPrecess::ReadFileData(QString strFilePath, QVector<RecvFile::STDetailD
         QString strSuffix = GetFileSuffix(strFilePath);
         if(strSuffix != "txt" )
         {
-            LOG_ERROR("自动感知文件后缀错误,file:%s,iFileType:%d",strFilePath.toStdString().c_str(),iFileType);
+            LOG_DEBUG("自动感知文件后缀错误,file:%s,iFileType:%d",strFilePath.toStdString().c_str(),iFileType);
             return -98;
         }
         iRet = ReadTxtData(strFilePath , VectorData);
