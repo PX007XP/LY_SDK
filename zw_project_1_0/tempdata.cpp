@@ -65,7 +65,10 @@ TempData::~TempData()
 bool TempData::LoadData(QString filename, int showrow){
     bool setModel=true;
     if(m_model!=nullptr){
-        //if(m_model->columnCount()>7) return false;
+        if(m_model->columnCount()>7){
+            QMessageBox::warning(nullptr, "警告", "请先清理测试数据！");
+            return false;
+        }
     }
     if (m_excel == nullptr){
         m_excel = new QAxObject("Excel.Application");
