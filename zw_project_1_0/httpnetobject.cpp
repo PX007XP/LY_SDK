@@ -203,7 +203,7 @@ int HttpNetObject::CompeleteCheck()
 }
 
 
-int HttpNetObject::DownloadFile(QString strMmsID)
+int HttpNetObject::DownloadFile(QString strMmsID,int iFileType /*= 0*/)
 {
     //QUrl url("http://100.0.4.37:8080/Quality/MMS_QCChkSummary/GetQCCPKFAIExcel");
     QUrl url("https://mom.lingyiitech.com:8092/api/Quality/MMS_QCChkSummary/GetQCCPKFAIExcel");
@@ -214,7 +214,16 @@ int HttpNetObject::DownloadFile(QString strMmsID)
     //request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
     QJsonObject jsonObject;
-    jsonObject["Type"] = 1;
+    jsonObject["Type"] = iFileType;
+
+    if(0 == iFileType)
+    {
+        m_strDownloadFile = "CPK";
+    }
+    else
+    {
+        m_strDownloadFile="FAI";
+    }
 
     QJsonArray reqDetailNoArray;
     reqDetailNoArray.append(strMmsID);
@@ -224,14 +233,15 @@ int HttpNetObject::DownloadFile(QString strMmsID)
     QByteArray jsonData = jsonDocument.toJson();
 
     //QNetworkReply *reply = networkManager->post(request, jsonData);
-    qDebug() << jsonData;
+    //qDebug() << jsonData;
+    m_iFileData++;
     LOG_INFO("Http DownLoadFile request : %s",jsonData.data());
     QNetworkReply *pReply = m_pManager->post(request, jsonData);
     if(NULL == pReply)
     {
         LOG_ERROR("DownloadFile post error :%s",strMmsID.toStdString().c_str());
     }
-    m_iFileData = 1;
+
     return 0;
 
 }
@@ -347,7 +357,7 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
     if (pReplay->error() == QNetworkReply::NoError)
     {
         // 处理成功响应
-        if(1 != m_iFileData)
+        if(0 == m_iFileData)
         {
             strResponse = pReplay->readAll();
         }
@@ -362,27 +372,36 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
         LOG_ERROR("http response error %d , %s", pReplay->error(),strResponse.toUtf8().data());
         return ;
     }
-    if(1 == m_iFileData)
+    if(m_iFileData > 0)
     {
         QByteArray fileData = pReplay->readAll();
        // QString filePath = "./123file.xlsx" ;
         QString filePath =  m_pOperationObject->GetUiPointObject()->saveFilePathEdit->text();
         QString fileName = m_pOperationObject->GetUiPointObject()->NumberEdit->text();
-        filePath = filePath + "/" + fileName + ".xlsm";
+        filePath = filePath + "/" + fileName + "_"+ m_strDownloadFile +".xlsm";
         QFile file(filePath);
         if (file.open(QIODevice::WriteOnly))
         {
             qint64 bytesWritten = file.write(fileData);
             file.close();
-            LOG_INFO("File downloaded and saved to [%d,%d]", fileData.size(),bytesWritten);
-
-            m_pOperationObject->MessageBoxInfomation("提示", "下载成功");
+            LOG_INFO("File downloaded and saved to %s [%d,%d]", m_strDownloadFile.toStdString().c_str() ,fileData.size(),bytesWritten);
+            if(2 == m_iFileData)
+            {
+                m_pOperationObject->MessageBoxInfomation("提示", "下载成功");
+            }
         }
         else
         {
            // LOG_ERROR("Unable to save file %s", strMmsID.toStdString().c_str());
         }
-        m_iFileData = 0;
+        if(1 == m_iFileData)
+        {
+            DownloadFile(fileName ,1);
+        }
+        else
+        {
+            m_iFileData = 0;
+        }
         return;
     }
 

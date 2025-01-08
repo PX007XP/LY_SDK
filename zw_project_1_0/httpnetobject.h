@@ -30,7 +30,7 @@ public:
     // 提交审核
     int SubmitForView();
     // 下载文件
-    int DownloadFile(QString strMmsID);
+    int DownloadFile(QString strMmsID,int iFileType = 0);
 private:
     void DealWithLoginResponse(QJsonObject& json);
     void DealWithPageListResponse(QJsonObject& json);
@@ -52,6 +52,8 @@ private:
     int m_iStatus = 0;  // 单号状态  1 上传文件  2 完成检测 3 提交审核
 
     int m_iFileData = 0; // 文件接收
+
+    QString m_strDownloadFile;
 public slots:
     void SlotsRecvReplayData(QNetworkReply* pReplay);
 
