@@ -23,6 +23,7 @@ TempData::TempData(QTableView* tv) {
         }
 
     }
+    /*
     if (m_excel->setControl("Excel.Application"))
     {	// 加载 Microsoft Excel 控件
         LOG_INFO("load Excel.Application success");
@@ -35,6 +36,7 @@ TempData::TempData(QTableView* tv) {
     {
         LOG_ERROR("加载excel控件失败");
     }
+    */
     // 设置 Excel 为不可见
     m_excel->setProperty("Visible", false);
     //读取配置文件-修改文件
