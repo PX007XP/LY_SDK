@@ -563,7 +563,7 @@ int ExcellPrecess::ReadExcelData(QString strFilePath, QVector<RecvFile::STDetail
 int ExcellPrecess::ReadTxtData(QString strFilePath, QVector<RecvFile::STDetailData> &VectorData)
 {
     QFile file(strFilePath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text| QIODevice::ExistingOnly))
     {
         LOG_ERROR("ReadTxtData open file faild %s",strFilePath.toStdString().c_str()) ;
         return -1 ;

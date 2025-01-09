@@ -243,6 +243,33 @@ int OperationInterface::DealMerageMessage(RecvFile::STDetailData &stResult)
     return m_iLastInsertDataColumn;
 }
 
+int OperationInterface::DealMerageMessage(QVector<RecvFile::STDetailData> VRecvData)
+{
+    int i = 0;
+    foreach (RecvFile::STDetailData stResult, VRecvData)
+    {
+        if(m_vRecvData.size() == i)
+        {
+            m_vRecvData.push_back(stResult);
+            LOG_INFO("文件感知插入数据");
+        }
+        else if(m_vRecvData.size() > i)
+        {
+            auto& OldData =  m_vRecvData[i];
+            for(auto it_insert= stResult.m_mMeasuredValue.begin(); it_insert != stResult.m_mMeasuredValue.end();++it_insert )
+            {
+                OldData.m_mMeasuredValue[it_insert.key()] = it_insert.value();
+            }
+        }
+        else
+        {
+            LOG_ERROR("DealMerageMessage  error m_vRecvData.size=%d , i =%d",m_vRecvData.size() , i);
+        }
+        ++i;
+    }
+    return 0;
+}
+
 void OperationInterface::ShowDetailMesage(RecvFile::STDetailData stResult)
 {
     // 开关检查 如果是自动感知 则不进行操作
@@ -637,8 +664,27 @@ void OperationInterface::FindLatestFile(const QString &strPath , QVector<QFileIn
         return ;
     }
 
+    QStringList NameFilters;
+
+    int iFileType = GetSheBeiType();
+    if(1 == iFileType || 2 == iFileType)
+    {
+        NameFilters.append("*.xlsx");
+        NameFilters.append("*.xls");
+    }
+    else if(3 == iFileType)
+    {
+        QString name = "*.txt";
+        NameFilters.append(name);
+    }
+    else
+    {
+        LOG_ERROR("file type is error :%d",iFileType);
+        return;
+    }
+
     // 获取所有文件
-    QFileInfoList fileList = directory.entryInfoList(QDir::Files);
+    QFileInfoList fileList = directory.entryInfoList(NameFilters ,QDir::Files , QDir::Time | QDir::Reversed);
 
     if (fileList.isEmpty())
     {
@@ -646,18 +692,17 @@ void OperationInterface::FindLatestFile(const QString &strPath , QVector<QFileIn
         return ;
     }
 
-#if 0
+
     // 找出更新的文件
-    QFileInfo latestFile;
+   // QFileInfo latestFile;
     foreach (const QFileInfo &fileInfo, fileList)
     {
-        if (!latestFile.exists() || fileInfo.lastModified() > latestFile.lastModified())
-        {
-            latestFile = fileInfo;
-        }
+        LOG_DEBUG("file info find:[%s]",fileInfo.fileName().toStdString().c_str());
     }
-#endif
+    auto it = fileList.first();
+    vNewFiles.push_back(it);
 
+#if 0
     foreach (const QFileInfo &fileInfo, fileList)
     {
         auto it = m_sSetOldFiles.find(fileInfo.fileName());
@@ -667,7 +712,7 @@ void OperationInterface::FindLatestFile(const QString &strPath , QVector<QFileIn
             LOG_INFO("感知到文件 :%s",fileInfo.fileName().toStdString().c_str());
         }
     }
-
+#endif
   //  return latestFile;
 }
 
@@ -780,19 +825,20 @@ void OperationInterface::onDirectoryChanged(const QString &strPath)
     {
         return ;
     }
-
+    int iFileType = GetSheBeiType();
     QVector<QFileInfo> vNewFiles;
-    FindLatestFile(strPath,vNewFiles);
+    FindLatestFile(strPath,vNewFiles );
 
     if(vNewFiles.isEmpty())
     {
         return;
     }
+
     // 检查文件是否被占用
-   // if (!isFileInUse(FileInfo.filePath()))
-   // {
-   //     LOG_ERROR("");
-   // }
+    //if (!isFileInUse(FileInfo.filePath()))
+    //{
+    //    LOG_ERROR("");
+    //}
 
     // 去重
     //if(RemoveRepetiton(FileInfo))
@@ -806,7 +852,7 @@ void OperationInterface::onDirectoryChanged(const QString &strPath)
         LOG_ERROR("onDirectoryChanged m_pExcellWork is null");
         return ;
     }
-    int iFileType = GetSheBeiType();
+
     if(0 == iFileType )
     {
         LOG_ERROR("onDirectoryChanged iFileType is error :%d",iFileType);
@@ -818,17 +864,15 @@ void OperationInterface::onDirectoryChanged(const QString &strPath)
     foreach (QFileInfo FileInfo , vNewFiles)
     {
         int iRet = m_pExcellWork->ReadFileData(FileInfo.absoluteFilePath() , VRecvData , iFileType);
-        m_sSetOldFiles.insert(FileInfo.fileName());
-        LOG_INFO("自动感知到文件完成读取:%s,iFielType:%d ,iRet=%d",FileInfo.absoluteFilePath().toStdString().c_str(), iFileType,iRet);
+       // m_sSetOldFiles.insert(FileInfo.fileName());
+        LOG_INFO("自动感知到文件完成读取:%s,iFielType:%d ,iRet=%d , data_size=%d",FileInfo.absoluteFilePath().toStdString().c_str(), iFileType,iRet,VRecvData.size());
     }
     if(VRecvData.isEmpty())
     {
         return;
     }
-    foreach (RecvFile::STDetailData stResult, VRecvData)
-    {
-        DealMerageMessage(stResult);
-    }
+
+    DealMerageMessage(VRecvData);
 
     // 显示数据
     if(m_tempData)
