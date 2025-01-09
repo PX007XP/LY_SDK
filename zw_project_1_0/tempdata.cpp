@@ -14,10 +14,10 @@ TempData::TempData(QTableView* tv) {
     m_model = new TableModel;
     // 创建一个WPS 应用程序对象
 
-    m_excel = new QAxObject("Ket.Application");
+    m_excel = new QAxObject("Excel.Application");
     if (!m_excel) {
         qDebug() << "无法启动 Excel 应用程序!";
-        m_excel = new QAxObject("Excel.Application");
+        m_excel = new QAxObject("Ket.Application");
         if (!m_excel) {
             qDebug() << "Failed to create WPS COM object!";
         }
@@ -377,6 +377,7 @@ void TempData::recShowData(RecvFile::STDetailData datildata)
             //continue;
         }else{
             LOG_DEBUG("参数 %s 不存在",name.toStdString().c_str());
+            continue;
         }
         measure=item.value().dActual;//实测值
         QStandardItem *showitem=new QStandardItem(QString::number(measure));
@@ -501,6 +502,7 @@ void TempData::showcoldata(RecvFile::STDetailData datildata, int col)
             //continue;
         }else{
             LOG_DEBUG("参数 %s 不存在",name.toStdString().c_str());
+            continue;
         }
         measure=item.value().dActual;//实测值
         QStandardItem *showitem=new QStandardItem(QString::number(measure));
@@ -892,9 +894,12 @@ void TempData::SaveData(const QModelIndex &topLeft, const QModelIndex &bottomRig
     }
     if(fn){
         auto item=m_model->item(row,m_model->columnCount()-1);
-        item->setText("OK");
-        item->setForeground(QBrush(Qt::green));
-        m_model->setItem(row,m_model->columnCount()-1,item);
+        if(item !=nullptr){
+            item->setText("OK");
+            item->setForeground(QBrush(Qt::green));
+            m_model->setItem(row,m_model->columnCount()-1,item);
+        }
+
     }
     //遍历结果列，没有红色 则设置label为绿色
     bool fs=false;
