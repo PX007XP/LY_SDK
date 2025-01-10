@@ -150,6 +150,8 @@ private:
 
     QSet<QString> m_sSetOldFiles; // 不需要处理的文件
 
+    QFileInfo m_LastFileInfo; // 记录最新文件记录
+
     int GetSheBeiType();
 
     bool RemoveRepetiton(QFileInfo fileInfo);
@@ -165,6 +167,7 @@ public:
 private slots:
     // 信号处理函数
     void onDirectoryChanged(const QString &strPath);
+    void onFileChanged(const QString &strPath);
 
     void on_caijiTypecomboBox_activated(int index);
     void on_zhidongganzhi_lineEdit_editingFinished();
@@ -179,6 +182,8 @@ private slots:
     void on_shenherenyuan_lineEdit_editingFinished();
 
     void on_DownLoadFileButton_clicked();
+
+    void on_lineEdit_3_editingFinished();
 
 public:
     bool CheckWorkCondition();

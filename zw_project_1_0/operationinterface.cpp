@@ -120,6 +120,7 @@ OperationInterface::OperationInterface(QWidget *parent)
     m_widget->setLayout(layout);
     m_widget->setWindowModality(Qt::ApplicationModal);
 
+    config.InitJsonObject(this);
     // 连接信号和槽
     connect(newAction, &QAction::triggered, this, &OperationInterface::sonWidget);
 
@@ -684,7 +685,7 @@ void OperationInterface::FindLatestFile(const QString &strPath , QVector<QFileIn
     }
 
     // 获取所有文件
-    QFileInfoList fileList = directory.entryInfoList(NameFilters ,QDir::Files , QDir::Time | QDir::Reversed);
+    QFileInfoList fileList = directory.entryInfoList(NameFilters ,QDir::Files , QDir::Time /*| QDir::Reversed*/);
 
     if (fileList.isEmpty())
     {
@@ -697,10 +698,25 @@ void OperationInterface::FindLatestFile(const QString &strPath , QVector<QFileIn
    // QFileInfo latestFile;
     foreach (const QFileInfo &fileInfo, fileList)
     {
-        LOG_DEBUG("file info find:[%s]",fileInfo.fileName().toStdString().c_str());
+        LOG_DEBUG("file info find:[%s],time:%s",fileInfo.fileName().toStdString().c_str(),fileInfo.lastModified().toString().toStdString().c_str());
     }
-    auto it = fileList.first();
+    auto& it = fileList.first();
+    if(m_LastFileInfo.lastModified() >= it.lastModified())
+    {
+        LOG_DEBUG("file not new last:%s,%s , new:%s,%s",m_LastFileInfo.lastModified().toString().toStdString().c_str(),m_LastFileInfo.absoluteFilePath().toStdString().c_str()
+                    , it.lastModified().toString().toStdString().c_str(),it.absoluteFilePath().toStdString().c_str());
+        return;
+    }
     vNewFiles.push_back(it);
+
+    // 对新的文件进行监听
+    if(!m_LastFileInfo.absoluteFilePath().isEmpty())
+    {
+        m_Watcher.removePath(m_LastFileInfo.absoluteFilePath());
+    }
+    m_Watcher.addPath(it.absoluteFilePath());
+    m_LastFileInfo = it;
+    LOG_DEBUG("file info find last insert :[%s]",it.fileName().toStdString().c_str());
 
 #if 0
     foreach (const QFileInfo &fileInfo, fileList)
@@ -735,6 +751,7 @@ int OperationInterface::InitWatcher()
     m_bListening = false;
     m_bFileReadtype = false;
     connect(&m_Watcher, &QFileSystemWatcher::directoryChanged, this, &OperationInterface::onDirectoryChanged);
+    connect(&m_Watcher, &QFileSystemWatcher::fileChanged, this, &OperationInterface::onFileChanged);
     return 0;
 }
 
@@ -758,20 +775,25 @@ void OperationInterface::StartListening()
         }
 
         // 记录文件夹下面的所有文件
-        m_sSetOldFiles.clear();
-        const QStringList& listFiles = directory.entryList(QDir::Files);
-        for(auto it_list = listFiles.begin() ; it_list != listFiles.end() ; ++it_list)
+       // m_sSetOldFiles.clear();
+        QFileInfoList listFiles = directory.entryInfoList(QDir::Files);
+        if(!listFiles.isEmpty())
         {
-            m_sSetOldFiles.insert(*it_list);
-            LOG_DEBUG("OperationInterface::StartListening dir:%s , filename:%s",m_strListeningPath.toStdString().c_str(), it_list->toStdString().c_str());
+            m_LastFileInfo = listFiles.first();
+            for(auto it_list = listFiles.begin() ; it_list != listFiles.end() ; ++it_list)
+            {
+                if(m_LastFileInfo.lastModified() <  it_list->lastModified())
+                {
+                    m_LastFileInfo = *it_list;
+                }
+               // m_sSetOldFiles.insert(*it_list);
+                LOG_DEBUG("OperationInterface::StartListening dir:%s , filename:%s",m_strListeningPath.toStdString().c_str(), it_list->fileName().toStdString().c_str());
+            }
         }
 
         m_Watcher.addPath(m_strListeningPath);
         m_bListening = true;
-        LOG_INFO("开始文件感知:%s",m_strListeningPath.toStdString().c_str());
-
-
-
+        LOG_INFO("开始文件感知:%s , lastfile:%s",m_strListeningPath.toStdString().c_str(),m_LastFileInfo.lastModified().toString().toStdString().c_str());
     }
 }
 
@@ -780,6 +802,7 @@ void OperationInterface::StopListening()
     if(m_bListening)
     {
         m_Watcher.removePath(m_strListeningPath);
+        m_Watcher.removePaths(m_Watcher.files());
         m_bListening = false;
         m_strListeningPath.clear();
         m_sSetOldFiles.clear();
@@ -815,7 +838,7 @@ bool isFileInUse(const QString &filePath) {
 #endif
 void OperationInterface::onDirectoryChanged(const QString &strPath)
 {
-    LOG_DEBUG("感知到文件变化");
+    LOG_DEBUG("感知到文件目录变化");
     if(!m_bListening)
     {
         return;
@@ -879,6 +902,34 @@ void OperationInterface::onDirectoryChanged(const QString &strPath)
     {
         m_tempData->showalldata(m_vRecvData);
     }
+}
+
+void OperationInterface::onFileChanged(const QString &strPath)
+{
+    QFileInfo fileinfo(strPath);
+    LOG_DEBUG("感知到文件变化：%s ,%s now:%s,%s",m_LastFileInfo.absoluteFilePath().toStdString().c_str(),m_LastFileInfo.lastModified().toString().toStdString().c_str(),
+               strPath.toStdString().c_str() , fileinfo.lastModified().toString().toStdString().c_str() );
+    if(fileinfo.lastModified() <= m_LastFileInfo.lastModified())
+    {
+        return ;
+    }
+    int iFileType = GetSheBeiType();
+    QVector<RecvFile::STDetailData> VRecvData;
+    int iRet = m_pExcellWork->ReadFileData(m_LastFileInfo.absoluteFilePath() , VRecvData , iFileType);
+    LOG_INFO("自动感知到文件完成读取:%s,iFielType:%d ,iRet=%d , data_size=%d",m_LastFileInfo.absoluteFilePath().toStdString().c_str(), iFileType,iRet,VRecvData.size());
+    if(VRecvData.isEmpty())
+    {
+        return;
+    }
+
+    DealMerageMessage(VRecvData);
+
+    // 显示数据
+    if(m_tempData)
+    {
+        m_tempData->showalldata(m_vRecvData);
+    }
+    m_LastFileInfo = fileinfo;
 }
 
 
@@ -1224,4 +1275,20 @@ void OperationInterface::on_DownLoadFileButton_clicked()
     }
     m_pHttpNetObject->DownloadFile(ui->NumberEdit->text());
 }
+
+
+void OperationInterface::on_lineEdit_3_editingFinished()
+{
+    // 保存
+    ConfigObject config;
+    QString strText = ui->lineEdit_3->text();
+    int iRet = config.SaveConfigData("zidongganzhilujing" , strText);
+    if(iRet < 0)
+    {
+        LOG_ERROR("OperationInterface save zidongganzhilujing faild :%d ,%s ",iRet , strText.toStdString().c_str());
+        return ;
+    }
+    LOG_INFO("OperationInterface save zidongganzhilujing :%d ,%s ",iRet , strText.toStdString().c_str());
+}
+
 
