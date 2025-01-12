@@ -376,7 +376,7 @@ int ExcellPrecess::ReadFileData(QString strFilePath, QVector<RecvFile::STDetailD
     {
         // 验证文件后缀为 txt
         QString strSuffix = GetFileSuffix(strFilePath);
-        if(strSuffix != "txt" )
+        if(strSuffix != "txt" && strSuffix != "TXT")
         {
             LOG_DEBUG("自动感知文件后缀错误,file:%s,iFileType:%d",strFilePath.toStdString().c_str(),iFileType);
             return -98;
@@ -586,17 +586,26 @@ int ExcellPrecess::ReadTxtData(QString strFilePath, QVector<RecvFile::STDetailDa
         } else if (line == ":END")
         {
             state = Idle;
-            VectorData.push_back(TempData);
-            LOG_INFO("txt data 测量一件样本完成");
+            if(!TempData.m_mMeasuredValue.isEmpty())
+            {
+                VectorData.push_back(TempData);
+                LOG_INFO("txt data 测量一件样本完成");
+            }
         } else if (state == InBlock)
         {
-            if (line.startsWith("FAI"))
+            if (line.startsWith("FAI") || line.startsWith("\"FAI"))
             {
                 RecvFile::STDimenSionData TemCeLiangValue;
                 QStringList parts = line.split(QRegExp("\\s+")); // 正则匹配 空格 一个或多个
                 if (parts.size() >= 2)
                 {
                     QString faiKey = parts[0];
+                    if(faiKey.startsWith("\""))
+                    {
+                        // 删除首尾两个引号
+                        faiKey = faiKey.mid(1 , faiKey.size() - 2);
+
+                    }
                     QString faiValue = parts[1];
                     qDebug() << "FAI Key:" << faiKey << "FAI Value:" << faiValue;
                     double dActual = faiValue.toDouble();
