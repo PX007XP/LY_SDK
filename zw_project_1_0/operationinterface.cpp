@@ -352,6 +352,14 @@ void OperationInterface::on_connectButton_clicked()
     {
         return;
     }
+
+    // 如果是自动感知时 直接弹出提示框成功
+    QString strText = ui->caijiTypecomboBox->currentText();
+    if(strText == "自动感知")
+    {
+        QMessageBox::information(this,"提示","连接成功");
+    }
+
     QString strIp = ui->IpEdit->text();
     QString strPort = ui->PortEdit->text();
 
