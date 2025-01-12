@@ -732,7 +732,7 @@ public:
         label_13->setText(QCoreApplication::translate("OperationInterface", "\347\253\257\345\217\243\357\274\232", nullptr));
         PortEdit->setText(QCoreApplication::translate("OperationInterface", "8889", nullptr));
         ClearDataButton->setText(QCoreApplication::translate("OperationInterface", "\346\270\205\347\251\272\346\225\260\346\215\256", nullptr));
-        DownLoadFileButton->setText(QCoreApplication::translate("OperationInterface", "\344\270\213\350\275\275\346\226\207\344\273\266", nullptr));
+        DownLoadFileButton->setText(QCoreApplication::translate("OperationInterface", "\345\257\274\345\207\272\345\256\242\346\210\267CPK&&FAI", nullptr));
         groupBox_2->setTitle(QCoreApplication::translate("OperationInterface", "\346\226\207\344\273\266\351\200\211\346\213\251", nullptr));
         label_2->setText(QCoreApplication::translate("OperationInterface", "\346\235\220\346\226\231\345\220\215\347\247\260\357\274\232", nullptr));
         label_16->setText(QCoreApplication::translate("OperationInterface", "\345\256\241\346\240\270\344\272\272\345\221\230", nullptr));

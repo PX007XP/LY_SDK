@@ -540,7 +540,7 @@
            <item row="1" column="10">
             <widget class="QPushButton" name="DownLoadFileButton">
              <property name="text">
-              <string>下载文件</string>
+              <string>导出客户CPK&amp;&amp;FAI</string>
              </property>
             </widget>
            </item>
