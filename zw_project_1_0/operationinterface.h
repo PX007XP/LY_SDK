@@ -188,6 +188,9 @@ private slots:
 public:
     bool CheckWorkCondition();
 
+    // 对读取完数据后进行数据限制 最多100 列数据；
+    void CheckDataCount();
+
 #if 0
 private:
     void closeEvent(QCloseEvent *event) override;

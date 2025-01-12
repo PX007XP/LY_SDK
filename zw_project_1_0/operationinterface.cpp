@@ -313,18 +313,25 @@ void OperationInterface::ShowDetailMesage(RecvFile::STDetailData stResult)
 #endif
     // 对数据做处理 确认是新增列数 还是在原有数据里面补足数据
    // m_vRecvData.push_back(stResult);
-    int iCloum = DealMerageMessage(stResult);  // iCloum 是写入数据列数 从0 开始
-    int iSize = m_vRecvData.size();
-    if(iCloum < iSize + 1)
+    if(m_vRecvData.size() >= 100)
     {
-        if(m_tempData)
-        {
-           m_tempData->showcoldata(stResult,iCloum + 1);
-        }
+        LOG_ERROR("数据大于100条，不在插入");
     }
     else
     {
-        LOG_ERROR("DealMerageMessage return error :%d > %d",iCloum, iSize);
+        int iCloum = DealMerageMessage(stResult);  // iCloum 是写入数据列数 从0 开始
+        int iSize = m_vRecvData.size();
+        if(iCloum < iSize + 1)
+        {
+            if(m_tempData)
+            {
+               m_tempData->showcoldata(stResult,iCloum + 1);
+            }
+        }
+        else
+        {
+            LOG_ERROR("DealMerageMessage return error :%d > %d",iCloum, iSize);
+        }
     }
 }
 
@@ -897,6 +904,8 @@ void OperationInterface::onDirectoryChanged(const QString &strPath)
 
     DealMerageMessage(VRecvData);
 
+    // 验证数据数量
+    CheckDataCount();
     // 显示数据
     if(m_tempData)
     {
@@ -923,7 +932,7 @@ void OperationInterface::onFileChanged(const QString &strPath)
     }
 
     DealMerageMessage(VRecvData);
-
+    CheckDataCount();
     // 显示数据
     if(m_tempData)
     {
@@ -1188,6 +1197,14 @@ bool OperationInterface::CheckWorkCondition()
     }
 
     return true;
+}
+
+void OperationInterface::CheckDataCount()
+{
+    if(m_vRecvData.size() > 100)
+    {
+        m_vRecvData.remove(100 , m_vRecvData.size() - 100);
+    }
 }
 
 # if 0
