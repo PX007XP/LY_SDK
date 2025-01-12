@@ -37,7 +37,7 @@ QPushButton:pressed#DownLoadFileButton,
 QPushButton:pressed#SavePasswordPushButton {
     background-color: #397e39;
 }
-QLineEdit#lineEdit_3,#saveFilePathEdit,#IpEdit,#PortEdit,#NumberEdit,#MobanlujinEdit,#lineEdit,#lineEdit_2#UserEdit,#PasswordEdit{
+QLineEdit#lineEdit_3,#IpEdit,#PortEdit,#NumberEdit,#MobanlujinEdit,#lineEdit,#lineEdit_2#UserEdit,#PasswordEdit{
     border: 2px solid #ccc;
     padding: 5px;
     font-size: 14px;

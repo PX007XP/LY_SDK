@@ -24,6 +24,8 @@ extern QString g_strIpAddressKey; // ip地址关键字
 
 extern int g_iFileSaveFlag ; // 上传文件后是否保存文件  0 不保存 1 保存
 
+extern QString g_strSaveFilePath;  // 下载文件自动保存路径
+
 int CheckDirectoryExists(QString strPath);
 
 QString GetFileSuffix(QString strFile);

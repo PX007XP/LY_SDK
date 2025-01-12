@@ -495,12 +495,13 @@ void OperationInterface::on_ComCheckButton_clicked()
             //
             return ;
         }
-        QString strFileName = m_strPushFilePath.mid(iLastIndexName+1);
-        qDebug() << "file name is :" << strFileName;
-        QString strNewFilePath = ui->saveFilePathEdit->text() + "/" + strFileName;
 
         if(1 == g_iFileSaveFlag)
         {
+            QString strFileName = m_strPushFilePath.mid(iLastIndexName+1);
+            qDebug() << "file name is :" << strFileName;
+            QString strNewFilePath = g_strSaveFilePath + "/" + strFileName;
+
             file.rename(strNewFilePath);
         }
         else
@@ -513,7 +514,7 @@ void OperationInterface::on_ComCheckButton_clicked()
 
        // m_bFileReading = false;
 
-        LOG_INFO("complete check return=%d , filepath=%s ,%s",iRet,strNewFilePath.toStdString().c_str());
+        LOG_INFO("complete check return=%d ",iRet);
     }
 }
 
@@ -1046,7 +1047,6 @@ int OperationInterface::UiInit()
     //ui->dateTimeEditEnd->setDateTime(QDateTime::currentDateTime());  // 设置当前日期时间
     //ui->dateTimeEditEnd->setDisplayFormat("yyyy-MM-dd HH:mm:ss");  // 设置显示格式
     QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    ui->saveFilePathEdit->setText(desktopPath);
     ui->GetDataButton->setVisible(false);
     ui->GetDataButton->setEnabled(false);
 

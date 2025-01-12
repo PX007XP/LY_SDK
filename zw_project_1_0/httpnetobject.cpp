@@ -2,6 +2,7 @@
 #include <QHttpMultiPart>
 #include <QFile>
 #include <QJsonArray>
+#include <QStandardPaths>
 #include "operationinterface.h"
 #include "ui_operationinterface.h"
 #include "globle.h"
@@ -376,15 +377,14 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
     {
         QByteArray fileData = pReplay->readAll();
        // QString filePath = "./123file.xlsx" ;
-        QString filePath =  m_pOperationObject->GetUiPointObject()->saveFilePathEdit->text();
         QString fileName = m_pOperationObject->GetUiPointObject()->NumberEdit->text();
-        filePath = filePath + "/" + fileName + "_"+ m_strDownloadFile +".xlsm";
+        QString filePath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + "/" + fileName + "_"+ m_strDownloadFile +".xlsm";
         QFile file(filePath);
         if (file.open(QIODevice::WriteOnly))
         {
             qint64 bytesWritten = file.write(fileData);
             file.close();
-            LOG_INFO("File downloaded and saved to %s [%d,%d]", m_strDownloadFile.toStdString().c_str() ,fileData.size(),bytesWritten);
+            LOG_INFO("File downloaded and saved to %s [%d,%d]", filePath.toStdString().c_str() ,fileData.size(),bytesWritten);
             if(2 == m_iFileData)
             {
                 m_pOperationObject->MessageBoxInfomation("提示", "下载成功");

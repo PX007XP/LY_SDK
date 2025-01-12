@@ -21,6 +21,8 @@ QString g_strSatageNo = QStringLiteral("SatageNo"); // 夹具编号
 QString g_strOrgCode = QStringLiteral("OrgCode"); // 模穴号
 QString g_strRemark = QStringLiteral("Remark"); // 备注
 
+QString g_strSaveFilePath;  // 下载文件自动保存路径
+
 Logger* g_pLogger = nullptr;
 
 int g_iLogLevel = 5;

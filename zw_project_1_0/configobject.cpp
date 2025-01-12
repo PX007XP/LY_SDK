@@ -10,6 +10,7 @@
 #include <QTextStream>
 #include "operationinterface.h"
 #include "ui_operationinterface.h"
+#include <QStandardPaths>
 extern int g_iLogLevel;
 ConfigObject::ConfigObject() {}
 
@@ -98,7 +99,10 @@ void ConfigObject::ReadConfig(OperationInterface* pObjcet)
     }
 #endif
     InitJsonObject(pObjcet);
+
+    g_strSaveFilePath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     qDebug() << "log_level:" << g_iLogLevel;
+    LOG_STATS("配置haul读取; g_strSaveFilePath:%s , log_level:%d",g_strSaveFilePath.toStdString().c_str(), g_iLogLevel);
 }
 
 
