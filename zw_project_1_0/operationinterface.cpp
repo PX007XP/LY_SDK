@@ -1134,15 +1134,15 @@ int OperationInterface::GetSheBeiType()
     QString strText = ui->sehbeicomboBox->currentText();
     int iFileType = 0;
     // 文件感知类型 1 老兆丰 2 新兆丰 3 MIV
-    if(strText == "兆丰1")
+    if(strText == "老兆丰")
     {
         iFileType = 1;
     }
-    else if(strText == "兆丰2")
+    else if(strText == "新兆丰")
     {
         iFileType = 2;
     }
-    else if(strText == "MIV")
+    else if(strText == "MicroVu")
     {
         iFileType = 3;
     }

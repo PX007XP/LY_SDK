@@ -397,17 +397,17 @@
              </property>
              <item>
               <property name="text">
-               <string>兆丰1</string>
+               <string>新兆丰</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>MIV</string>
+               <string>MicroVu</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>兆丰2</string>
+               <string>老兆丰</string>
               </property>
              </item>
             </widget>
