@@ -1,4 +1,4 @@
-#include "operationinterface.h"
+﻿#include "operationinterface.h"
 
 #include <QApplication>
 #include <QFile>
@@ -99,7 +99,8 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
     OperationInterface w;
 
-
+    w.setWindowTitle("LIMS");
+    w.setWindowIconText("LIMS");
     w.show();
     return a.exec();
 }

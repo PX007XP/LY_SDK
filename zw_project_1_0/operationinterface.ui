@@ -491,6 +491,16 @@
                <string>老兆丰</string>
               </property>
              </item>
+             <item>
+              <property name="text">
+               <string>海克斯康1</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>海克斯康2</string>
+              </property>
+             </item>
             </widget>
            </item>
            <item row="1" column="0">
