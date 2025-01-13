@@ -21,6 +21,9 @@
 
 QMenuBar *menuBar = nullptr;
 
+QString g_strZidonggaanzhi = "数据接口2";
+QString g_strShujuduijie = "数据接口1";
+
 OperationInterface::OperationInterface(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::OperationInterface)
@@ -355,7 +358,7 @@ void OperationInterface::on_connectButton_clicked()
 
     // 如果是自动感知时 直接弹出提示框成功
     QString strText = ui->caijiTypecomboBox->currentText();
-    if(strText == "自动感知")
+    if(strText == g_strZidonggaanzhi)
     {
         QMessageBox::information(this,"提示","连接成功");
     }
@@ -1057,6 +1060,17 @@ int OperationInterface::UiInit()
     QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     ui->GetDataButton->setVisible(false);
     ui->GetDataButton->setEnabled(false);
+    ui->label_11->setVisible(false);
+    ui->label_11->setEnabled(false);
+
+    ui->IpEdit->setVisible(false);
+    ui->IpEdit->setEnabled(false);
+
+    ui->label_13->setVisible(false);
+    ui->label_13->setEnabled(false);
+
+    ui->PortEdit->setVisible(false);
+    ui->PortEdit->setEnabled(false);
 
     return 0;
 }
@@ -1132,7 +1146,7 @@ void OperationInterface::on_FilecomboBox_activated(int index)
 void OperationInterface::on_caijiTypecomboBox_activated(int index)
 {
     QString strText = ui->caijiTypecomboBox->currentText();
-    if(strText == "自动感知")
+    if(strText == g_strZidonggaanzhi)
     {
         StartListening();
         m_bFileReadtype = true;
@@ -1182,7 +1196,7 @@ void OperationInterface::on_zhidongganzhi_lineEdit_editingFinished()
         StopListening();
     }
     QString strText = ui->caijiTypecomboBox->currentText();
-    if(strText == "自动感知")
+    if(strText == g_strZidonggaanzhi)
     {
         StartListening();
     }
