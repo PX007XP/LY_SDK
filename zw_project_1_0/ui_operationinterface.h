@@ -477,6 +477,8 @@ public:
         sehbeicomboBox->addItem(QString());
         sehbeicomboBox->addItem(QString());
         sehbeicomboBox->addItem(QString());
+        sehbeicomboBox->addItem(QString());
+        sehbeicomboBox->addItem(QString());
         sehbeicomboBox->setObjectName(QString::fromUtf8("sehbeicomboBox"));
 
         gridLayout->addWidget(sehbeicomboBox, 1, 6, 1, 2);
@@ -715,6 +717,8 @@ public:
         sehbeicomboBox->setItemText(0, QCoreApplication::translate("OperationInterface", "\346\226\260\345\205\206\344\270\260", nullptr));
         sehbeicomboBox->setItemText(1, QCoreApplication::translate("OperationInterface", "MicroVu", nullptr));
         sehbeicomboBox->setItemText(2, QCoreApplication::translate("OperationInterface", "\350\200\201\345\205\206\344\270\260", nullptr));
+        sehbeicomboBox->setItemText(3, QCoreApplication::translate("OperationInterface", "\346\265\267\345\205\213\346\226\257\345\272\2671", nullptr));
+        sehbeicomboBox->setItemText(4, QCoreApplication::translate("OperationInterface", "\346\265\267\345\205\213\346\226\257\345\272\2672", nullptr));
 
         label_5->setText(QCoreApplication::translate("OperationInterface", "\346\225\260\346\215\256\346\216\245\345\217\243\357\274\232", nullptr));
         ShowDataButton->setText(QCoreApplication::translate("OperationInterface", "\344\277\241\346\201\257\346\230\276\347\244\272", nullptr));
