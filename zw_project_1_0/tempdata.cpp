@@ -237,6 +237,9 @@ bool TempData::LoadData(QString filename, int showrow){
         m_tableView->setModel(&*m_model);  // 将模型绑定到视图
         MyItemDelegate *delegate = new MyItemDelegate(m_tableView);
         m_tableView->setItemDelegate(delegate);
+        for(int i=0;i<8;i++){
+          m_tableView->setColumnWidth(0,90);
+        }
         //m_tableView->resizeColumnsToContents();  // 自动调整列宽以适应内容
 
     }
