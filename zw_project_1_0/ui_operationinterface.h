@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'operationinterface.ui'
 **
-** Created by: Qt User Interface Compiler version 5.15.0
+** Created by: Qt User Interface Compiler version 5.15.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -84,28 +84,28 @@ public:
     QLabel *label_19;
     QGroupBox *groupBox_4;
     QGridLayout *gridLayout;
-    QPushButton *WriteFilepushButton;
-    QPushButton *ComCheckButton;
     QLabel *label_21;
+    QLineEdit *lineEdit_3;
+    QHBoxLayout *horizontalLayout_3;
+    QPushButton *connectButton;
+    QPushButton *GetDataButton;
+    QLabel *label_6;
+    QRadioButton *radioButton;
     QHBoxLayout *horizontalLayout;
     QLabel *label_11;
     QLineEdit *IpEdit;
     QHBoxLayout *horizontalLayout_2;
     QLabel *label_13;
     QLineEdit *PortEdit;
-    QPushButton *ClearDataButton;
-    QLineEdit *lineEdit_3;
-    QHBoxLayout *horizontalLayout_3;
-    QPushButton *connectButton;
-    QPushButton *GetDataButton;
-    QLabel *label_7;
-    QComboBox *caijiTypecomboBox;
-    QPushButton *DownLoadFileButton;
-    QComboBox *sehbeicomboBox;
     QLabel *label_5;
+    QComboBox *caijiTypecomboBox;
+    QLabel *label_7;
+    QComboBox *sehbeicomboBox;
+    QPushButton *DownLoadFileButton;
+    QPushButton *ClearDataButton;
     QPushButton *ShowDataButton;
-    QLabel *label_6;
-    QRadioButton *radioButton;
+    QPushButton *WriteFilepushButton;
+    QPushButton *ComCheckButton;
     QGroupBox *groupBox_2;
     QGridLayout *gridLayout_2;
     QLabel *label_2;
@@ -135,7 +135,7 @@ public:
         OperationInterface->resize(1399, 720);
         layoutWidget = new QWidget(OperationInterface);
         layoutWidget->setObjectName(QString::fromUtf8("layoutWidget"));
-        layoutWidget->setGeometry(QRect(12, -17, 1236, 584));
+        layoutWidget->setGeometry(QRect(12, -17, 1271, 584));
         verticalLayout_2 = new QVBoxLayout(layoutWidget);
         verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
         verticalLayout_2->setContentsMargins(0, 0, 0, 0);
@@ -376,21 +376,6 @@ public:
         groupBox_4->setObjectName(QString::fromUtf8("groupBox_4"));
         gridLayout = new QGridLayout(groupBox_4);
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-        WriteFilepushButton = new QPushButton(groupBox_4);
-        WriteFilepushButton->setObjectName(QString::fromUtf8("WriteFilepushButton"));
-        QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Fixed);
-        sizePolicy1.setHorizontalStretch(0);
-        sizePolicy1.setVerticalStretch(0);
-        sizePolicy1.setHeightForWidth(WriteFilepushButton->sizePolicy().hasHeightForWidth());
-        WriteFilepushButton->setSizePolicy(sizePolicy1);
-
-        gridLayout->addWidget(WriteFilepushButton, 2, 10, 1, 1);
-
-        ComCheckButton = new QPushButton(groupBox_4);
-        ComCheckButton->setObjectName(QString::fromUtf8("ComCheckButton"));
-
-        gridLayout->addWidget(ComCheckButton, 2, 11, 1, 1);
-
         label_21 = new QLabel(groupBox_4);
         label_21->setObjectName(QString::fromUtf8("label_21"));
         QFont font;
@@ -400,41 +385,6 @@ public:
         label_21->setAlignment(Qt::AlignCenter);
 
         gridLayout->addWidget(label_21, 2, 8, 1, 1);
-
-        horizontalLayout = new QHBoxLayout();
-        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        label_11 = new QLabel(groupBox_4);
-        label_11->setObjectName(QString::fromUtf8("label_11"));
-
-        horizontalLayout->addWidget(label_11);
-
-        IpEdit = new QLineEdit(groupBox_4);
-        IpEdit->setObjectName(QString::fromUtf8("IpEdit"));
-
-        horizontalLayout->addWidget(IpEdit);
-
-
-        gridLayout->addLayout(horizontalLayout, 0, 0, 1, 5);
-
-        horizontalLayout_2 = new QHBoxLayout();
-        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
-        label_13 = new QLabel(groupBox_4);
-        label_13->setObjectName(QString::fromUtf8("label_13"));
-
-        horizontalLayout_2->addWidget(label_13);
-
-        PortEdit = new QLineEdit(groupBox_4);
-        PortEdit->setObjectName(QString::fromUtf8("PortEdit"));
-
-        horizontalLayout_2->addWidget(PortEdit);
-
-
-        gridLayout->addLayout(horizontalLayout_2, 0, 5, 1, 3);
-
-        ClearDataButton = new QPushButton(groupBox_4);
-        ClearDataButton->setObjectName(QString::fromUtf8("ClearDataButton"));
-
-        gridLayout->addWidget(ClearDataButton, 1, 11, 1, 1);
 
         lineEdit_3 = new QLineEdit(groupBox_4);
         lineEdit_3->setObjectName(QString::fromUtf8("lineEdit_3"));
@@ -456,41 +406,6 @@ public:
 
         gridLayout->addLayout(horizontalLayout_3, 0, 8, 1, 1);
 
-        label_7 = new QLabel(groupBox_4);
-        label_7->setObjectName(QString::fromUtf8("label_7"));
-
-        gridLayout->addWidget(label_7, 1, 4, 1, 2);
-
-        caijiTypecomboBox = new QComboBox(groupBox_4);
-        caijiTypecomboBox->addItem(QString());
-        caijiTypecomboBox->addItem(QString());
-        caijiTypecomboBox->setObjectName(QString::fromUtf8("caijiTypecomboBox"));
-
-        gridLayout->addWidget(caijiTypecomboBox, 1, 1, 1, 3);
-
-        DownLoadFileButton = new QPushButton(groupBox_4);
-        DownLoadFileButton->setObjectName(QString::fromUtf8("DownLoadFileButton"));
-
-        gridLayout->addWidget(DownLoadFileButton, 1, 10, 1, 1);
-
-        sehbeicomboBox = new QComboBox(groupBox_4);
-        sehbeicomboBox->addItem(QString());
-        sehbeicomboBox->addItem(QString());
-        sehbeicomboBox->addItem(QString());
-        sehbeicomboBox->setObjectName(QString::fromUtf8("sehbeicomboBox"));
-
-        gridLayout->addWidget(sehbeicomboBox, 1, 6, 1, 2);
-
-        label_5 = new QLabel(groupBox_4);
-        label_5->setObjectName(QString::fromUtf8("label_5"));
-
-        gridLayout->addWidget(label_5, 1, 0, 1, 1);
-
-        ShowDataButton = new QPushButton(groupBox_4);
-        ShowDataButton->setObjectName(QString::fromUtf8("ShowDataButton"));
-
-        gridLayout->addWidget(ShowDataButton, 2, 9, 1, 1);
-
         label_6 = new QLabel(groupBox_4);
         label_6->setObjectName(QString::fromUtf8("label_6"));
 
@@ -500,6 +415,91 @@ public:
         radioButton->setObjectName(QString::fromUtf8("radioButton"));
 
         gridLayout->addWidget(radioButton, 1, 9, 1, 1);
+
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        label_11 = new QLabel(groupBox_4);
+        label_11->setObjectName(QString::fromUtf8("label_11"));
+
+        horizontalLayout->addWidget(label_11);
+
+        IpEdit = new QLineEdit(groupBox_4);
+        IpEdit->setObjectName(QString::fromUtf8("IpEdit"));
+
+        horizontalLayout->addWidget(IpEdit);
+
+
+        gridLayout->addLayout(horizontalLayout, 2, 0, 1, 1);
+
+        horizontalLayout_2 = new QHBoxLayout();
+        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
+        label_13 = new QLabel(groupBox_4);
+        label_13->setObjectName(QString::fromUtf8("label_13"));
+
+        horizontalLayout_2->addWidget(label_13);
+
+        PortEdit = new QLineEdit(groupBox_4);
+        PortEdit->setObjectName(QString::fromUtf8("PortEdit"));
+
+        horizontalLayout_2->addWidget(PortEdit);
+
+
+        gridLayout->addLayout(horizontalLayout_2, 2, 2, 1, 1);
+
+        label_5 = new QLabel(groupBox_4);
+        label_5->setObjectName(QString::fromUtf8("label_5"));
+
+        gridLayout->addWidget(label_5, 0, 0, 1, 1);
+
+        caijiTypecomboBox = new QComboBox(groupBox_4);
+        caijiTypecomboBox->addItem(QString());
+        caijiTypecomboBox->addItem(QString());
+        caijiTypecomboBox->setObjectName(QString::fromUtf8("caijiTypecomboBox"));
+
+        gridLayout->addWidget(caijiTypecomboBox, 0, 2, 1, 1);
+
+        label_7 = new QLabel(groupBox_4);
+        label_7->setObjectName(QString::fromUtf8("label_7"));
+
+        gridLayout->addWidget(label_7, 0, 6, 1, 1);
+
+        sehbeicomboBox = new QComboBox(groupBox_4);
+        sehbeicomboBox->addItem(QString());
+        sehbeicomboBox->addItem(QString());
+        sehbeicomboBox->addItem(QString());
+        sehbeicomboBox->setObjectName(QString::fromUtf8("sehbeicomboBox"));
+
+        gridLayout->addWidget(sehbeicomboBox, 0, 7, 1, 1);
+
+        DownLoadFileButton = new QPushButton(groupBox_4);
+        DownLoadFileButton->setObjectName(QString::fromUtf8("DownLoadFileButton"));
+
+        gridLayout->addWidget(DownLoadFileButton, 1, 0, 1, 1);
+
+        ClearDataButton = new QPushButton(groupBox_4);
+        ClearDataButton->setObjectName(QString::fromUtf8("ClearDataButton"));
+
+        gridLayout->addWidget(ClearDataButton, 1, 2, 1, 1);
+
+        ShowDataButton = new QPushButton(groupBox_4);
+        ShowDataButton->setObjectName(QString::fromUtf8("ShowDataButton"));
+
+        gridLayout->addWidget(ShowDataButton, 1, 6, 1, 1);
+
+        WriteFilepushButton = new QPushButton(groupBox_4);
+        WriteFilepushButton->setObjectName(QString::fromUtf8("WriteFilepushButton"));
+        QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Fixed);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+        sizePolicy1.setHeightForWidth(WriteFilepushButton->sizePolicy().hasHeightForWidth());
+        WriteFilepushButton->setSizePolicy(sizePolicy1);
+
+        gridLayout->addWidget(WriteFilepushButton, 1, 7, 1, 1);
+
+        ComCheckButton = new QPushButton(groupBox_4);
+        ComCheckButton->setObjectName(QString::fromUtf8("ComCheckButton"));
+
+        gridLayout->addWidget(ComCheckButton, 1, 8, 1, 1);
 
 
         verticalLayout->addWidget(groupBox_4);
@@ -697,29 +697,29 @@ public:
         label_shenqingdanhao->setText(QCoreApplication::translate("OperationInterface", "\350\257\267\345\205\210\350\276\223\345\205\245mms\345\255\220\345\215\225\345\217\267", nullptr));
         label_19->setText(QCoreApplication::translate("OperationInterface", "mm\345\255\220\345\215\225\345\217\267\357\274\232", nullptr));
         groupBox_4->setTitle(QString());
-        WriteFilepushButton->setText(QCoreApplication::translate("OperationInterface", "\344\270\212\344\274\240\346\225\260\346\215\256", nullptr));
-        ComCheckButton->setText(QCoreApplication::translate("OperationInterface", "\345\256\214\346\210\220\346\243\200\346\265\213", nullptr));
         label_21->setText(QCoreApplication::translate("OperationInterface", "OK", nullptr));
+        connectButton->setText(QCoreApplication::translate("OperationInterface", "\345\273\272\347\253\213\351\223\276\346\216\245", nullptr));
+        GetDataButton->setText(QCoreApplication::translate("OperationInterface", "\350\216\267\345\217\226\346\225\260\346\215\256", nullptr));
+        label_6->setText(QCoreApplication::translate("OperationInterface", "\350\207\252\345\212\250\346\204\237\347\237\245\346\226\207\344\273\266\350\267\257\345\276\204\357\274\232", nullptr));
+        radioButton->setText(QCoreApplication::translate("OperationInterface", "\344\277\256\346\224\271\346\225\260\346\215\256", nullptr));
         label_11->setText(QCoreApplication::translate("OperationInterface", "iP\357\274\232", nullptr));
         IpEdit->setText(QCoreApplication::translate("OperationInterface", "192.168.31.145", nullptr));
         label_13->setText(QCoreApplication::translate("OperationInterface", "\347\253\257\345\217\243\357\274\232", nullptr));
         PortEdit->setText(QCoreApplication::translate("OperationInterface", "8889", nullptr));
-        ClearDataButton->setText(QCoreApplication::translate("OperationInterface", "\346\270\205\347\251\272\346\225\260\346\215\256", nullptr));
-        connectButton->setText(QCoreApplication::translate("OperationInterface", "\345\273\272\347\253\213\351\223\276\346\216\245", nullptr));
-        GetDataButton->setText(QCoreApplication::translate("OperationInterface", "\350\216\267\345\217\226\346\225\260\346\215\256", nullptr));
-        label_7->setText(QCoreApplication::translate("OperationInterface", "\350\256\276\345\244\207\345\223\201\347\211\214\357\274\232", nullptr));
+        label_5->setText(QCoreApplication::translate("OperationInterface", "\346\225\260\346\215\256\346\216\245\345\217\243\357\274\232", nullptr));
         caijiTypecomboBox->setItemText(0, QCoreApplication::translate("OperationInterface", "\346\225\260\346\215\256\346\216\245\345\217\2431", nullptr));
         caijiTypecomboBox->setItemText(1, QCoreApplication::translate("OperationInterface", "\346\225\260\346\215\256\346\216\245\345\217\2432", nullptr));
 
-        DownLoadFileButton->setText(QCoreApplication::translate("OperationInterface", "\345\257\274\345\207\272\345\256\242\346\210\267CPK&&FAI", nullptr));
+        label_7->setText(QCoreApplication::translate("OperationInterface", "\350\256\276\345\244\207\345\223\201\347\211\214\357\274\232", nullptr));
         sehbeicomboBox->setItemText(0, QCoreApplication::translate("OperationInterface", "\346\226\260\345\205\206\344\270\260", nullptr));
         sehbeicomboBox->setItemText(1, QCoreApplication::translate("OperationInterface", "MicroVu", nullptr));
         sehbeicomboBox->setItemText(2, QCoreApplication::translate("OperationInterface", "\350\200\201\345\205\206\344\270\260", nullptr));
 
-        label_5->setText(QCoreApplication::translate("OperationInterface", "\346\225\260\346\215\256\346\216\245\345\217\243\357\274\232", nullptr));
+        DownLoadFileButton->setText(QCoreApplication::translate("OperationInterface", "\345\257\274\345\207\272\345\256\242\346\210\267CPK&&FAI", nullptr));
+        ClearDataButton->setText(QCoreApplication::translate("OperationInterface", "\346\270\205\347\251\272\346\225\260\346\215\256", nullptr));
         ShowDataButton->setText(QCoreApplication::translate("OperationInterface", "\344\277\241\346\201\257\346\230\276\347\244\272", nullptr));
-        label_6->setText(QCoreApplication::translate("OperationInterface", "\350\207\252\345\212\250\346\204\237\347\237\245\346\226\207\344\273\266\350\267\257\345\276\204\357\274\232", nullptr));
-        radioButton->setText(QCoreApplication::translate("OperationInterface", "\344\277\256\346\224\271\346\225\260\346\215\256", nullptr));
+        WriteFilepushButton->setText(QCoreApplication::translate("OperationInterface", "\344\270\212\344\274\240\346\225\260\346\215\256", nullptr));
+        ComCheckButton->setText(QCoreApplication::translate("OperationInterface", "\345\256\214\346\210\220\346\243\200\346\265\213", nullptr));
         groupBox_2->setTitle(QCoreApplication::translate("OperationInterface", "\346\226\207\344\273\266\351\200\211\346\213\251", nullptr));
         label_2->setText(QCoreApplication::translate("OperationInterface", "\346\235\220\346\226\231\345\220\215\347\247\260\357\274\232", nullptr));
         label_16->setText(QCoreApplication::translate("OperationInterface", "\345\256\241\346\240\270\344\272\272\345\221\230", nullptr));

@@ -217,9 +217,9 @@ bool TempData::LoadData(QString filename, int showrow){
         m_model -> setItem(startRow-14,1,new QStandardItem(rowData[1].toString()));
         m_key[rowData[1].toString()]=startRow-14;
         m_model -> setItem(startRow-14,2,new QStandardItem(rowData[3].toString()));
-        m_model -> setItem(startRow-14,3,new QStandardItem(rowData[4].toString()));
-        m_model -> setItem(startRow-14,4,new QStandardItem(rowData[5].toString()));
-        m_model -> setItem(startRow-14,5,new QStandardItem(rowData[6].toString()));
+        m_model -> setItem(startRow-14,3,new QStandardItem(QString::number(rowData[4].toDouble(), 'f', 4)));
+        m_model -> setItem(startRow-14,4,new QStandardItem(QString::number(rowData[5].toDouble(), 'f', 4)));
+        m_model -> setItem(startRow-14,5,new QStandardItem(QString::number(rowData[6].toDouble(), 'f', 4)));
         //m_model -> setItem(startRow-14,6,new QStandardItem(rowData[0].toString()));
         //m_model -> setItem(startRow-13,1,new QStandardItem(QString::number(modelcol++)));
         //m_model->setItem(startRow-14,2,item);
@@ -362,7 +362,7 @@ void TempData::recShowData(RecvFile::STDetailData datildata)
     double stand=0,measure=0,ups=0,downs=0;
     int i=0;
     // 遍历并修改数据
-    int showrow=j;
+    int showrow=0;
     int colCount=m_model->columnCount();
     QStringList headerlist;
     QSet<int> redvec;
@@ -380,7 +380,7 @@ void TempData::recShowData(RecvFile::STDetailData datildata)
             continue;
         }
         measure=item.value().dActual;//实测值
-        QStandardItem *showitem=new QStandardItem(QString::number(measure));
+        QStandardItem *showitem=new QStandardItem(QString::number(measure, 'f', 4));
         if(i>showrow)showrow=i;
         showitem->setTextAlignment(Qt::AlignCenter);
         m_model->setItem(i++,j,showitem);
