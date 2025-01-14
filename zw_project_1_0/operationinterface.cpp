@@ -180,7 +180,7 @@ void OperationInterface::ConncetServerSucces()
 void OperationInterface::ConnectServerFaild()
 {
     QMessageBox::information(this,"提示","连接失败");
-    HideLoading();
+   // HideLoading();
 }
 
 void OperationInterface::RecvSocketMessage(QByteArray szMessage)
@@ -360,11 +360,12 @@ void OperationInterface::on_connectButton_clicked()
     {
         return;
     }
-    ShowLoading();
+   // ShowLoading();
     // 如果是自动感知时 直接弹出提示框成功
     QString strText = ui->caijiTypecomboBox->currentText();
     if(strText == g_strZidonggaanzhi)
     {
+        QThread::sleep(1);
         QMessageBox::information(this,"提示","连接成功");
         return;
     }
