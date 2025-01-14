@@ -360,6 +360,12 @@ void OperationInterface::on_connectButton_clicked()
         return;
     }
 
+    LoadingDialog *pLoad = new LoadingDialog(this);
+    pLoad->show();
+
+    //QThread::sleep(5);
+   // pLoad->close();
+
     // 如果是自动感知时 直接弹出提示框成功
     QString strText = ui->caijiTypecomboBox->currentText();
     if(strText == g_strZidonggaanzhi)
