@@ -18,6 +18,7 @@
 #include <QTableView>
 #include <QToolBar>
 #include <QMenuBar>
+#include "loadingdialog.h"
 
 QMenuBar *menuBar = nullptr;
 
@@ -361,6 +362,7 @@ void OperationInterface::on_connectButton_clicked()
     if(strText == g_strZidonggaanzhi)
     {
         QMessageBox::information(this,"提示","连接成功");
+        return;
     }
 
     QString strIp = ui->IpEdit->text();
@@ -487,7 +489,8 @@ int OperationInterface::GetMobanFileName(QString& strFilePath)
 
 void OperationInterface::on_ComCheckButton_clicked()
 {
-    int iRet = m_pHttpNetObject->CompeleteCheck( );
+   // int iRet = m_pHttpNetObject->CompeleteCheck( );
+    int iRet = m_pHttpNetObject->SubmitForView();
     // 删除保存的文件
     QFile file(m_strPushFilePath);
     if(!file.exists())

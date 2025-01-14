@@ -337,7 +337,11 @@ void HttpNetObject::DealWithFileResponse(QJsonObject &json)
     // 目前只处理第一个
     QJsonObject FilesData = filesArray[0].toObject();
     m_strFileId = FilesData.value("FileId").toString();
-    m_pOperationObject->MessageBoxInfomation("提示", "上传文件成功");
+
+    // 上传文件成功后  完成检查
+    CompeleteCheck();
+
+  //  m_pOperationObject->MessageBoxInfomation("提示", "上传文件成功");
 }
 
 int HttpNetObject::GetJsonValueBykey(QJsonObject jsonObject,QString strKeyName)
@@ -461,7 +465,8 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
             if(2 == m_iStatus)
             {
                 // 提交审核
-                SubmitForView();
+               // SubmitForView();
+                m_pOperationObject->MessageBoxInfomation("提示", "上传文件成功");
             }
             else
             {

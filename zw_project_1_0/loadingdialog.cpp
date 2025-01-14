@@ -1,81 +1,103 @@
 ﻿#include "loadingdialog.h"
+#include <QDialog>
+#include <QFrame>
+#include <QLabel>
+#include <QMovie>
+#include <QGridLayout>
+#include <QTimer>
+#include <QResizeEvent>
+#include <QFile>
+#include <QDebug>
+#include "logger.h"
 
-LoadingDialog::LoadingDialog(QWidget *parent)
-    : QWidget{parent}
+LoadingDialog::LoadingDialog(QWidget *parent) : QDialog(parent)
 {
-    setWindowFlags(Qt::FramelessWindowHint);
-    setAttribute(Qt::WA_TranslucentBackground);
+    m_pParent = parent;
+    //如果需要显示任务栏对话框则删除Qt::Tool
+    setWindowFlags(Qt::FramelessWindowHint | Qt::Tool | Qt::WindowStaysOnTopHint);
+    setAttribute(Qt::WA_TranslucentBackground, true);
 
-    // 创建一个QLabel用于显示GIF动画
-    label = new QLabel(this);
-
-    // 创建一个QMovie对象并加载GIF文件
-    movie = new QMovie(":/Resources/loading.gif", QByteArray(), this);
-
-    if (!movie->isValid()) {
-        qWarning() << "Error loading movie resource.";
-    }
-
-    // 设置QLabel的Movie对象并开始播放动画
-    label->setMovie(movie);
-    movie->start();
-
-    // 设置布局并将QLabel添加到布局中
-    QVBoxLayout *layout = new QVBoxLayout(this);
-    layout->addWidget(label, 0, Qt::AlignCenter);
-
-    // 定义一个定时器用于动画结束后发送结束信号
-    timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &LoadingDialog::stopAnimation);
+    init();
 }
 
 LoadingDialog::~LoadingDialog()
 {
-    if(label)
+    delete m_lable;
+    delete m_movie;
+    delete m_centerFrame;
+    deleteLater();
+}
+
+void LoadingDialog::init()
+{
+    this->setFixedSize(600, 600);
+    this->setAttribute(Qt::WA_TranslucentBackground);// 设置背景透明
+    this->setWindowFlags(Qt::FramelessWindowHint); // 设置无边框窗口
+
+    m_centerFrame = new QFrame(this);
+    m_centerFrame->setGeometry(10, 10 ,this->width()-10, this->height()-10);
+   // m_centerFrame->setAttribute(Qt::WA_TranslucentBackground);// 设置背景透明
+
+
+    //加载Loading动画
+    m_lable = new QLabel(this);
+    //m_lable->setAttribute(Qt::WA_TranslucentBackground);
+    m_movie = new QMovie(":/Resources/loading.gif");
+
+    if (m_movie->isValid())
     {
-        delete label;
-    }
-    if(movie)
+        m_movie->setScaledSize(this->size());
+        m_lable->setScaledContents(true);
+        m_lable->setMovie(m_movie);
+        m_movie->start();
+    } else
     {
-        delete movie;
+        LOG_INFO("动画加载失败");
+        return;
     }
-    if(timer)
+
+
+    QGridLayout *gridLayout = new QGridLayout();
+    gridLayout->setSpacing(0);
+    gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
+    gridLayout->setContentsMargins(0, 0, 0, 0);
+    gridLayout->addWidget(m_lable);
+    m_centerFrame->setLayout(gridLayout);
+
+    m_pTimer = new QTimer(this);
+    connect(m_pTimer, &QTimer::timeout, this, &LoadingDialog::onTimerTimeout, Qt::UniqueConnection);
+    m_pTimer->start(10);
+    LOG_INFO("LoadingDialog 初始化完成");
+
+
+
+}
+
+void LoadingDialog::move_to_center(QWidget *pParent)
+{
+    m_pParent = pParent;
+    if(pParent != nullptr && pParent != NULL)
     {
-        delete timer;
+        int nParentWidth = pParent->width();
+        int nParentHeigth = pParent->height();
+
+        int nWidth = this->width();
+        int nHeight = this->height();
+
+        int nParentX = pParent->x();
+        int nParentY = pParent->y();
+
+        int x = (nParentX + (nParentWidth - nWidth) / 2);
+        int y = (nParentY + (nParentHeigth - nHeight) / 2);
+
+        this->move(x, y);
     }
 }
 
-void LoadingDialog::startAnimation()
+void LoadingDialog::onTimerTimeout()
 {
-    // 重新开始动画，并显示窗口
-    movie->start();
-    show();
+    move_to_center(m_pParent);
 }
 
-void LoadingDialog::stopAnimation()
-{
-    movie->stop();
-    hide();
-    timer->stop();
 
-}
 
-void LoadingDialog::setDuration(int milliseconds)
-{
-    // 设置动画持续时间，如果为0，则表示无限期显示动画
-    if (milliseconds > 0) {
-        timer->setInterval(milliseconds);
-        timer->start();
-    } else {
-        timer->stop();
-    }
-}
-
-void LoadingDialog::resizeEvent(QResizeEvent *event)
-{
-    // 重写调整窗口大小事件，确保GIF始终显示在窗口中央
-    QWidget::resizeEvent(event);
-    if (label) {
-        label->move((width() - label->width()) / 2, (height() - label->height()) / 2);
-    }
-}
