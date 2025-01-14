@@ -32,8 +32,8 @@ OperationInterface::OperationInterface(QWidget *parent)
     ui->setupUi(this);
 
     qDebug()<<"主线程id:" << QThread::currentThreadId();
-    //LoadingDialog* ldd=new LoadingDialog(this);
-    //ldd->move(this->pos().x() + 50, this->pos().y() + 500); // 在父窗口的右下角偏移 50 像素
+   // LoadingDialog* ldd=new LoadingDialog(this);
+   // ldd->move(this->pos().x() + 50, this->pos().y() + 500); // 在父窗口的右下角偏移 50 像素
     //ldd->show();
 
     // 在你的 main 函数或其他初始化代码中注册该类型
@@ -180,6 +180,7 @@ void OperationInterface::ConncetServerSucces()
 void OperationInterface::ConnectServerFaild()
 {
     QMessageBox::information(this,"提示","连接失败");
+    HideLoading();
 }
 
 void OperationInterface::RecvSocketMessage(QByteArray szMessage)
@@ -359,13 +360,7 @@ void OperationInterface::on_connectButton_clicked()
     {
         return;
     }
-
-    LoadingDialog *pLoad = new LoadingDialog(this);
-    pLoad->show();
-
-    //QThread::sleep(5);
-   // pLoad->close();
-
+    ShowLoading();
     // 如果是自动感知时 直接弹出提示框成功
     QString strText = ui->caijiTypecomboBox->currentText();
     if(strText == g_strZidonggaanzhi)
@@ -1238,6 +1233,30 @@ void OperationInterface::CheckDataCount()
     if(m_vRecvData.size() > 100)
     {
         m_vRecvData.remove(100 , m_vRecvData.size() - 100);
+    }
+}
+
+void OperationInterface::ShowLoading()
+{
+    if(nullptr == pLoad)
+    {
+        //pLoad = new LoadingDialog(NULL);
+        pLoad = new LoadingDialog(this);
+
+       // pLoad->move_to_center(this);
+    }
+    pLoad->move(this->pos().x() , this->pos().y() ); // 在父窗口的右下角偏移 50 像素
+    pLoad->show();
+    pLoad->move_to_center(this);
+}
+
+void OperationInterface::HideLoading()
+{
+    if(pLoad)
+    {
+        pLoad->hide();
+        pLoad->close();
+        LOG_INFO("禁用窗口");
     }
 }
 

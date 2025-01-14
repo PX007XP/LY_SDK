@@ -13,6 +13,8 @@
 #include <QFileInfo>
 #include <QSet>
 
+class LoadingDialog;
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class OperationInterface;
@@ -190,6 +192,13 @@ public:
 
     // 对读取完数据后进行数据限制 最多100 列数据；
     void CheckDataCount();
+
+    LoadingDialog *pLoad = nullptr;
+
+
+    void ShowLoading();
+
+    void HideLoading();
 
 #if 0
 private:

@@ -87,7 +87,7 @@ void LoadingDialog::init()
 void LoadingDialog::move_to_center(QWidget *pParent)
 {
     m_pParent = pParent;
-    if(pParent != nullptr && pParent != NULL)
+    if(pParent != nullptr)
     {
         int nParentWidth = pParent->width();
         int nParentHeigth = pParent->height();
@@ -102,6 +102,7 @@ void LoadingDialog::move_to_center(QWidget *pParent)
         int y = (nParentY + (nParentHeigth - nHeight) / 2);
 
         this->move(x, y);
+        this->show();
     }
 }
 
