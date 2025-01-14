@@ -18,11 +18,13 @@ public:
 
     void move_to_center(QWidget* pParent);
 
+
 private:
     void init();
 
 private slots:
     void onTimerTimeout();
+    void onFrameChanged(int frame);
 
 private:
     QLabel *m_lable;

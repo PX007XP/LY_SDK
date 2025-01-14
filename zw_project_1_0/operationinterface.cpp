@@ -32,6 +32,9 @@ OperationInterface::OperationInterface(QWidget *parent)
     ui->setupUi(this);
 
     qDebug()<<"主线程id:" << QThread::currentThreadId();
+    //LoadingDialog* ldd=new LoadingDialog(this);
+    //ldd->move(this->pos().x() + 50, this->pos().y() + 500); // 在父窗口的右下角偏移 50 像素
+    //ldd->show();
 
     // 在你的 main 函数或其他初始化代码中注册该类型
     qRegisterMetaType<RecvFile::STDetailData>("STDetailData");

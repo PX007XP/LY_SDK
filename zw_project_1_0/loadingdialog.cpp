@@ -31,18 +31,29 @@ LoadingDialog::~LoadingDialog()
 void LoadingDialog::init()
 {
     this->setFixedSize(600, 600);
-    this->setAttribute(Qt::WA_TranslucentBackground);// 设置背景透明
+    //this->setAttribute(Qt::WA_TranslucentBackground);// 设置背景透明
+    this->setStyleSheet("background: transparent;");
+    this->setFixedSize(100,100);
     this->setWindowFlags(Qt::FramelessWindowHint); // 设置无边框窗口
 
     m_centerFrame = new QFrame(this);
     m_centerFrame->setGeometry(10, 10 ,this->width()-10, this->height()-10);
    // m_centerFrame->setAttribute(Qt::WA_TranslucentBackground);// 设置背景透明
 
+    QImage gifImage(":/Resources/loading.gif");
+
+    if (gifImage.isNull()) {
+        qWarning() << "Failed to load the GIF image.";
+        return;
+    }
 
     //加载Loading动画
     m_lable = new QLabel(this);
+    m_lable->setStyleSheet("background: transparent;");
     //m_lable->setAttribute(Qt::WA_TranslucentBackground);
-    m_movie = new QMovie(":/Resources/loading.gif");
+    m_movie = new QMovie(":/Resources/loadingdialog2.gif");
+    // 定时器来更新每一帧
+    connect(m_movie, &QMovie::frameChanged, this, &LoadingDialog::onFrameChanged);
 
     if (m_movie->isValid())
     {
@@ -97,6 +108,19 @@ void LoadingDialog::move_to_center(QWidget *pParent)
 void LoadingDialog::onTimerTimeout()
 {
     move_to_center(m_pParent);
+}
+
+void LoadingDialog::onFrameChanged(int frame)
+{
+    // 获取当前帧的 QPixmap
+    QPixmap pixmap = m_movie->currentPixmap();
+
+    // 裁剪区域 (例如裁剪图像的中间部分)
+    QRect cropRect(500, 900, 600, 1050);
+    QPixmap croppedPixmap = pixmap.copy(cropRect);
+
+    // 将裁剪后的 QPixmap 设置到 QLabel
+    m_lable->setPixmap(croppedPixmap);
 }
 
 
