@@ -12,6 +12,7 @@
 #include <QFileSystemWatcher>
 #include <QFileInfo>
 #include <QSet>
+#include <QMessageBox>
 
 class LoadingDialog;
 
@@ -187,6 +188,8 @@ private slots:
 
     void on_lineEdit_3_editingFinished();
 
+    void on_NumberEdit_editingFinished();
+
 public:
     bool CheckWorkCondition();
 
@@ -199,6 +202,8 @@ public:
     void ShowLoading();
 
     void HideLoading();
+
+    QMessageBox *msgBox = nullptr;
 
 #if 0
 private:

@@ -156,6 +156,12 @@ void ConfigObject::InitJsonObject(OperationInterface* pObjcet)
         pObjcet->GetUiPointObject()->lineEdit_3->setText(value1);
         LOG_STATS("配置文件初始化 zidongganzhilujing:%s",value1.toStdString().c_str());
     }
+    if (obj.contains("zidanhao"))
+    {
+        QString value1 = obj.value("zidanhao").toString();
+        pObjcet->GetUiPointObject()->NumberEdit->setText(value1);
+        LOG_STATS("配置文件初始化 zidanhao:%s",value1.toStdString().c_str());
+    }
 
 
     file.close();
@@ -191,12 +197,13 @@ int ConfigObject::SaveConfigData(QString strKey, QString strValue)
     }
     else
     {
-        obj["user"] = "";
-        obj["password"] = "";
-        obj["mubanpath"] = "";
-        obj["celiangrenyuan"] = "";
-        obj["shenherenyuan"] = "";
-        obj["zidongganzhilujing"]="";
+       // obj["user"] = "";
+       // obj["password"] = "";
+       // obj["mubanpath"] = "";
+       // obj["celiangrenyuan"] = "";
+       // obj["shenherenyuan"] = "";
+       // obj["zidongganzhilujing"]="";
+        obj[strKey]=strValue;
         LOG_INFO("新增 字段 :%s , 值: %s",strKey.toStdString().c_str(),strValue.toStdString().c_str());
     }
     QFile fileSave(strPath);

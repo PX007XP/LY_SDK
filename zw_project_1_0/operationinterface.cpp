@@ -18,6 +18,7 @@
 #include <QTableView>
 #include <QToolBar>
 #include <QMenuBar>
+#include <QPushButton>
 #include "loadingdialog.h"
 
 QMenuBar *menuBar = nullptr;
@@ -179,8 +180,9 @@ void OperationInterface::ConncetServerSucces()
 
 void OperationInterface::ConnectServerFaild()
 {
+    //HideLoading();
     QMessageBox::information(this,"提示","连接失败");
-   // HideLoading();
+
 }
 
 void OperationInterface::RecvSocketMessage(QByteArray szMessage)
@@ -361,6 +363,7 @@ void OperationInterface::on_connectButton_clicked()
         return;
     }
    // ShowLoading();
+
     // 如果是自动感知时 直接弹出提示框成功
     QString strText = ui->caijiTypecomboBox->currentText();
     if(strText == g_strZidonggaanzhi)
@@ -411,10 +414,14 @@ void OperationInterface::on_WriteFilepushButton_clicked()
     QString currentPath = QDir::currentPath();
     QString strFilePath = currentPath + "/template/880-GNT022-03-003.xlsm";
     */
+    ShowLoading();
+    QApplication::processEvents();  // 手动刷新界面
     QString strFilePath;
     int iRet = GetMobanFileName(strFilePath);
     if(0 == iRet)
     {
+       // ShowLoading();
+
         int iRet = m_pExcellWork->WriteData(&m_vRecvData , strFilePath);
         qDebug() << "WriteData return " << iRet;
         LOG_DEBUG("WriteData return %d",iRet);
@@ -469,10 +476,16 @@ void OperationInterface::on_pushFileButton_clicked()
 {
     if(m_strPushFilePath.isEmpty())
     {
+        HideLoading();
         QMessageBox::information(this,"提示","没有生成文件");
         return ;
     }
     int iRet = m_pHttpNetObject->PostFileToNet(m_strPushFilePath);
+    if(0 != iRet)
+    {
+        HideLoading();
+
+    }
     LOG_INFO("PostFileToNet return :%d ,filename:%s",iRet , m_strPushFilePath.toStdString().c_str());
 }
 
@@ -1080,6 +1093,15 @@ int OperationInterface::UiInit()
     ui->PortEdit->setVisible(false);
     ui->PortEdit->setEnabled(false);
 
+    // 设置字体颜色（使用 QPalette）
+    QPalette palette = ui->labelLoading->palette();
+    palette.setColor(QPalette::WindowText, Qt::red);  // 设置字体颜色为蓝色
+    ui->labelLoading->setPalette(palette);
+
+    QFont font = ui->labelLoading->font();
+    font.setPointSize(14);
+    ui->labelLoading->setFont(font);
+    ui->labelLoading->setVisible(false);
     return 0;
 }
 
@@ -1181,7 +1203,7 @@ int OperationInterface::GetSheBeiType()
     {
         iFileType = 2;
     }
-    else if(strText == "MicroVu")
+    else if(strText == "MicroVu" || strText == "海克斯康CMM")
     {
         iFileType = 3;
     }
@@ -1239,6 +1261,7 @@ void OperationInterface::CheckDataCount()
 
 void OperationInterface::ShowLoading()
 {
+#if 0
     if(nullptr == pLoad)
     {
         //pLoad = new LoadingDialog(NULL);
@@ -1249,16 +1272,55 @@ void OperationInterface::ShowLoading()
     pLoad->move(this->pos().x() , this->pos().y() ); // 在父窗口的右下角偏移 50 像素
     pLoad->show();
     pLoad->move_to_center(this);
+#endif
+#if 0
+    if(msgBox)
+    {
+        msgBox->close();
+        delete msgBox;
+    }
+    msgBox = new QMessageBox(QMessageBox::Information, "提示", "文件上传中", QMessageBox::Ok, this);
+    // 禁用关闭按钮
+    msgBox->setWindowFlags(Qt::Window | Qt::CustomizeWindowHint);
+
+    // 禁用 OK 按钮
+    QPushButton *okButton = qobject_cast<QPushButton*> (msgBox->button(QMessageBox::Ok));
+    if (okButton)
+    {
+        okButton->setEnabled(false);
+    }
+    //msgBox->show();
+     msgBox->open();
+
+    // 使用定时器在2秒后关闭消息框
+    QTimer::singleShot(20000, msgBox, &QMessageBox::close);
+     // 确保消息框在关闭时被删除
+    // msgBox->setAttribute(Qt::WA_DeleteOnClose);
+
+    msgBox->repaint();
+#endif
+    ui->labelLoading->setVisible(true);
 }
 
 void OperationInterface::HideLoading()
 {
+#if 0
     if(pLoad)
     {
         pLoad->hide();
         pLoad->close();
         LOG_INFO("禁用窗口");
     }
+
+
+    if(msgBox)
+    {
+        msgBox->close();
+        delete msgBox;
+        msgBox = nullptr;
+    }
+#endif
+    ui->labelLoading->setVisible(false);
 }
 
 # if 0
@@ -1362,4 +1424,19 @@ void OperationInterface::on_lineEdit_3_editingFinished()
     LOG_INFO("OperationInterface save zidongganzhilujing :%d ,%s ",iRet , strText.toStdString().c_str());
 }
 
+
+
+void OperationInterface::on_NumberEdit_editingFinished()
+{
+    // 保存
+    ConfigObject config;
+    QString strText = ui->NumberEdit->text();
+    int iRet = config.SaveConfigData("zidanhao" , strText);
+    if(iRet < 0)
+    {
+        LOG_ERROR("OperationInterface save zidanhao faild :%d ,%s ",iRet , strText.toStdString().c_str());
+        return ;
+    }
+    LOG_INFO("OperationInterface save zidanhao :%d ,%s ",iRet , strText.toStdString().c_str());
+}
 

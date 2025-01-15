@@ -96,7 +96,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
         m_pOperationInterFace->MessageBoxInfomation("错误",strError);
         return -2;
     }
-    qDebug() << "文件路径：" << strFilePath;
+   // qDebug() << "文件路径：" << strFilePath;
    // if(IsFileOpen(strFilePath))
    // {
        // m_pOperationInterFace->ShowMessageBoxInfo("错误", "目标文件已打开");
@@ -143,7 +143,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
     //捕获异常
     m_pOperationInterFace->SetSlotExcelException(pWorkbook , strFilePath);
     //2 .获取所有工作簿
-     qDebug() << "WriteData 2 : filepath" << strFilePath ;
+    // qDebug() << "WriteData 2 : filepath" << strFilePath ;
     QAxObject *pSheets = pWorkbook->querySubObject("Sheets");
     if(nullptr == pSheets)
     {
@@ -151,7 +151,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
         return -8;
     }
     //3 . 打开工作簿
-     qDebug() << "WriteData 3 : filepath" << strFilePath ;
+    // qDebug() << "WriteData 3 : filepath" << strFilePath ;
     QAxObject *pSheet =pSheets->querySubObject("Item(int)", 1);
     if(nullptr == pSheet)
     {
@@ -173,7 +173,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
             int iBeginRow =GetDataRow(it_value.strName);
             if(-1 == iBeginRow)
             {
-                qDebug() << "writedata error key: " << it_value.strName << ", column: " << iBeginRow;
+               // qDebug() << "writedata error key: " << it_value.strName << ", column: " << iBeginRow;
                 LOG_ERROR("error writedata error key:%s ,column:%d",it_value.strName.toStdString().c_str() , iBeginRow);
                 continue;
             }

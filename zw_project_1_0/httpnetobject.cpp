@@ -47,8 +47,9 @@ int HttpNetObject::LoginPost(QString strUserName , QString strPassword)
     // 发送POST请求
     QNetworkReply *pReply = m_pManager->post(request, jsonData);
     m_strUserName = strUserName;
+    m_strBizid.clear();
 
-    LOG_DEBUG("http Login  %s", jsonData.data());
+    LOG_DEBUG("user[:%s] Login  %s",m_strUserName.toStdString().c_str(), jsonData.data());
 
      /*
     // 创建事件循环，以便等待请求完成
@@ -158,7 +159,6 @@ int HttpNetObject::PostFileToNet(QString strFilePath)
     QNetworkReply* reply = m_pManager->post(request, multiPart);
     multiPart->setParent(reply);  // 确保 reply 释放时释放 multipart
 
-
     return 0;
 }
 
@@ -195,7 +195,7 @@ int HttpNetObject::CompeleteCheck()
     QByteArray jsonData = jsonDoc.toJson();
 
     // 发送POST请求
-    qDebug() <<"get data: " <<jsonData ;
+    LOG_INFO("comelete check :%s",jsonData.data());
     QNetworkReply *pReply = m_pManager->post(request, jsonData);
 
     m_iStatus = 2; // 完成检测 待提交审核
@@ -298,32 +298,39 @@ void HttpNetObject::DealWithPageListResponse(QJsonObject &json)
     {
         return ;
     }
+    m_strBizid.clear();
     int iArrary = jsonData.value("Total").toInt();
     for(int i = 0 ; i < iArrary ; ++i)
     {
         QJsonObject pageListData = pageListArray[i].toObject();
-        // 目前取最后一个
-        m_strBizid = pageListData.value("Id").toString();
 
-        GetJsonValueBykey(pageListData , g_strReqNo);
-        GetJsonValueBykey(pageListData , g_strReqUserName);
-        GetJsonValueBykey(pageListData , g_strReqUnicom);
-        GetJsonValueBykey(pageListData , g_strDeviceName);
-        GetJsonValueBykey(pageListData , g_strDeviceNo);
-        GetJsonValueBykey(pageListData , g_strReqTime);
-        GetJsonValueBykey(pageListData , g_strTestCon);
-        GetJsonValueBykey(pageListData , g_strReportType);
-        GetJsonValueBykey(pageListData , g_strProjectClassId);
-        GetJsonValueBykey(pageListData , g_strProjectStageId);
-        GetJsonValueBykey(pageListData , g_strSatageNo);
-        GetJsonValueBykey(pageListData , g_strOrgCode);
-        GetJsonValueBykey(pageListData , g_strRemark);
-        GetJsonValueBykey(pageListData, g_strRevArtTime);
+        QString strTestUserNo = pageListData.value("TestUserNo").toString();
 
+        if(strTestUserNo == m_strUserName)
+        {
+            m_strBizid = pageListData.value("Id").toString();
+
+            GetJsonValueBykey(pageListData , g_strReqNo);
+            GetJsonValueBykey(pageListData , g_strReqUserName);
+            GetJsonValueBykey(pageListData , g_strReqUnicom);
+            GetJsonValueBykey(pageListData , g_strDeviceName);
+            GetJsonValueBykey(pageListData , g_strDeviceNo);
+            GetJsonValueBykey(pageListData , g_strReqTime);
+            GetJsonValueBykey(pageListData , g_strTestCon);
+            GetJsonValueBykey(pageListData , g_strReportType);
+            GetJsonValueBykey(pageListData , g_strProjectClassId);
+            GetJsonValueBykey(pageListData , g_strProjectStageId);
+            GetJsonValueBykey(pageListData , g_strSatageNo);
+            GetJsonValueBykey(pageListData , g_strOrgCode);
+            GetJsonValueBykey(pageListData , g_strRemark);
+            GetJsonValueBykey(pageListData, g_strRevArtTime);
+            LOG_INFO(" get mms detail user[%s] ,bizid[%s]  jsonm_strBizid: %s" , m_strUserName.toStdString().c_str() ,  m_strBizid.toStdString().c_str());
+        }
     }
-
-
-    qDebug()<< "jsonm_strBizid:  " << m_strBizid ;
+    if(m_strBizid.isEmpty())
+    {
+        m_pOperationObject->MessageBoxInfomation("提示","子单号信息错误");
+    }
 }
 
 void HttpNetObject::DealWithFileResponse(QJsonObject &json)
@@ -366,14 +373,13 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
         {
             strResponse = pReplay->readAll();
         }
-        qDebug() << "Response:" << strResponse;
         LOG_INFO("httpnet response is :%s ",strResponse.toStdString().c_str());
     }
     else
     {
         // 处理错误
         strResponse = pReplay->readAll();
-        qDebug() << "Error:" << pReplay->errorString();
+        m_pOperationObject->HideLoading();
         LOG_ERROR("http response error %d , %s", pReplay->error(),strResponse.toUtf8().data());
         return ;
     }
@@ -466,6 +472,7 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
             {
                 // 提交审核
                // SubmitForView();
+                m_pOperationObject->HideLoading();
                 m_pOperationObject->MessageBoxInfomation("提示", "上传文件成功");
             }
             else
@@ -476,12 +483,14 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
         else
         {
             m_pOperationObject->MessageBoxInfomation("提示", "失败1");
+            m_pOperationObject->HideLoading();
             LOG_ERROR("http response error1 %s" ,strResponse.toStdString().data() );
         }
     }
     else
     {
         m_pOperationObject->MessageBoxInfomation("提示", "失败2");
+        m_pOperationObject->HideLoading();
         LOG_ERROR("http response error2 %s" ,strResponse.toStdString().data() );
     }
     pReplay->deleteLater();

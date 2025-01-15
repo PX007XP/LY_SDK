@@ -18,8 +18,8 @@
     <rect>
      <x>12</x>
      <y>-17</y>
-     <width>1271</width>
-     <height>584</height>
+     <width>1011</width>
+     <height>607</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -294,7 +294,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>mmsdCY12412160C6</string>
+                <string/>
                </property>
               </widget>
              </item>
@@ -351,95 +351,6 @@
            <string/>
           </property>
           <layout class="QGridLayout" name="gridLayout">
-           <item row="2" column="8">
-            <widget class="QLabel" name="label_21">
-             <property name="font">
-              <font>
-               <pointsize>17</pointsize>
-              </font>
-             </property>
-             <property name="acceptDrops">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>OK</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="2">
-            <widget class="QLineEdit" name="lineEdit_3"/>
-           </item>
-           <item row="0" column="8">
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
-             <item>
-              <widget class="QPushButton" name="connectButton">
-               <property name="text">
-                <string>建立链接</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="GetDataButton">
-               <property name="text">
-                <string>获取数据</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_6">
-             <property name="text">
-              <string>自动感知文件路径：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="9">
-            <widget class="QRadioButton" name="radioButton">
-             <property name="text">
-              <string>修改数据</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <item>
-              <widget class="QLabel" name="label_11">
-               <property name="text">
-                <string>iP：</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="IpEdit">
-               <property name="text">
-                <string>192.168.31.145</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item row="2" column="2">
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <item>
-              <widget class="QLabel" name="label_13">
-               <property name="text">
-                <string>端口：</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="PortEdit">
-               <property name="text">
-                <string>8889</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
            <item row="0" column="0">
             <widget class="QLabel" name="label_5">
              <property name="text">
@@ -447,7 +358,30 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="2">
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="lineEdit_3"/>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>系统路径：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="6">
+            <widget class="QPushButton" name="WriteFilepushButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>上传数据</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
             <widget class="QComboBox" name="caijiTypecomboBox">
              <property name="currentIndex">
               <number>0</number>
@@ -464,14 +398,14 @@
              </item>
             </widget>
            </item>
-           <item row="0" column="6">
-            <widget class="QLabel" name="label_7">
+           <item row="1" column="1">
+            <widget class="QPushButton" name="ClearDataButton">
              <property name="text">
-              <string>设备品牌：</string>
+              <string>清空数据</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="7">
+           <item row="0" column="6">
             <widget class="QComboBox" name="sehbeicomboBox">
              <property name="currentIndex">
               <number>0</number>
@@ -493,15 +427,40 @@
              </item>
              <item>
               <property name="text">
-               <string>海克斯康1</string>
+               <string>海克斯康OMM</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>海克斯康2</string>
+               <string>海克斯康CMM</string>
               </property>
              </item>
             </widget>
+           </item>
+           <item row="0" column="5">
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>设备品牌：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="7">
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <widget class="QPushButton" name="connectButton">
+               <property name="text">
+                <string>建立链接</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="GetDataButton">
+               <property name="text">
+                <string>获取数据</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item row="1" column="0">
             <widget class="QPushButton" name="DownLoadFileButton">
@@ -510,14 +469,7 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="2">
-            <widget class="QPushButton" name="ClearDataButton">
-             <property name="text">
-              <string>清空数据</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="6">
+           <item row="1" column="5">
             <widget class="QPushButton" name="ShowDataButton">
              <property name="text">
               <string>信息显示</string>
@@ -525,22 +477,106 @@
             </widget>
            </item>
            <item row="1" column="7">
-            <widget class="QPushButton" name="WriteFilepushButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+            <widget class="QPushButton" name="ComCheckButton">
+             <property name="text">
+              <string>提交审核</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="6">
+            <widget class="QLineEdit" name="IpEdit">
+             <property name="text">
+              <string>192.168.31.145</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="6">
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QLabel" name="label_13">
+               <property name="text">
+                <string>端口：</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="PortEdit">
+               <property name="text">
+                <string>8889</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="2" column="7">
+            <widget class="QLabel" name="label_21">
+             <property name="font">
+              <font>
+               <pointsize>17</pointsize>
+              </font>
+             </property>
+             <property name="acceptDrops">
+              <bool>false</bool>
              </property>
              <property name="text">
-              <string>上传数据</string>
+              <string>OK</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
              </property>
             </widget>
            </item>
            <item row="1" column="8">
-            <widget class="QPushButton" name="ComCheckButton">
+            <widget class="QRadioButton" name="radioButton">
              <property name="text">
-              <string>完成检测</string>
+              <string>修改数据</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" colspan="2">
+            <widget class="QLabel" name="labelLoading">
+             <property name="palette">
+              <palette>
+               <active>
+                <colorrole role="Text">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>0</red>
+                   <green>0</green>
+                   <blue>0</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+               </active>
+               <inactive>
+                <colorrole role="Text">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>0</red>
+                   <green>0</green>
+                   <blue>0</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+               </inactive>
+               <disabled/>
+              </palette>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="text">
+              <string>检查到数据上传中......</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="5">
+            <widget class="QLabel" name="label_11">
+             <property name="text">
+              <string>iP：</string>
              </property>
             </widget>
            </item>
