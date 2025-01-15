@@ -1,8 +1,7 @@
 
 <root>
     <!-- log_level 日志级别 1 error  2 warn 3 info 4 debug -->
-    <common log_level="4" ip_address_key="以太网"/>
-    <datasave user="10030534" password="Qwer.12345" mubanpath="D:\" celiangrenyuan="123" shenherenyuan="321"/>
+    <common log_level="4" ip_address_key="以太网" del_file="0"/>
 </root>
 <!--?xml version="1.0" encoding="UTF-8"? -->
        

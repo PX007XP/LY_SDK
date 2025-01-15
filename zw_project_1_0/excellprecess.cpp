@@ -42,6 +42,17 @@ int ExcellPrecess::Init(OperationInterface* pOperationInterFace)
     CheckDirectoryExists("./template");
     CheckDirectoryExists("./temporary");
 
+    QDir dir("./temporary");
+
+    // 获取目录下所有文件和子目录的列表
+    QFileInfoList fileList = dir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot);
+
+    foreach (const QFileInfo &fileInfo, fileList)
+    {
+        // 删除文件
+        dir.remove(fileInfo.fileName());
+    }
+
     return 0;
 }
 

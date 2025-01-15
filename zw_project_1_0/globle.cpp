@@ -29,6 +29,8 @@ int g_iLogLevel = 5;
 QString g_strIpAddressKey = "以太网";
 int g_iFileSaveFlag = 0;
 
+int g_iDelTxtFile = 0; // 文件感知文件是否读取后直接删除 1 不删 0 删除
+
 int CheckDirectoryExists(QString strPath)
 {
     QDir dir(strPath);

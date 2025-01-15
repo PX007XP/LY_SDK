@@ -54,6 +54,8 @@ void ConfigObject::ReadConfig(OperationInterface* pObjcet)
         QString filesave = commonElement.attribute("file_save", "0");
         g_iFileSaveFlag = filesave.toInt();
         g_strIpAddressKey = commonElement.attribute("ip_address_key" , "以太网");
+        QString strFileDel = commonElement.attribute("del_file", "0");
+        g_iDelTxtFile = strFileDel.toInt();
         LOG_STATS("log level is = %d ,ip_address_key[%s]",g_iLogLevel,g_strIpAddressKey.toStdString().c_str());
     }
 #if 0

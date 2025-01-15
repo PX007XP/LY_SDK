@@ -26,6 +26,7 @@ extern int g_iFileSaveFlag ; // 上传文件后是否保存文件  0 不保存 1
 
 extern QString g_strSaveFilePath;  // 下载文件自动保存路径
 
+extern int g_iDelTxtFile;
 int CheckDirectoryExists(QString strPath);
 
 QString GetFileSuffix(QString strFile);

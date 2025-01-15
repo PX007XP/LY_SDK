@@ -927,6 +927,13 @@ void OperationInterface::onDirectoryChanged(const QString &strPath)
     foreach (QFileInfo FileInfo , vNewFiles)
     {
         int iRet = m_pExcellWork->ReadFileData(FileInfo.absoluteFilePath() , VRecvData , iFileType);
+        if(0 == iRet && 3 == iFileType && 0 == g_iDelTxtFile )
+        {
+            if( ui->sehbeicomboBox->currentText() == "MicroVu")
+            {
+                QFile::remove(FileInfo.absoluteFilePath());
+            }
+        }
        // m_sSetOldFiles.insert(FileInfo.fileName());
         LOG_INFO("自动感知到文件完成读取:%s,iFielType:%d ,iRet=%d , data_size=%d",FileInfo.absoluteFilePath().toStdString().c_str(), iFileType,iRet,VRecvData.size());
     }
