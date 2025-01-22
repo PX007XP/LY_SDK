@@ -235,11 +235,28 @@ int ExcellPrecess::FillBasicInfomation(QAxObject *pSheet,int iCloumNum)
     // QVariant cellValue = pCell->dynamicCall("Value()");
     pCell->setProperty("Value", strBeginTime);
 
+
+    pCell = pSheet->querySubObject("Cells(int, int)", 8, 113);
+    // QVariant cellValue = pCell->dynamicCall("Value()");
+    pCell->setProperty("Value", strBeginTime);
+
+    pCell = pSheet->querySubObject("Cells(int, int)", 8, 115);
+    // QVariant cellValue = pCell->dynamicCall("Value()");
+    pCell->setProperty("Value", strBeginTime);
+
     // 结束时间
     QString strEndTime = m_pOperationInterFace->GetUiPointObject()->dateTimeEditEnd->text();
     pCell = pSheet->querySubObject("Cells(int, int)", 7, 6);
     // QVariant cellValue = pCell->dynamicCall("Value()");
     pCell->setProperty("Value", strEndTime);
+
+    pCell = pSheet->querySubObject("Cells(int, int)", 9, 113);
+    // QVariant cellValue = pCell->dynamicCall("Value()");
+    pCell->setProperty("Value", strBeginTime);
+
+    pCell = pSheet->querySubObject("Cells(int, int)", 9, 115);
+    // QVariant cellValue = pCell->dynamicCall("Value()");
+    pCell->setProperty("Value", strBeginTime);
 
     // 检查类别
     QString strCheckType = m_pOperationInterFace->GetUiPointObject()->jianceleibie_comboBox->currentText();
@@ -260,12 +277,24 @@ int ExcellPrecess::FillBasicInfomation(QAxObject *pSheet,int iCloumNum)
 
     QVariant cellValue = pCell->dynamicCall("Value()");
    // qDebug() << "basic infomation fill cell :  " << cellValue.toString();
-    LOG_INFO("basic infomation writedata success row:%d ,column:%d,key:%s,value:%s ",11 , 6 ,cellValue.toString().toStdString().c_str());
+   // LOG_INFO("basic infomation writedata success row:%d ,column:%d,key:%s,value:%s ",11 , 6 ,cellValue.toString().toStdString().c_str());
 
     // 送检单位：
     QString strCompany = "成都领益";
-    pCell = pSheet->querySubObject("Cells(int, int)", 2, 5);
-    pCell->setProperty("Value", strSampleNum);
+    pCell = pSheet->querySubObject("Cells(int, int)", 5, 2);
+    pCell->setProperty("Value", strCompany);
+
+    QString strCeliang = m_pOperationInterFace->GetUiPointObject()->celiangrenyuan_lineEdit->text();
+    pCell = pSheet->querySubObject("Cells(int, int)", 10, 113);
+    // QVariant cellValue = pCell->dynamicCall("Value()");
+    pCell->setProperty("Value", strCeliang);
+
+
+    QString strShehe = m_pOperationInterFace->GetUiPointObject()->shenherenyuan_lineEdit->text();
+    pCell = pSheet->querySubObject("Cells(int, int)", 11, 113);
+    QVariant shenherenyuan = pCell->dynamicCall("Value()");
+    //LOG_INFO("shenherenyuan is %s  ,%s",shenherenyuan.toString().toStdString().c_str() ,strShehe.toStdString().c_str() );
+    pCell->setProperty("Value", strShehe);
 
 
     return 0;

@@ -324,7 +324,7 @@ void HttpNetObject::DealWithPageListResponse(QJsonObject &json)
             GetJsonValueBykey(pageListData , g_strOrgCode);
             GetJsonValueBykey(pageListData , g_strRemark);
             GetJsonValueBykey(pageListData, g_strRevArtTime);
-            LOG_INFO(" get mms detail user[%s] ,bizid[%s]  jsonm_strBizid: %s" , m_strUserName.toStdString().c_str() ,  m_strBizid.toStdString().c_str());
+            LOG_INFO(" get mms detail user[%s] ,bizid[%s]" , m_strUserName.toStdString().c_str() ,  m_strBizid.toStdString().c_str());
         }
     }
     if(m_strBizid.isEmpty())
@@ -353,6 +353,10 @@ void HttpNetObject::DealWithFileResponse(QJsonObject &json)
 
 int HttpNetObject::GetJsonValueBykey(QJsonObject jsonObject,QString strKeyName)
 {
+    if(!jsonObject.contains(strKeyName))
+    {
+        return -2;
+    }
     QJsonValue jsonValue = jsonObject.value(strKeyName);
     if(jsonValue.isUndefined())
     {
