@@ -138,6 +138,7 @@ OperationInterface::OperationInterface(QWidget *parent)
     connect(ui->radioButton,&QRadioButton::clicked,m_tempData,&TempData::modslot);
     connect(ui->ClearDataButton,&QPushButton::clicked,m_tempData,&TempData::dataClear);
     connect(m_tempData,&TempData::setLaybelText,this,&OperationInterface::LaybelText);
+    connect(ui->ShowtableView ,&QTableView::clicked,this, &OperationInterface::ClikedInfoCell);
     setLayout(ui->verticalLayout_2);
     UiInit();
     GetLocalIp();
@@ -1216,6 +1217,10 @@ int OperationInterface::GetSheBeiType()
     {
         iFileType = 3;
     }
+    else if(strText == "高度规")
+    {
+        iFileType = 4;
+    }
     //LOG_STATS("文件感知文件类型发生变化：%d",iFileType);
     return iFileType;
 }
@@ -1331,6 +1336,7 @@ void OperationInterface::HideLoading()
 #endif
     ui->labelLoading->setVisible(false);
 }
+
 
 # if 0
 
@@ -1448,4 +1454,91 @@ void OperationInterface::on_NumberEdit_editingFinished()
     }
     LOG_INFO("OperationInterface save zidanhao :%d ,%s ",iRet , strText.toStdString().c_str());
 }
+
+
+// 槽函数
+void OperationInterface::ClikedInfoCell(const QModelIndex &index)
+{
+    if(4 != GetSheBeiType())
+    {
+        return;
+    }
+    qDebug()<< "ClikedInfoCell " << index.row() << " 列:" << index.column() << "内容：" << index.data().toString();
+    // 获取key值
+    if(index.column() < 6)
+    {
+        return;
+    }
+    m_indexCell = index;
+    ui->gaoduguilineEdit->setFocus();
+
+}
+
+void OperationInterface::on_gaoduguilineEdit_editingFinished()
+{
+    if(4 != GetSheBeiType())
+    {
+        return;
+    }
+
+    qDebug()<< "on_gaoduguilineEdit_editingFinished begin";
+    //1 .开始写入数据
+    QString strValue = ui->gaoduguilineEdit->text();
+    if(strValue.isEmpty())
+    {
+        return;
+    }
+
+    // 获取key值
+    if(!m_indexCell.isValid() || m_indexCell.column() < 6)
+    {
+        QMessageBox::information(this,"提示","选择正确单元格");
+    }
+
+    if(nullptr == m_tempData)
+    {
+        LOG_ERROR("on_gaoduguilineEdit_editingFinished error m_tempData is nullptr");
+        return;
+    }
+    QModelIndex indexKey =m_tempData->GetCellData(m_indexCell.row() , 1);
+
+    QString strKey = indexKey.data().toString();
+    if(strKey.isEmpty())
+    {
+        QMessageBox::information(this,"提示","所在行错误");
+        LOG_ERROR("on_gaoduguilineEdit_editingFinished strKey iserror : [%d < %d]",m_indexCell.row() , 1);
+        return;
+    }
+
+    // 台头有6列信息列 从第7 列  开始 为数据列
+    int iDataSize = m_indexCell.column() - 6;
+    if(m_vRecvData.size() < iDataSize + 1  || iDataSize < 0)
+    {
+        LOG_ERROR("on_gaoduguilineEdit_editingFinished size iserror :[%d < %d]",m_vRecvData.size() , iDataSize);
+        return ;
+    }
+
+    RecvFile::STDetailData& DataInfo = m_vRecvData[iDataSize];
+    DataInfo.m_mMeasuredValue[strKey].dActual = strValue.toDouble();
+
+    // 显示：
+    m_tempData->showcoldata(DataInfo , iDataSize + 1 );
+
+    // 转到下一行
+    int iNextRow = m_indexCell.row() + 1;
+    int iColumn = m_indexCell.column();
+    m_indexCell = QModelIndex();
+    int iRet = m_tempData->ChoseCell(iNextRow, iColumn ,m_indexCell);
+    if(0 != iRet)
+    {
+        LOG_INFO("ChoseCell faild  iRet:%d", iRet);
+    }
+    else
+    {
+        LOG_INFO("高度规跳到下一单元格： [%d,%d]",m_indexCell.row(),m_indexCell.column());
+    }
+    ui->gaoduguilineEdit->setFocus();
+}
+
+
 

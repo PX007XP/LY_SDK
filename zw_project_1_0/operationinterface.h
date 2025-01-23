@@ -13,6 +13,7 @@
 #include <QFileInfo>
 #include <QSet>
 #include <QMessageBox>
+#include <QModelIndex>
 
 class LoadingDialog;
 
@@ -98,6 +99,7 @@ private slots:
     void LaybelText(QString text);
 
     void sonWidget();
+
 signals:
     void StartConnect(QString strIP,unsigned short usPort);
     void SendMessage(QString strMessage);
@@ -209,5 +211,14 @@ public:
 private:
     void closeEvent(QCloseEvent *event) override;
 #endif
+
+private slots:
+    void ClikedInfoCell(const QModelIndex &index);
+
+    void on_gaoduguilineEdit_editingFinished();
+
+private:
+    QModelIndex m_indexCell; // 记录当前对象的值
+
 };
 #endif // OPERATIONINTERFACE_H

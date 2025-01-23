@@ -7,6 +7,7 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QMessageBox>
 #include <QSet>
+#include <QItemSelectionModel>
 #include "logger.h"
 int TempData::m_showcol=6;
 TempData::TempData(QTableView* tv) {
@@ -956,5 +957,31 @@ void TempData::onFileChanged(const QString &filePath)
         m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
         qDebug() << "Failed to open file:" << filePath;
     }
+}
+
+int TempData::ChoseCell(int iRow , int iColumn , QModelIndex &nextIndex)
+{
+    if(nullptr == m_model)
+    {
+        return -1;
+    }
+    if(iRow >= m_model->rowCount() || iColumn >= m_model->columnCount())
+    {
+        return -2;
+    }
+    nextIndex = m_model->index(iRow, iColumn);
+    m_tableView->selectionModel()->setCurrentIndex(nextIndex, QItemSelectionModel::ClearAndSelect);
+    m_tableView->selectionModel()->select(nextIndex, QItemSelectionModel::Select);
+    m_tableView->scrollTo(nextIndex); // 滚动表格以确保新选择的单元格可见
+    return 0;
+}
+
+QModelIndex TempData::GetCellData(int iRow, int iColumn)
+{
+    if(iRow >= m_model->rowCount() || iColumn >= m_model->columnCount() || nullptr == m_model)
+    {
+        return QModelIndex();
+    }
+    return m_model->index(iRow, iColumn);
 }
 

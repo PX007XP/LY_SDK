@@ -89,6 +89,12 @@ private:
     QMap<QString,int> m_key;
     static int m_showcol;
     QFileSystemWatcher watcher;
+
+//
+public:
+    // 选中某个单元格
+    int ChoseCell(int iRow , int iColumn , QModelIndex &index);
+    QModelIndex GetCellData(int iRow , int iColumn);
 };
 
 #endif // TEMPDATA_H
