@@ -34,6 +34,8 @@ int g_iDelTxtFile = 0; // 文件感知文件是否读取后直接删除 1 不删
 QString g_strPluginPath = "";
 QString g_strPluginConfigFilePath = "";
 
+QString g_strDownloadFileSavePath = "D:"; // 下载文件保存的路径
+
 int CheckDirectoryExists(QString strPath)
 {
     QDir dir(strPath);

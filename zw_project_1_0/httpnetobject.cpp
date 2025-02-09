@@ -395,7 +395,16 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
         QByteArray fileData = pReplay->readAll();
        // QString filePath = "./123file.xlsx" ;
         QString fileName = m_pOperationObject->GetUiPointObject()->NumberEdit->text();
-        QString filePath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + "/" + fileName + "_"+ m_strDownloadFile +".xlsm";
+        QString strFilePath ;
+        if(g_strDownloadFileSavePath.isEmpty())
+        {
+            strFilePath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+        }
+        else
+        {
+            strFilePath = g_strDownloadFileSavePath;
+        }
+        QString filePath = strFilePath + "/" + fileName + "_"+ m_strDownloadFile +".xlsm";
         QFile file(filePath);
         if (file.open(QIODevice::WriteOnly))
         {
@@ -404,7 +413,8 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
             LOG_INFO("File downloaded and saved to %s [%d,%d]", filePath.toStdString().c_str() ,fileData.size(),bytesWritten);
             if(2 == m_iFileData)
             {
-                m_pOperationObject->MessageBoxInfomation("提示", "下载成功");
+                //m_pOperationObject->MessageBoxInfomation("提示", "下载成功");
+                LOG_INFO("下载成功[%s][%s]",m_strCPKFilePath.toStdString().c_str(), filePath.toStdString().c_str());
             }
         }
         else

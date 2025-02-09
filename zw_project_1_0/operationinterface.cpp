@@ -1525,10 +1525,17 @@ void OperationInterface::on_gaoduguilineEdit_editingFinished()
     QModelIndex indexKey =m_tempData->GetCellData(m_indexCell.row() , 1);
 
     QString strKey = indexKey.data().toString();
-    if(strKey.isEmpty())
+    if(strKey.isEmpty() )
     {
-        QMessageBox::information(this,"提示","所在行错误");
+        QMessageBox::information(this,"提示","请选择高度规所在行");
         LOG_ERROR("on_gaoduguilineEdit_editingFinished strKey iserror : [%d < %d]",m_indexCell.row() , 1);
+        return;
+    }
+    QModelIndex indexType =m_tempData->GetCellData(m_indexCell.row() , 2);
+    QString strType = indexType.data().toString();
+    if(strType != "HG")
+    {
+        QMessageBox::information(this,"提示","请选择高度规所在行");
         return;
     }
 

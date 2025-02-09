@@ -30,6 +30,7 @@ extern int g_iDelTxtFile;
 
 extern QString g_strPluginPath;
 extern QString g_strPluginConfigFilePath;
+extern QString g_strDownloadFileSavePath;
 int CheckDirectoryExists(QString strPath);
 
 QString GetFileSuffix(QString strFile);

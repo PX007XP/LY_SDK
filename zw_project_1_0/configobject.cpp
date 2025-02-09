@@ -68,6 +68,13 @@ void ConfigObject::ReadConfig(OperationInterface* pObjcet)
         {
             g_strPluginConfigFilePath = strPluginFilePath;
         }
+
+        QString strSaveFilePath = commonElement.attribute("dowanload_file_path", "");
+        if(!strSaveFilePath.isEmpty())
+        {
+            g_strDownloadFileSavePath = strSaveFilePath;
+        }
+
         LOG_STATS("log level is = %d ,ip_address_key[%s] ,plugin_path[%s],plugin_config_path[%s]",g_iLogLevel,g_strIpAddressKey.toStdString().c_str(),
                             strPluginPath.toStdString().c_str(),strPluginFilePath.toStdString().c_str());
     }
