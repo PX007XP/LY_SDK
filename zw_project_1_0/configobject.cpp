@@ -56,7 +56,20 @@ void ConfigObject::ReadConfig(OperationInterface* pObjcet)
         g_strIpAddressKey = commonElement.attribute("ip_address_key" , "以太网");
         QString strFileDel = commonElement.attribute("del_file", "0");
         g_iDelTxtFile = strFileDel.toInt();
-        LOG_STATS("log level is = %d ,ip_address_key[%s]",g_iLogLevel,g_strIpAddressKey.toStdString().c_str());
+
+        QString strPluginPath = commonElement.attribute("plugin_path", "");
+        if(!strPluginPath.isEmpty())
+        {
+            g_strPluginPath = strPluginPath;
+        }
+
+        QString strPluginFilePath = commonElement.attribute("plugin_config_path", "");
+        if(!strPluginFilePath.isEmpty())
+        {
+            g_strPluginConfigFilePath = strPluginFilePath;
+        }
+        LOG_STATS("log level is = %d ,ip_address_key[%s] ,plugin_path[%s],plugin_config_path[%s]",g_iLogLevel,g_strIpAddressKey.toStdString().c_str(),
+                            strPluginPath.toStdString().c_str(),strPluginFilePath.toStdString().c_str());
     }
 #if 0
     // 读取存储相关数据

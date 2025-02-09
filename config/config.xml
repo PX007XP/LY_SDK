@@ -1,7 +1,7 @@
 
 <root>
-    <!-- log_level 日志级别 1 error  2 warn 3 info 4 debug -->
-    <common log_level="4" ip_address_key="以太网" del_file="0"/>
+    <!-- log_level 日志级别 1 error  2 warn 3 info 4 debug  del_file 文件感知读取文件后是否删除文件 1 不删 0 删除  plugin_path 插件的路径   plugin_config_path 插件配置文件名（含路径） -->
+    <common log_level="4" ip_address_key="以太网" del_file="0" plugin_config_path="D:\S_wroking\三方插件\测试程序\Configuration.ini"/>
 </root>
 <!--?xml version="1.0" encoding="UTF-8"? -->
        

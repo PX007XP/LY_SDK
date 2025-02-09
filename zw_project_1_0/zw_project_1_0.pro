@@ -26,6 +26,7 @@ SOURCES += \
     recvfile.cpp \
     sheetfilldatarange.cpp\
     operationinterface.cpp\
+    tcpserverthread.cpp \
     tempdata.cpp\
     readpoint.cpp\
     tablemodel.cpp \
@@ -42,6 +43,7 @@ HEADERS += \
     recvfile.h \
     sheetfilldatarange.h\
     operationinterface.h \
+    tcpserverthread.h \
     ui_operationinterface.h \
     tempdata.h\
     readpoint.h\

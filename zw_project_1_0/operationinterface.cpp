@@ -19,7 +19,7 @@
 #include <QToolBar>
 #include <QMenuBar>
 #include <QPushButton>
-#include "loadingdialog.h"
+#include "tcpserverthread.h"
 
 QMenuBar *menuBar = nullptr;
 
@@ -67,6 +67,17 @@ OperationInterface::OperationInterface(QWidget *parent)
 
     // 开启tcp线程
     m_pSocketThread->start();
+
+    // 开启tcpserver
+
+    TcpServerThread* pServerThread = new TcpServerThread;
+    if(pServerThread)
+    {
+        pServerThread->run();
+        pServerThread->start();
+    }
+
+
 
 
     m_pExcellWork = new ExcellPrecess();
@@ -390,6 +401,10 @@ void OperationInterface::on_GetDataButton_clicked()
     //QString strMessage = "msResult";
    // QString strMessage = g_strPacketHeader;
    // emit SendMessage(strMessage);
+
+   // m_pHttpNetObject->ExePlugin("D:\\S_wroking\\三方插件\\测试程序\\Derive.exe");
+    int iRet = m_pHttpNetObject->ModifyPluginConfig();
+    qDebug() << "ModifyPluginConfig return :" << iRet ;
 }
 
 // 接收消息的信号函数
@@ -1112,6 +1127,13 @@ int OperationInterface::UiInit()
     font.setPointSize(14);
     ui->labelLoading->setFont(font);
     ui->labelLoading->setVisible(false);
+
+    // 高度规
+    //ui->label_8->setVisible(false);
+    //ui->label_8->setEnabled(false);
+
+   // ui->gaoduguilineEdit->setVisible(false);
+   // ui->gaoduguilineEdit->setEnabled(false);
     return 0;
 }
 
@@ -1537,6 +1559,7 @@ void OperationInterface::on_gaoduguilineEdit_editingFinished()
     {
         LOG_INFO("高度规跳到下一单元格： [%d,%d]",m_indexCell.row(),m_indexCell.column());
     }
+    ui->gaoduguilineEdit->clear();
     ui->gaoduguilineEdit->setFocus();
 }
 

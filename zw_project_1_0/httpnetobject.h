@@ -57,6 +57,15 @@ private:
 public slots:
     void SlotsRecvReplayData(QNetworkReply* pReplay);
 
+public:
+    // 调用外部插件前的配置处理
+    int ModifyPluginConfig();
+    // 调用外部插件
+    int ExePlugin(QString strPluginPath);
+
+    QString m_strCPKFilePath = "";
+    QString m_strFAIFilePath = "";
+
 };
 
 #endif // HTTPNETOBJECT_H

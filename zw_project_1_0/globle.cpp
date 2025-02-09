@@ -31,6 +31,9 @@ int g_iFileSaveFlag = 0;
 
 int g_iDelTxtFile = 0; // 文件感知文件是否读取后直接删除 1 不删 0 删除
 
+QString g_strPluginPath = "";
+QString g_strPluginConfigFilePath = "";
+
 int CheckDirectoryExists(QString strPath)
 {
     QDir dir(strPath);

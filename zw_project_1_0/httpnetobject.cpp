@@ -7,6 +7,9 @@
 #include "ui_operationinterface.h"
 #include "globle.h"
 #include "logger.h"
+#include <QProcess>
+#include <QSettings>
+#include <QDir>
 
 HttpNetObject::HttpNetObject() {}
 
@@ -411,10 +414,33 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
         if(1 == m_iFileData)
         {
             DownloadFile(fileName ,1);
+            m_strCPKFilePath = filePath;
         }
         else
         {
             m_iFileData = 0;
+            m_strFAIFilePath = filePath;
+
+            // 文件下载完成  需要调用 外部插件  插件路径以及插件名通过外部配置配置
+            QString strPlugin = "";
+            if(g_strPluginPath.isEmpty())
+            {
+                strPlugin = "./Derive.exe";
+            }
+            else
+            {
+                strPlugin =  g_strPluginPath;
+            }
+            int iRet = ModifyPluginConfig();
+            if(iRet < 0)
+            {
+                LOG_ERROR("ModifyPluginConfig faild return :%d",iRet);
+            }
+            iRet = ExePlugin(strPlugin);
+            if(iRet < 0)
+            {
+                LOG_ERROR("ExePlugin faild return :%d",iRet);
+            }
         }
         return;
     }
@@ -498,4 +524,137 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
         LOG_ERROR("http response error2 %s" ,strResponse.toStdString().data() );
     }
     pReplay->deleteLater();
+}
+
+int HttpNetObject::ModifyPluginConfig()
+{
+    QString strConfigFile = "";
+    if(g_strPluginConfigFilePath.isEmpty())
+    {
+        strConfigFile = "./Configuration.ini";
+    }
+    else
+    {
+        strConfigFile =  g_strPluginConfigFilePath;
+    }
+
+    if(!QFile::exists(strConfigFile))
+    {
+        LOG_ERROR("HttpNetObject::ModifyPluginConfig strPluginpath is null :%s",strConfigFile.toStdString().c_str());
+        return -1;
+    }
+
+    // 读取配置
+    LOG_INFO("ini file path :%s",strConfigFile.toStdString().c_str());
+    QSettings settings(strConfigFile, QSettings::IniFormat);
+    settings.setIniCodec("UTF-8");
+
+    // 获取修改的内容
+    if(nullptr == m_pOperationObject || nullptr == m_pOperationObject->GetUiPointObject())
+    {
+        return -2;
+    }
+    QString strRootPath = m_pOperationObject->GetUiPointObject()->MobanlujinEdit->text();
+    QString strProjectPath = m_pOperationObject->GetUiPointObject()->PathcomboBox->currentText();
+    QString strTypePath = m_pOperationObject->GetUiPointObject()->TypecomboBox->currentText();
+
+    QString strConfigPath = strRootPath  + strProjectPath + "\\" + strTypePath + "\\" + "CPK&FAI" + "\\";
+
+   // qDebug() << "strConfigPath: " <<strConfigPath ;
+    // 创建 QDir 对象
+    QDir fileDir(strConfigPath);
+
+    // 获取文件夹下的所有文件
+    QStringList fileList = fileDir.entryList(QDir::Files);
+    if(fileList.isEmpty())
+    {
+        return -3;
+    }
+
+   // qDebug() << "KH_FAI_Path :" << settings.value("Document/KH_FAI_Path");
+
+    QString strFaiFileName ="";
+    QString strCpkFileName ="";
+    foreach (const QString& strFileName, fileList)
+    {
+        if(strFileName.contains("CPK"))
+        {
+            strCpkFileName = fileDir.absoluteFilePath(strFileName);
+            strCpkFileName = QDir::toNativeSeparators(strCpkFileName);
+        }
+        else if(strFileName.contains("FAI"))
+        {
+            strFaiFileName = fileDir.absoluteFilePath(strFileName);
+            strFaiFileName = QDir::toNativeSeparators(strFaiFileName);
+        }
+    }
+    // qDebug() << "status 1 :" << settings.status();
+   // qDebug() << "strFaiFileName :" << strCpkFileName;
+
+    // 修改配置
+    settings.beginGroup("Document");
+    settings.setValue("KH_CPK_Path", strCpkFileName);
+    settings.setValue("KH_FAI_Path", strFaiFileName);
+
+    settings.setValue("NB_CPK_Path", m_strCPKFilePath);
+    settings.setValue("NB_FAI_Path", m_strFAIFilePath);
+    settings.endGroup();
+
+
+    settings.sync(); // 强制保存
+
+    //qDebug() << "status 4:" << settings.status();
+
+    LOG_INFO("ModifyPluginConfig status:%d",settings.status());
+    return 0;
+}
+
+int HttpNetObject::ExePlugin(QString strPluginPath)
+{
+    // 1 检查 strPluginPath 路径是否正确
+    if(strPluginPath.isEmpty())
+    {
+        m_pOperationObject->MessageBoxInfomation("错误", "插件路径不正确");
+        return -1;
+    }
+    if(!QFile::exists(strPluginPath))
+    {
+        LOG_ERROR("HttpNetObject::ExePlugin strPluginpath is null :%s",strPluginPath.toStdString().c_str());
+        m_pOperationObject->MessageBoxInfomation("错误", "插件路径不正确");
+        return -1;
+    }
+
+    QProcess process;
+
+    // 将输出重定向到标准输出
+    process.setProcessChannelMode(QProcess::MergedChannels);
+
+    // 启动外部程序
+    process.start(strPluginPath);
+
+    // 等待程序启动
+    if (!process.waitForStarted())
+    {
+        LOG_ERROR("HttpNetObject::ExePlugin Failed to start process");
+        return 1;
+    }
+
+    // 等待程序完成执行
+    if (!process.waitForFinished())
+    {
+        LOG_ERROR("HttpNetObject::ExePlugin crashed or timed out");
+        return 2;
+    }
+
+    // 获取程序的标准输出和标准错误
+    QByteArray output = process.readAllStandardOutput();
+    QByteArray errorOutput = process.readAllStandardError();
+
+
+    // 获取程序的退出代码
+    int exitCode = process.exitCode();
+    // 打印输出
+    LOG_INFO("HttpNetObject::ExePlugin output[%s] ,Error Output[%s] returncode[%d] ",output.data(),errorOutput.data(),exitCode);
+
+    return 0;
 }

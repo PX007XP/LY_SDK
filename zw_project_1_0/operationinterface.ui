@@ -400,13 +400,6 @@
              </item>
             </layout>
            </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_5">
-             <property name="text">
-              <string>数据接口：</string>
-             </property>
-            </widget>
-           </item>
            <item row="1" column="1">
             <widget class="QPushButton" name="DownLoadFileButton">
              <property name="text">
@@ -613,7 +606,14 @@
            <item row="4" column="1">
             <widget class="QLineEdit" name="gaoduguilineEdit">
              <property name="text">
-              <string>123.456</string>
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>数据接口：</string>
              </property>
             </widget>
            </item>
