@@ -36,6 +36,8 @@ QString g_strPluginConfigFilePath = "";
 
 QString g_strDownloadFileSavePath = "D:"; // 下载文件保存的路径
 
+qint64 g_lGaoduguiTimeInterval = 200;  // 200 ms
+
 int CheckDirectoryExists(QString strPath)
 {
     QDir dir(strPath);

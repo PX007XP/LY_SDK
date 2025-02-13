@@ -92,11 +92,8 @@ public:
     QHBoxLayout *horizontalLayout_2;
     QLabel *label_13;
     QLineEdit *PortEdit;
-    QLabel *label_5;
     QPushButton *DownLoadFileButton;
     QLabel *label_6;
-    QLabel *label_8;
-    QLabel *labelLoading;
     QLabel *label_7;
     QComboBox *caijiTypecomboBox;
     QComboBox *sehbeicomboBox;
@@ -107,7 +104,9 @@ public:
     QPushButton *WriteFilepushButton;
     QLabel *label_21;
     QLabel *label_11;
+    QLabel *label_5;
     QLineEdit *gaoduguilineEdit;
+    QLabel *labelLoading;
     QGroupBox *groupBox_2;
     QGridLayout *gridLayout_2;
     QLabel *label_2;
@@ -418,11 +417,6 @@ public:
 
         gridLayout->addLayout(horizontalLayout_2, 5, 6, 1, 1);
 
-        label_5 = new QLabel(groupBox_4);
-        label_5->setObjectName(QString::fromUtf8("label_5"));
-
-        gridLayout->addWidget(label_5, 0, 0, 1, 1);
-
         DownLoadFileButton = new QPushButton(groupBox_4);
         DownLoadFileButton->setObjectName(QString::fromUtf8("DownLoadFileButton"));
 
@@ -432,26 +426,6 @@ public:
         label_6->setObjectName(QString::fromUtf8("label_6"));
 
         gridLayout->addWidget(label_6, 5, 0, 1, 1);
-
-        label_8 = new QLabel(groupBox_4);
-        label_8->setObjectName(QString::fromUtf8("label_8"));
-
-        gridLayout->addWidget(label_8, 4, 0, 1, 1);
-
-        labelLoading = new QLabel(groupBox_4);
-        labelLoading->setObjectName(QString::fromUtf8("labelLoading"));
-        QPalette palette;
-        QBrush brush(QColor(0, 0, 0, 255));
-        brush.setStyle(Qt::SolidPattern);
-        palette.setBrush(QPalette::Active, QPalette::Text, brush);
-        palette.setBrush(QPalette::Inactive, QPalette::Text, brush);
-        labelLoading->setPalette(palette);
-        QFont font;
-        font.setPointSize(8);
-        font.setKerning(true);
-        labelLoading->setFont(font);
-
-        gridLayout->addWidget(labelLoading, 4, 6, 1, 1);
 
         label_7 = new QLabel(groupBox_4);
         label_7->setObjectName(QString::fromUtf8("label_7"));
@@ -517,9 +491,9 @@ public:
 
         label_21 = new QLabel(groupBox_4);
         label_21->setObjectName(QString::fromUtf8("label_21"));
-        QFont font1;
-        font1.setPointSize(17);
-        label_21->setFont(font1);
+        QFont font;
+        font.setPointSize(17);
+        label_21->setFont(font);
         label_21->setAcceptDrops(false);
         label_21->setAlignment(Qt::AlignCenter);
 
@@ -530,10 +504,30 @@ public:
 
         gridLayout->addWidget(label_11, 5, 5, 1, 1);
 
+        label_5 = new QLabel(groupBox_4);
+        label_5->setObjectName(QString::fromUtf8("label_5"));
+
+        gridLayout->addWidget(label_5, 0, 0, 1, 1);
+
         gaoduguilineEdit = new QLineEdit(groupBox_4);
         gaoduguilineEdit->setObjectName(QString::fromUtf8("gaoduguilineEdit"));
 
-        gridLayout->addWidget(gaoduguilineEdit, 4, 1, 1, 1);
+        gridLayout->addWidget(gaoduguilineEdit, 4, 0, 1, 1);
+
+        labelLoading = new QLabel(groupBox_4);
+        labelLoading->setObjectName(QString::fromUtf8("labelLoading"));
+        QPalette palette;
+        QBrush brush(QColor(0, 0, 0, 255));
+        brush.setStyle(Qt::SolidPattern);
+        palette.setBrush(QPalette::Active, QPalette::Text, brush);
+        palette.setBrush(QPalette::Inactive, QPalette::Text, brush);
+        labelLoading->setPalette(palette);
+        QFont font1;
+        font1.setPointSize(8);
+        font1.setKerning(true);
+        labelLoading->setFont(font1);
+
+        gridLayout->addWidget(labelLoading, 4, 1, 1, 1);
 
 
         verticalLayout->addWidget(groupBox_4);
@@ -737,11 +731,8 @@ public:
         radioButton->setText(QCoreApplication::translate("OperationInterface", "\344\277\256\346\224\271\346\225\260\346\215\256", nullptr));
         label_13->setText(QCoreApplication::translate("OperationInterface", "\347\253\257\345\217\243\357\274\232", nullptr));
         PortEdit->setText(QCoreApplication::translate("OperationInterface", "8889", nullptr));
-        label_5->setText(QCoreApplication::translate("OperationInterface", "\346\225\260\346\215\256\346\216\245\345\217\243\357\274\232", nullptr));
         DownLoadFileButton->setText(QCoreApplication::translate("OperationInterface", "\345\257\274\345\207\272\345\256\242\346\210\267CPK&&FAI", nullptr));
         label_6->setText(QCoreApplication::translate("OperationInterface", "\347\263\273\347\273\237\350\267\257\345\276\204\357\274\232", nullptr));
-        label_8->setText(QCoreApplication::translate("OperationInterface", "\351\253\230\345\272\246\350\247\204\357\274\232", nullptr));
-        labelLoading->setText(QCoreApplication::translate("OperationInterface", "\346\243\200\346\237\245\345\210\260\346\225\260\346\215\256\344\270\212\344\274\240\344\270\255......", nullptr));
         label_7->setText(QCoreApplication::translate("OperationInterface", "\350\256\276\345\244\207\345\223\201\347\211\214\357\274\232", nullptr));
         caijiTypecomboBox->setItemText(0, QCoreApplication::translate("OperationInterface", "\346\225\260\346\215\256\346\216\245\345\217\2431", nullptr));
         caijiTypecomboBox->setItemText(1, QCoreApplication::translate("OperationInterface", "\346\225\260\346\215\256\346\216\245\345\217\2432", nullptr));
@@ -759,7 +750,9 @@ public:
         WriteFilepushButton->setText(QCoreApplication::translate("OperationInterface", "\344\270\212\344\274\240\346\225\260\346\215\256", nullptr));
         label_21->setText(QCoreApplication::translate("OperationInterface", "OK", nullptr));
         label_11->setText(QCoreApplication::translate("OperationInterface", "iP\357\274\232", nullptr));
-        gaoduguilineEdit->setText(QCoreApplication::translate("OperationInterface", "123.456", nullptr));
+        label_5->setText(QCoreApplication::translate("OperationInterface", "\346\225\260\346\215\256\346\216\245\345\217\243\357\274\232", nullptr));
+        gaoduguilineEdit->setText(QString());
+        labelLoading->setText(QCoreApplication::translate("OperationInterface", "\346\243\200\346\237\245\345\210\260\346\225\260\346\215\256\344\270\212\344\274\240\344\270\255......", nullptr));
         groupBox_2->setTitle(QCoreApplication::translate("OperationInterface", "\346\226\207\344\273\266\351\200\211\346\213\251", nullptr));
         label_2->setText(QCoreApplication::translate("OperationInterface", "\346\235\220\346\226\231\345\220\215\347\247\260\357\274\232", nullptr));
         label_16->setText(QCoreApplication::translate("OperationInterface", "\345\256\241\346\240\270\344\272\272\345\221\230", nullptr));

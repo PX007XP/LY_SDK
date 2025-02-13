@@ -1129,11 +1129,10 @@ int OperationInterface::UiInit()
     ui->labelLoading->setVisible(false);
 
     // 高度规
-    //ui->label_8->setVisible(false);
-    //ui->label_8->setEnabled(false);
-
    // ui->gaoduguilineEdit->setVisible(false);
    // ui->gaoduguilineEdit->setEnabled(false);
+    ui->gaoduguilineEdit->move(-1000,-1000);
+    ui->gaoduguilineEdit->setFixedSize(1,1); //把高度规输入框移除可视区域
     return 0;
 }
 
@@ -1492,6 +1491,7 @@ void OperationInterface::ClikedInfoCell(const QModelIndex &index)
         return;
     }
     m_indexCell = index;
+    ui->gaoduguilineEdit->clear();
     ui->gaoduguilineEdit->setFocus();
 
 }
@@ -1503,7 +1503,28 @@ void OperationInterface::on_gaoduguilineEdit_editingFinished()
         return;
     }
 
-    qDebug()<< "on_gaoduguilineEdit_editingFinished begin";
+    // 时间验证
+    qint64 lTimeNowMsec = QDateTime::currentDateTime().toMSecsSinceEpoch();
+
+    if(0 == m_lGaoduguiLineStatTime )
+    {
+        LOG_ERROR("m_lGaoduguiLineStatTime error");
+        return;
+    }
+
+    if(m_lGaoduguiLineStatTime > lTimeNowMsec)
+    {
+        LOG_ERROR("m_lGaoduguiLineStatTime error %lu > %lu",m_lGaoduguiLineStatTime , lTimeNowMsec);
+        return ;
+    }
+    qint64 lInterval = lTimeNowMsec - m_lGaoduguiLineStatTime;
+    if(lInterval > g_lGaoduguiTimeInterval)
+    {
+        LOG_DEBUG("lTimeNowMsec[%lu] - m_lGaoduguiLineStatTime[%lu] = [%lu] > g_lGaoduguiTimeInterval[%lu]",lTimeNowMsec , m_lGaoduguiLineStatTime ,lInterval,g_lGaoduguiTimeInterval);
+        return;
+    }
+
+    qDebug()<< "on_gaoduguilineEdit_editingFinished begin" <<lTimeNowMsec << "-" << m_lGaoduguiLineStatTime << "=" << lInterval << "<"<<  g_lGaoduguiTimeInterval;
     //1 .开始写入数据
     QString strValue = ui->gaoduguilineEdit->text();
     if(strValue.isEmpty())
@@ -1571,4 +1592,19 @@ void OperationInterface::on_gaoduguilineEdit_editingFinished()
 }
 
 
+void OperationInterface::on_gaoduguilineEdit_textChanged(const QString &arg1)
+{
+    if(arg1.isEmpty())
+    {
+        m_lGaoduguiLineStatTime = 0;
+    }
+    else
+    {
+        if(0 == m_lGaoduguiLineStatTime)
+        {
+            m_lGaoduguiLineStatTime = QDateTime::currentDateTime().toMSecsSinceEpoch();
+            LOG_INFO("on_gaoduguilineEdit_textChanged time begin:[%llu] ,text[%s]",m_lGaoduguiLineStatTime , arg1.toStdString().c_str());
+        }
+    }
+}
 

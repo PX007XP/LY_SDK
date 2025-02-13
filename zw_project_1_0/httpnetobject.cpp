@@ -590,12 +590,12 @@ int HttpNetObject::ModifyPluginConfig()
         if(strFileName.contains("CPK"))
         {
             strCpkFileName = fileDir.absoluteFilePath(strFileName);
-            strCpkFileName = QDir::toNativeSeparators(strCpkFileName);
+           // strCpkFileName = QDir::toNativeSeparators(strCpkFileName);
         }
         else if(strFileName.contains("FAI"))
         {
             strFaiFileName = fileDir.absoluteFilePath(strFileName);
-            strFaiFileName = QDir::toNativeSeparators(strFaiFileName);
+           // strFaiFileName = QDir::toNativeSeparators(strFaiFileName);
         }
     }
     // qDebug() << "status 1 :" << settings.status();

@@ -4,7 +4,7 @@
 	plugin_path 插件的路径   
 	plugin_config_path 插件配置文件名（含路径）
 	dowanload_file_path 下载文件默认保存路径 -->
-    <common log_level="4" ip_address_key="以太网" del_file="0" dowanload_file_path="D:" />
+    <common log_level="4" ip_address_key="以太网" del_file="0" dowanload_file_path="D:"  gaodugui_time_interval="200"/>
 </root>
 <!--?xml version="1.0" encoding="UTF-8"? -->
        

@@ -414,53 +414,6 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label_8">
-             <property name="text">
-              <string>高度规：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="6">
-            <widget class="QLabel" name="labelLoading">
-             <property name="palette">
-              <palette>
-               <active>
-                <colorrole role="Text">
-                 <brush brushstyle="SolidPattern">
-                  <color alpha="255">
-                   <red>0</red>
-                   <green>0</green>
-                   <blue>0</blue>
-                  </color>
-                 </brush>
-                </colorrole>
-               </active>
-               <inactive>
-                <colorrole role="Text">
-                 <brush brushstyle="SolidPattern">
-                  <color alpha="255">
-                   <red>0</red>
-                   <green>0</green>
-                   <blue>0</blue>
-                  </color>
-                 </brush>
-                </colorrole>
-               </inactive>
-               <disabled/>
-              </palette>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>8</pointsize>
-               <kerning>true</kerning>
-              </font>
-             </property>
-             <property name="text">
-              <string>检查到数据上传中......</string>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="5">
             <widget class="QLabel" name="label_7">
              <property name="sizePolicy">
@@ -603,17 +556,57 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="1">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>数据接口：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
             <widget class="QLineEdit" name="gaoduguilineEdit">
              <property name="text">
               <string/>
              </property>
             </widget>
            </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_5">
+           <item row="4" column="1">
+            <widget class="QLabel" name="labelLoading">
+             <property name="palette">
+              <palette>
+               <active>
+                <colorrole role="Text">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>0</red>
+                   <green>0</green>
+                   <blue>0</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+               </active>
+               <inactive>
+                <colorrole role="Text">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>0</red>
+                   <green>0</green>
+                   <blue>0</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+               </inactive>
+               <disabled/>
+              </palette>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <kerning>true</kerning>
+              </font>
+             </property>
              <property name="text">
-              <string>数据接口：</string>
+              <string>检查到数据上传中......</string>
              </property>
             </widget>
            </item>

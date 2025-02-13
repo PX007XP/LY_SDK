@@ -75,6 +75,9 @@ void ConfigObject::ReadConfig(OperationInterface* pObjcet)
             g_strDownloadFileSavePath = strSaveFilePath;
         }
 
+        QString strTimeMsec = commonElement.attribute("gaodugui_time_interval", "200");
+        g_lGaoduguiTimeInterval = strTimeMsec.toInt();
+
         LOG_STATS("log level is = %d ,ip_address_key[%s] ,plugin_path[%s],plugin_config_path[%s]",g_iLogLevel,g_strIpAddressKey.toStdString().c_str(),
                             strPluginPath.toStdString().c_str(),strPluginFilePath.toStdString().c_str());
     }

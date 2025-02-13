@@ -215,10 +215,15 @@ private:
 private slots:
     void ClikedInfoCell(const QModelIndex &index);
 
+    // 高度规完成输入 回车或者失去焦点
     void on_gaoduguilineEdit_editingFinished();
+    // 高度规文本发生变化
+    void on_gaoduguilineEdit_textChanged(const QString &arg1);
 
 private:
     QModelIndex m_indexCell; // 记录当前对象的值
+
+    qint64 m_lGaoduguiLineStatTime = 0; // 高度规lineedit 开始输入的 时间 单位ms
 
 };
 #endif // OPERATIONINTERFACE_H
