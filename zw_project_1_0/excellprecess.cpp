@@ -410,7 +410,7 @@ int ExcellPrecess::ReadFileData(QString strFilePath, QVector<RecvFile::STDetailD
             LOG_DEBUG("自动感知文件后缀错误,file:%s,iFileType:%d",strFilePath.toStdString().c_str(),iFileType);
             return -98;
         }
-        iRet = ReadExcelData(strFilePath , VectorData);
+        iRet = ReadExcelDataNew(strFilePath , VectorData);
     }
     else if(3 == iFileType)
     {
@@ -496,7 +496,7 @@ int ExcellPrecess::ReadExcelData(QString strFilePath, QVector<RecvFile::STDetail
             for(iColumn = 2; iColumn < 100 ; ++iColumn )
             {
                 QAxObject *pCellInfo = pSheet->querySubObject("Cells(int, int)", iRow, iColumn);
-                if (nullptr == pCell)
+                if (nullptr == pCellInfo)
                 {
                     continue;
                 }
@@ -549,6 +549,196 @@ int ExcellPrecess::ReadExcelData(QString strFilePath, QVector<RecvFile::STDetail
     while(true)
     {
         QAxObject *pCell = pSheet->querySubObject("Cells(int, int)", iRow, iValueCloumn);
+        if (nullptr == pCell)
+        {
+            continue;
+        }
+        cellValue = pCell->dynamicCall("Value()");
+        QString strNum = cellValue.toString();
+        if (strNum.isEmpty())
+        {
+            break;
+        }
+
+        int iValueRow = iRow + 1;
+        RecvFile::STDetailData Value;
+        for (iValueRow = iRow + 1 ; iValueRow < iRow + m_mKeyHash.size() + 1; ++iValueRow)
+        {
+            QAxObject *pCell = pSheet->querySubObject("Cells(int, int)", iValueRow, iValueCloumn);
+            if (nullptr == pCell)
+            {
+                continue;
+            }
+            cellValue = pCell->dynamicCall("Value()");
+            QString strValue = cellValue.toString();
+            if (strValue.isEmpty())
+            {
+                break;
+            }
+            auto it = m_mKeyHash.find(iValueRow);
+            if(it == m_mKeyHash.end())
+            {
+                LOG_ERROR("获取key 错误 row:%d ,cloumn:%d,beginrow[%d,%d]",iValueRow, iValueCloumn,iRow,iColumn);
+                continue;
+            }
+            RecvFile::STDimenSionData data;
+            bool ok = false;
+            data.strName = *it;
+            data.dActual = strValue.toDouble(&ok);
+            if(!ok)
+            {
+                LOG_ERROR("获取key 错误 row:%d ,cloumn:%d,beginrow[%d,%d],strvalue:%s",iValueRow, iValueCloumn,iRow,iColumn,strValue.toStdString().c_str());
+                continue;
+            }
+            Value.m_mMeasuredValue[*it] = data;
+            LOG_INFO("insert zhaofen data cell[%d,%d],%f",iValueRow, iValueCloumn,data.dActual);
+        }
+        VectorData.push_back(Value);
+        ++iValueCloumn;
+    }
+
+    return 0;
+}
+
+int ExcellPrecess::ReadExcelDataNew(QString strFilePath, QVector<RecvFile::STDetailData> &VectorData)
+{
+    shared_ptr<CExcellPointMgr> pExcellPtr = InitExcellObject();
+    if(nullptr == pExcellPtr || nullptr == pExcellPtr->m_pWorkBooks)
+    {
+        return -1;
+    }
+
+    QAxObject *pWorkbook = pExcellPtr->m_pWorkBooks->querySubObject("Open(const QString&)", strFilePath);
+    if(nullptr == pWorkbook)
+    {
+        return -2;
+    }
+
+    //捕获异常
+    m_pOperationInterFace->SetSlotExcelException(pWorkbook , strFilePath);
+    //2 .获取所有工作簿
+    qDebug() << "read  : filepath" << strFilePath ;
+    QAxObject *pSheets = pWorkbook->querySubObject("Sheets");
+    if(nullptr == pSheets)
+    {
+        pWorkbook->dynamicCall("Close()");
+        return -3;
+    }
+    //3 . 打开工作簿
+    qDebug() << "WriteData 3 : filepath" << strFilePath ;
+    QAxObject *pSheet =pSheets->querySubObject("Item(int)", 1);
+    if(nullptr == pSheet)
+    {
+        pWorkbook->dynamicCall("Close()");
+        return -4;
+    }
+
+    // 4 . 在100行 100列内找出关键字  "元素"
+    int iKeyColumn = 0 ; // key 所在列 固定第2列
+    int iColumn = 1 ;
+    int iRow = 1;
+    QVariant cellValue;
+    bool bFind = false;
+    for(  ; iColumn < 100 ; ++iColumn)
+    {
+        for(  int i = 0; i < 100 ; ++i)
+        {
+            QAxObject *pCell = pSheet->querySubObject("Cells(int, int)", i, iColumn);
+            if(nullptr == pCell)
+            {
+                continue;
+            }
+            cellValue = pCell->dynamicCall("Value()");
+            QString strValue = cellValue.toString();
+            if(strValue.isEmpty())
+            {
+                continue;
+            }
+
+            if (strValue == "元素")
+            {
+                bFind = true;
+                iRow = i;
+                break;
+            }
+        }
+        if(bFind)
+        {
+            iKeyColumn = iColumn;
+            break;
+        }
+    }
+    // 5 .找出开始数据列
+    for( iColumn = iColumn + 1; iColumn < 100 ; ++iColumn )
+    {
+        QAxObject *pCellInfo = pSheet->querySubObject("Cells(int, int)", iRow, iColumn);
+        if (nullptr == pCellInfo)
+        {
+            continue;
+        }
+        cellValue = pCellInfo->dynamicCall("Value()");
+        QString strVauleData = cellValue.toString();
+        if (strVauleData.isEmpty())
+        {
+            continue;
+        }
+        if(strVauleData == "LSL")
+        {
+            iColumn ++;
+            QAxObject *pCellInfo = pSheet->querySubObject("Cells(int, int)", iRow, iColumn);
+            if (nullptr == pCellInfo)
+            {
+                LOG_ERROR("pSheet->querySubObject eturn null :[%d,%d]",iRow , iColumn);
+                return -10;
+            }
+            cellValue = pCellInfo->dynamicCall("Value()");
+            QString strVauleData = cellValue.toString();
+            if(strVauleData == "测量值")
+            {
+                LOG_INFO("找到数据列 row=%d , column=%d",iRow , iColumn);
+
+            }
+            else
+            {
+                iColumn ++;
+            }
+             break;
+        }
+    }
+
+    // 5 开始读关键字
+    int ikeyRow = iRow + 1;
+    LOG_DEBUG("开始读取关键字：[%d,%d]",ikeyRow,iKeyColumn);
+
+    QHash<int ,QString> m_mKeyHash;
+
+    while(true)
+    {
+        if(ikeyRow > 1000)
+        {
+            LOG_ERROR("获取关键key时 ikerrow error :%d",ikeyRow);
+            break;
+        }
+        QAxObject *pCell = pSheet->querySubObject("Cells(int, int)", ikeyRow, iKeyColumn);
+        if(nullptr == pCell)
+        {
+            continue;
+        }
+        cellValue = pCell->dynamicCall("Value()");
+        QString strValue = cellValue.toString();
+        if(strValue.isEmpty())
+        {
+            break;
+        }
+        m_mKeyHash[ikeyRow] = strValue;
+        ikeyRow++;
+    }
+    // 6 开始读数据
+    LOG_DEBUG("开始读取测量数据：[%d,%d]",iRow,iColumn);
+    int iValueCloumn = iColumn;
+    while(true)
+    {
+        QAxObject *pCell = pSheet->querySubObject("Cells(int, int)", iRow + 1, iValueCloumn);  // 读取第一个数据
         if (nullptr == pCell)
         {
             continue;

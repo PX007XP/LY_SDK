@@ -1,4 +1,4 @@
-#include "recvfile.h"
+﻿#include "recvfile.h"
 #include <QHostAddress>
 #include <Qthread>
 
@@ -254,7 +254,7 @@ void RecvFile::RecieveData()
    // qDebug()<< "utf-8:   " <<strText;
     QString strGB2312Data = QString::fromLocal8Bit(szReData);
    // qDebug()<< "gb2312:  " <<strGB2312Data;
-    emit MessageToUi(szReData);
+   // emit MessageToUi(szReData);
 
     // 服务端过来的数据就是字符串
     m_strMessageData += strGB2312Data;

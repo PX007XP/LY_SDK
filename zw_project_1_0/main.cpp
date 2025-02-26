@@ -65,6 +65,7 @@ int main(int argc, char *argv[])
     */
     //QString c= encrypt(content);
     QString b= decrypt(content);
+    qDebug() << b ;
     int year =b.left(4).toInt();
     int mon = b.mid(4,2).toInt();
     int day = b.right(2).toInt();
@@ -72,6 +73,7 @@ int main(int argc, char *argv[])
     // 获取当前系统的日期
     QDate currentDate = QDateTime::currentDateTime().date();
     if(currentDate>dedate){
+        qDebug() << dedate << " , " << currentDate;
         return -1;
     }
 

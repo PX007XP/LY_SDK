@@ -1,4 +1,4 @@
-#ifndef RECVFILE_H
+﻿#ifndef RECVFILE_H
 #define RECVFILE_H
 
 #include <QObject>

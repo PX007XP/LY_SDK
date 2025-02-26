@@ -14,6 +14,7 @@
 #include <QSet>
 #include <QMessageBox>
 #include <QModelIndex>
+#include "tcpserverthread.h"
 
 class LoadingDialog;
 
@@ -44,8 +45,12 @@ public:
 
     // 处理数据，对数据进行分析 融合数据 返回数据插入的列数下标 从0 开始 文件感知使用的接口
     int DealMerageMessage(QVector<RecvFile::STDetailData>);
-    // 信号接收函数 解析后的数据
+    // 信号接收函数 解析后的数据 OMM
     void ShowDetailMesage(RecvFile::STDetailData stResult);
+
+    // 信号接收函数 解析后的数据 CMM
+    void ShowDetailMesageCMM(TcpServerThread::STDetailData stResult);
+
 
     // 设置excel写文件捕获异常
     void SetSlotExcelException(QAxObject *pWorkbook, QString strFile);
@@ -224,6 +229,9 @@ private:
     QModelIndex m_indexCell; // 记录当前对象的值
 
     qint64 m_lGaoduguiLineStatTime = 0; // 高度规lineedit 开始输入的 时间 单位ms
+
+    TcpServerThread* m_pServerObject;
+    QThread* m_pSocketThreadServer  ; // CMM 数据接收线程
 
 };
 #endif // OPERATIONINTERFACE_H

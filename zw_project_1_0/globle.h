@@ -1,6 +1,7 @@
 ﻿#ifndef GLOBLE_H
 #define GLOBLE_H
 #include<QString>
+#include <QHash>
 
 class Logger;
 extern QString g_strReqNo ;
@@ -35,4 +36,49 @@ extern qint64 g_lGaoduguiTimeInterval;
 int CheckDirectoryExists(QString strPath);
 
 QString GetFileSuffix(QString strFile);
+
+
+// 数据结构
+struct STDimenSionData1
+{
+    STDimenSionData1()
+    {
+        Clear();
+    }
+    void Clear()
+    {
+        strName.clear();
+        dTheo = 0.0;
+        dUpperLimit = 0.0;
+        dLowerLimit = 0.0;
+        dActual = 0.0;
+    }
+    QString strName; // 名称
+    double dTheo ; //理论值
+    double dUpperLimit; // 上偏差
+    double dLowerLimit; // 下偏差
+    double dActual;  // 实测值
+};
+struct STDetailData1
+{
+    STDetailData1()
+    {
+        m_strPartID.clear();
+        m_strDateTime.clear();
+        m_strUnits.clear();
+        m_mMeasuredValue.clear();
+    }
+    void RestData()
+    {
+        m_strPartID.clear();
+        m_strDateTime.clear();
+        m_strUnits.clear();
+        m_mMeasuredValue.clear();
+    }
+    QString m_strPartID;  // 工件ID
+    QString m_strDateTime;   // 测量时间
+    QChar m_cQualified;  // 是否合格  G代表合格,B代表不合格
+    QString m_strUnits;  // 测量单位
+    QHash<QString ,STDimenSionData1> m_mMeasuredValue; // 测量值
+};
 #endif // GLOBLE_H

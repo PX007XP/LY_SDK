@@ -6,7 +6,7 @@
 
 QString g_strReqNo = QStringLiteral("ReqNO");
 QString g_strReqUserName = QStringLiteral("CreatorName");
-QString g_strReqUnicom = QStringLiteral("TestUserName"); // 送检单位
+QString g_strReqUnicom = QStringLiteral("TestUnitName"); // 送检单位
 QString g_strDeviceName = QStringLiteral("DeviceName"); // 项目名称
 QString g_strDeviceNo = QStringLiteral("DeviceNo"); // 机台
 QString g_strReqTime = QStringLiteral("CreateTime"); // 申请时间

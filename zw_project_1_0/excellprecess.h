@@ -66,8 +66,11 @@ public:
     // 数据感知部分
     int ReadFileData(QString strFilePath , QVector<RecvFile::STDetailData> &VectorData,int iFileType);
 
-    // 读取兆丰的excel文件
+    // 读取兆丰的excel文件  老兆丰
     int ReadExcelData(QString strFilePath , QVector<RecvFile::STDetailData> &VectorData);
+
+    // 读取兆丰的excel文件  老兆丰
+    int ReadExcelDataNew(QString strFilePath , QVector<RecvFile::STDetailData> &VectorData);
 
     // 读取MIV的 txt文件s
     int ReadTxtData(QString strFilePath , QVector<RecvFile::STDetailData> &VectorData);

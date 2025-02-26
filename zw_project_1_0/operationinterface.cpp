@@ -59,7 +59,7 @@ OperationInterface::OperationInterface(QWidget *parent)
 
 
     //创建子线程
-    QThread* m_pSocketThread = new QThread;
+    m_pSocketThread = new QThread;
 
     m_pRecvFileWorker = new RecvFile;
 
@@ -71,14 +71,24 @@ OperationInterface::OperationInterface(QWidget *parent)
     // 开启tcpserver
 
     TcpServerThread* pServerThread = new TcpServerThread;
-    if(pServerThread)
+    if( pServerThread)
     {
-        pServerThread->run();
-        pServerThread->start();
+        m_pServerObject = pServerThread;
     }
 
+    m_pSocketThreadServer = new QThread;
 
+    if(m_pSocketThreadServer && m_pServerObject)
+    {
+        m_pServerObject->moveToThread(m_pSocketThreadServer);
+    }
+    else
+    {
+        LOG_ERROR("m_pSocketThreadServer or m_pServerThread is null  ");
+    }
 
+    m_pSocketThreadServer->start();
+    m_pServerObject->runServer();
 
     m_pExcellWork = new ExcellPrecess();
     if(m_pExcellWork)
@@ -99,8 +109,10 @@ OperationInterface::OperationInterface(QWidget *parent)
     connect(m_pRecvFileWorker ,&RecvFile::ConnectError ,this,&OperationInterface::ConnectServerFaild );
     // 接收消息的信号函数 测试使用
     connect(m_pRecvFileWorker ,&RecvFile::MessageToUi ,this,&OperationInterface::RecvSocketMessage );
-    // 接收消息的信号函数 测试使用
+    // 接收消息的信号函数 测试使用 oMM
     connect(m_pRecvFileWorker ,&RecvFile::ResultToUi ,this,&OperationInterface::ShowDetailMesage );
+    // 接收消息的信号函数 测试使用 CMM
+    connect(m_pServerObject ,&TcpServerThread::CMMResultToUi ,this,&OperationInterface::ShowDetailMesageCMM );
     // 点击获取消息的信号函数
     connect(this,&OperationInterface::SendMessage , m_pRecvFileWorker , &RecvFile::SendMessageToServer);
 
@@ -160,10 +172,17 @@ OperationInterface::OperationInterface(QWidget *parent)
 
 OperationInterface::~OperationInterface()
 {
-   // m_pSocketThread->quit();
-    //m_pSocketThread->wait();
-    //m_pSocketThread->deleteLater();
-   // m_pRecvFileWorker->deleteLater();
+    if(m_pSocketThread)
+    {
+        m_pSocketThread->quit();
+        m_pSocketThread->wait();
+        m_pSocketThread->deleteLater();
+    }
+
+    if(m_pRecvFileWorker)
+    {
+        delete m_pRecvFileWorker;
+    }
 
    if(g_pLogger)
    {
@@ -355,6 +374,66 @@ void OperationInterface::ShowDetailMesage(RecvFile::STDetailData stResult)
             LOG_ERROR("DealMerageMessage return error :%d > %d",iCloum, iSize);
         }
     }
+}
+
+void OperationInterface::ShowDetailMesageCMM(TcpServerThread::STDetailData stCmmResult)
+{
+    // 开关检查 如果是自动感知 则不进行操作
+    if(IsFileWorkType())
+    {
+        return;
+    }
+    if(5 != GetSheBeiType())
+    {
+        return;
+    }
+    if(stCmmResult.m_mMeasuredValue.isEmpty())
+    {
+        return;
+    }
+
+    // 对数据做处理 确认是新增列数 还是在原有数据里面补足数据
+    // m_vRecvData.push_back(stResult);
+    if(m_vRecvData.size() >= 100)
+    {
+        LOG_ERROR("数据大于100条，不在插入");
+    }
+    else
+    {
+        // 由于信号问题 兼容之前的接口  这里做类型转换
+        RecvFile::STDetailData stResult;
+        auto it = stCmmResult.m_mMeasuredValue.begin();
+        for( ; it != stCmmResult.m_mMeasuredValue.end() ; ++it)
+        {
+            RecvFile::STDimenSionData emDimenSion;
+            emDimenSion.strName = it->strName;
+            emDimenSion.dActual = it->dActual;
+            emDimenSion.dTheo = it->dTheo;
+            emDimenSion.dUpperLimit = it->dUpperLimit;
+            emDimenSion.dLowerLimit = it->dLowerLimit;
+            stResult.m_mMeasuredValue[emDimenSion.strName] = emDimenSion;
+            qDebug() << "insert file data :" << emDimenSion.strName << "-" << emDimenSion.dActual;
+        }
+
+
+        int iCloum = DealMerageMessage(stResult);  // iCloum 是写入数据列数 从0 开始
+        int iSize = m_vRecvData.size();
+        LOG_DEBUG("Merage info mation :[%d , %d]",iCloum , iSize);
+
+        if(iCloum < iSize + 1)
+        {
+            if(m_tempData)
+            {
+                m_tempData->showcoldata(stResult,iCloum + 1);
+            }
+        }
+        else
+        {
+            LOG_ERROR("DealMerageMessage return error :%d > %d",iCloum, iSize);
+        }
+    }
+
+    LOG_INFO("ShowDetailMesageCMM is:%d" , stCmmResult.m_mMeasuredValue.size());
 }
 
 void OperationInterface::SetSlotExcelException(QAxObject *pWorkbook, QString strFile)
@@ -1234,13 +1313,17 @@ int OperationInterface::GetSheBeiType()
     {
         iFileType = 2;
     }
-    else if(strText == "MicroVu" || strText == "海克斯康CMM")
+    else if(strText == "MicroVu" /*|| strText == "海克斯康CMM"*/)
     {
         iFileType = 3;
     }
     else if(strText == "高度规")
     {
         iFileType = 4;
+    }
+    else if(strText == "海克斯康CMM")
+    {
+        iFileType = 5;
     }
     //LOG_STATS("文件感知文件类型发生变化：%d",iFileType);
     return iFileType;
