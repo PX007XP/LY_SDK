@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QHash>
+#include <QWaitCondition>
 
 const QString g_strPacketHeader = "msResult";
 const QString g_strPacketTail1 = "\n\r";
@@ -72,6 +73,7 @@ public:
     QString GetADetailData(QString& strData, QChar cSplitChar);
     //拆分测量值
     bool GetDimensionData(QString &strDimension , STDimenSionData& stDimenSionData);
+
 signals:
     void ConnectOk();
     void ConnectError();
@@ -79,11 +81,13 @@ signals:
     void ResultToUi(STDetailData stResult);
 private slots:
     void RecieveData();
+    void stopWorking();
 
 private:
     QTcpSocket* m_pTcpSocket = nullptr;
 
     QString m_strMessageData;
+    QWaitCondition m_waitCondition;
 
 };
 

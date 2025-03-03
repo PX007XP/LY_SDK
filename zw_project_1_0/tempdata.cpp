@@ -58,6 +58,18 @@ TempData::TempData(QTableView* tv) {
 TempData::~TempData()
 {
     // 关闭工作簿
+    qDebug() << "TempData delete" ;
+    if(m_excel)
+    {
+        if(m_workbooks)
+        {
+            m_workbooks->dynamicCall("Close()");
+        }
+        m_excel->dynamicCall("Quit()");
+        delete m_excel;
+        m_excel = nullptr;
+        qDebug() << "TempData delete 1" ;
+    }
     //m_workbooks->dynamicCall("Close()");
 
     // 退出 Excel

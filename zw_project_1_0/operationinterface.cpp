@@ -172,35 +172,68 @@ OperationInterface::OperationInterface(QWidget *parent)
 
 OperationInterface::~OperationInterface()
 {
+    LOG_INFO("程序 主动释放");
+
     if(m_pSocketThread)
     {
+        QMetaObject::invokeMethod(m_pRecvFileWorker, "stopWorking",
+                                  Qt::QueuedConnection);
         m_pSocketThread->quit();
         m_pSocketThread->wait();
         m_pSocketThread->deleteLater();
+        m_pSocketThread = nullptr;
     }
 
+    LOG_INFO("程序 主动释放1");
     if(m_pRecvFileWorker)
     {
         delete m_pRecvFileWorker;
+        m_pRecvFileWorker = nullptr;
     }
 
-   if(g_pLogger)
-   {
-       delete g_pLogger;
-   }
+    if(m_pSocketThreadServer)
+    {
+        if(m_pServerObject)
+        {
+            m_pServerObject->CloseServer();
+        }
+       // QMetaObject::invokeMethod(m_pServerObject, "stopWorking",Qt::QueuedConnection);
+        m_pSocketThreadServer->quit();
+        m_pSocketThreadServer->wait();
+        m_pSocketThreadServer->deleteLater();
+        m_pSocketThreadServer = nullptr;
+    }
+    if(m_pServerObject)
+    {
+        delete m_pServerObject;
+        m_pServerObject = nullptr;
+    }
+
+    LOG_INFO("程序 主动释放2");
    if(m_pExcellWork)
    {
        delete m_pExcellWork;
        m_pExcellWork = nullptr;
    }
+   LOG_INFO("程序 主动释放3");
    if(menuBar)
    {
        delete menuBar;
+       menuBar = nullptr;
    }
+    LOG_INFO("程序 主动释放4");
+
    if(m_tempData)
    {
        delete m_tempData;
+       m_tempData = nullptr;
    }
+    LOG_INFO("程序 主动释放5");
+   if(g_pLogger)
+   {
+       delete g_pLogger;
+   }
+    LOG_INFO("程序 主动释放6");
     delete ui;
 }
 

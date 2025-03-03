@@ -11,6 +11,15 @@ TcpServerThread::TcpServerThread(QObject *parent)
     server = new QTcpServer(this);
 }
 
+TcpServerThread::~TcpServerThread()
+{
+    if(server)
+    {
+        server->deleteLater();
+        server = nullptr;
+    }
+}
+
 void TcpServerThread::runServer()
 {
     qDebug() << "Starting server thread..." << QThread::currentThreadId();
@@ -121,5 +130,15 @@ int TcpServerThread::DealWithData(QString strAComData, STDetailData& stResult)
 
 void TcpServerThread::CloseServer()
 {
-    // 关闭所有sockets.
+    // 关闭所有sockets.f
+    foreach (QTcpSocket* pSocket, sockets)
+    {
+        if(pSocket)
+        {
+            pSocket->deleteLater();
+            pSocket = nullptr;
+        }
+    }
+    server->disconnect();
+    server->close();
 }

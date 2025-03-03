@@ -60,6 +60,7 @@ public:
     };
 public:
     explicit TcpServerThread(QObject *parent = nullptr);
+    ~TcpServerThread();
     void runServer();
 
 private slots:

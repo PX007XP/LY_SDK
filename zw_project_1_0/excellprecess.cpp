@@ -634,15 +634,16 @@ int ExcellPrecess::ReadExcelDataNew(QString strFilePath, QVector<RecvFile::STDet
     }
 
     // 4 . 在100行 100列内找出关键字  "元素"
-    int iKeyColumn = 0 ; // key 所在列 固定第2列
+    int iKeyColumn = 1 ; // key 所在列 固定第2列
     int iColumn = 1 ;
     int iRow = 1;
     QVariant cellValue;
     bool bFind = false;
     for(  ; iColumn < 100 ; ++iColumn)
     {
-        for(  int i = 0; i < 100 ; ++i)
+        for(  int i = 1; i < 100 ; ++i)
         {
+           // LOG_DEBUG("开始读取单元格[%d ,%d]",i , iColumn);
             QAxObject *pCell = pSheet->querySubObject("Cells(int, int)", i, iColumn);
             if(nullptr == pCell)
             {
@@ -668,6 +669,7 @@ int ExcellPrecess::ReadExcelDataNew(QString strFilePath, QVector<RecvFile::STDet
             break;
         }
     }
+    LOG_DEBUG("find  yuan su hang:%d",iRow);
     // 5 .找出开始数据列
     for( iColumn = iColumn + 1; iColumn < 100 ; ++iColumn )
     {
@@ -722,6 +724,7 @@ int ExcellPrecess::ReadExcelDataNew(QString strFilePath, QVector<RecvFile::STDet
         QAxObject *pCell = pSheet->querySubObject("Cells(int, int)", ikeyRow, iKeyColumn);
         if(nullptr == pCell)
         {
+            ikeyRow++;
             continue;
         }
         cellValue = pCell->dynamicCall("Value()");
@@ -736,8 +739,14 @@ int ExcellPrecess::ReadExcelDataNew(QString strFilePath, QVector<RecvFile::STDet
     // 6 开始读数据
     LOG_DEBUG("开始读取测量数据：[%d,%d]",iRow,iColumn);
     int iValueCloumn = iColumn;
+    int iLoopCount = 0;
     while(true)
     {
+        if(++iLoopCount > 1000)
+        {
+            LOG_ERROR("loop is too more");
+            break;
+        }
         QAxObject *pCell = pSheet->querySubObject("Cells(int, int)", iRow + 1, iValueCloumn);  // 读取第一个数据
         if (nullptr == pCell)
         {
@@ -786,7 +795,7 @@ int ExcellPrecess::ReadExcelDataNew(QString strFilePath, QVector<RecvFile::STDet
         VectorData.push_back(Value);
         ++iValueCloumn;
     }
-
+    LOG_DEBUG("ReadExcelDataNew read data count[%d]",VectorData.size());
     return 0;
 }
 

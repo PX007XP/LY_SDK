@@ -1,6 +1,7 @@
 ﻿#include "recvfile.h"
 #include <QHostAddress>
 #include <Qthread>
+#include "logger.h"
 
 RecvFile::RecvFile(QObject *parent)
     : QObject{parent}
@@ -10,9 +11,16 @@ RecvFile::RecvFile(QObject *parent)
 
 RecvFile::~RecvFile()
 {
-    m_pTcpSocket->close();
-    m_pTcpSocket->deleteLater();
-    m_pTcpSocket = nullptr;
+    LOG_INFO("m_pTcpSocket delete");
+    if(m_pTcpSocket)
+    {
+        LOG_INFO("m_pTcpSocket delete1");
+        m_pTcpSocket->close();
+        LOG_INFO("m_pTcpSocket delete2");
+        m_pTcpSocket->deleteLater();
+        LOG_INFO("m_pTcpSocket delete3");
+        m_pTcpSocket = nullptr;
+    }
 }
 
 void RecvFile::ConnectServer(QString strIp, unsigned short usPort)
@@ -260,6 +268,11 @@ void RecvFile::RecieveData()
     m_strMessageData += strGB2312Data;
     qDebug()<< "detail:  " <<m_strMessageData;
     DealWithMessageData();
+}
+
+void RecvFile::stopWorking()
+{
+    m_waitCondition.wakeAll();
 }
 
 
