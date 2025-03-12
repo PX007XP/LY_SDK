@@ -227,12 +227,14 @@ OperationInterface::~OperationInterface()
    {
        delete m_tempData;
        m_tempData = nullptr;
+      //m_tempData->ReleaseObject();
    }
     LOG_INFO("程序 主动释放5");
    if(g_pLogger)
    {
        delete g_pLogger;
    }
+
     LOG_INFO("程序 主动释放6");
     delete ui;
 }
@@ -762,9 +764,9 @@ void OperationInterface::SavePushFilePath(QString strFileName)
 void OperationInterface::on_ClearDataButton_clicked()
 {
    // const char* pString = "D:\\S_wroking\\880-GNT022-03-003.xlsm";
-    QString currentPath = QDir::currentPath();
-    QString strFile = currentPath + "/template/880-GNT022-03-003.xlsm";
-    m_pExcellWork->CleanSheetData(strFile);
+   // QString currentPath = QDir::currentPath();
+   // QString strFile = currentPath + "/template/880-GNT022-03-003.xlsm";
+   // m_pExcellWork->CleanSheetData(strFile);
 
     m_vRecvData.clear();
    // m_bFileReading = false;
@@ -1071,8 +1073,24 @@ void OperationInterface::onDirectoryChanged(const QString &strPath)
     {
         return;
     }
-
-    DealMerageMessage(VRecvData);
+    if( 3 == iFileType)
+    {
+        LOG_INFO("文件感知1 数据类型 type=%d",iFileType);
+        foreach (RecvFile::STDetailData stResult, VRecvData)
+        {
+            int iRet = DealMerageMessage(stResult);
+            if(iRet < 0)
+            {
+                LOG_ERROR("文件感知 is errord return :%d , count[%d,%d] ,filename:%s",iRet,VRecvData.size(),m_vRecvData.size(),m_LastFileInfo.absoluteFilePath().toStdString().c_str());
+            }
+            LOG_ERROR("文件感知 count :%d",m_vRecvData.size());
+        }
+    }
+    else
+    {
+        LOG_INFO("文件感知2 数据类型 type=%d",iFileType);
+        DealMerageMessage(VRecvData); // 文件每次是更新 有重复数据
+    }
 
     // 验证数据数量
     CheckDataCount();
@@ -1100,8 +1118,26 @@ void OperationInterface::onFileChanged(const QString &strPath)
     {
         return;
     }
+    LOG_INFO("文件感知 数据类型 type=%d",iFileType);
+    if( 3 == iFileType)
+    {
+        LOG_INFO("文件感知1 数据类型 type=%d",iFileType);
+        foreach (RecvFile::STDetailData stResult, VRecvData)
+        {
+            int iRet = DealMerageMessage(stResult);
+            if(iRet < 0)
+            {
+                LOG_ERROR("文件感知 is errord return :%d , count[%d,%d] ,filename:%s",iRet,VRecvData.size(),m_vRecvData.size(),m_LastFileInfo.absoluteFilePath().toStdString().c_str());
+            }
+            LOG_ERROR("文件感知 count :%d",m_vRecvData.size());
+        }
+    }
+    else
+    {
+        LOG_INFO("文件感知2 数据类型 type=%d",iFileType);
+        DealMerageMessage(VRecvData); // 文件每次是更新 有重复数据
+    }
 
-    DealMerageMessage(VRecvData);
     CheckDataCount();
     // 显示数据
     if(m_tempData)
@@ -1350,7 +1386,7 @@ int OperationInterface::GetSheBeiType()
     {
         iFileType = 3;
     }
-    else if(strText == "高度规")
+    else if(strText == "HG&MIC")
     {
         iFileType = 4;
     }
@@ -1670,7 +1706,7 @@ void OperationInterface::on_gaoduguilineEdit_editingFinished()
     }
     QModelIndex indexType =m_tempData->GetCellData(m_indexCell.row() , 2);
     QString strType = indexType.data().toString();
-    if(strType != "HG")
+    if(strType != "HG" && strType != "MIC")
     {
         QMessageBox::information(this,"提示","请选择高度规所在行");
         return;

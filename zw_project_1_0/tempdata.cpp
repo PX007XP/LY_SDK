@@ -55,10 +55,12 @@ TempData::TempData(QTableView* tv) {
     QtConcurrent::run(this,&TempData::getData);
 }
 
+
 TempData::~TempData()
 {
     // 关闭工作簿
     qDebug() << "TempData delete" ;
+    m_stopFlag = true;
     if(m_excel)
     {
         if(m_workbooks)
@@ -70,12 +72,43 @@ TempData::~TempData()
         m_excel = nullptr;
         qDebug() << "TempData delete 1" ;
     }
+    if(m_model)
+    {
+        delete  m_model;
+        m_model = nullptr;
+    }
+    qDebug() << "TempData delete 2" ;
+   // future.cancel();
+    //QThreadPool::globalInstance()->waitForDone(5000);
     //m_workbooks->dynamicCall("Close()");
 
     // 退出 Excel
     //m_excel->dynamicCall("Quit()");
 
     //delete m_excel;
+}
+
+void TempData::ReleaseObject()
+{
+    // 关闭工作簿
+   // qDebug() << "TempData delete" ;
+    m_stopFlag = true;
+    if(m_excel)
+    {
+        if(m_workbooks)
+        {
+            m_workbooks->dynamicCall("Close()");
+        }
+        m_excel->dynamicCall("Quit()");
+        delete m_excel;
+        m_excel = nullptr;
+       // qDebug() << "TempData delete 1" ;
+    }
+    if(m_model)
+    {
+        delete  m_model;
+        m_model = nullptr;
+    }
 }
 bool TempData::LoadData(QString filename, int showrow){
     bool setModel=true;
@@ -422,17 +455,22 @@ void TempData::recShowData(RecvFile::STDetailData datildata)
                 }
                 allvec.insert(j);
                 m_model->setItem(j,i,showitem);
+                LOG_INFO("pandin red bu he ge row:%d",j);
             }
         }
     }
     bool flabel=false;
-    for(int j:allvec){
+    for(int j:allvec)
+    {
         auto showitem=m_model->item(j,m_model->columnCount()-1);
-        if(redvec.contains(j)){
+        if(redvec.contains(j))
+        {
             showitem=m_model->item(j,m_model->columnCount()-1);
-            if(showitem == nullptr){
+            if(showitem == nullptr)
+            {
                 showitem=new QStandardItem("NG");
-            }else{
+            }else
+            {
                 showitem->setText("NG");
             }
             // 设置字体颜色为红色
@@ -440,11 +478,15 @@ void TempData::recShowData(RecvFile::STDetailData datildata)
             showitem->setTextAlignment(Qt::AlignCenter);
             flabel=true;
             m_model->setItem(j,m_model->columnCount()-1,showitem);
-        }else{
+            LOG_INFO("pandin red bu he ge row:%d",j);
+        }
+        else
+        {
             showitem=m_model->item(j,m_model->columnCount()-1);
             if(showitem == nullptr){
                 showitem=new QStandardItem("OK");
-            }else{
+            }else
+            {
                 showitem->setText("OK");
             }
             // 设置字体颜色为红色
@@ -453,9 +495,12 @@ void TempData::recShowData(RecvFile::STDetailData datildata)
             m_model->setItem(j,m_model->columnCount()-1,showitem);
         }
     }
-    if (flabel){
+    if (flabel)
+    {
         emit setLaybelText("NG");
-    }else{
+    }
+    else
+    {
         emit setLaybelText("OK");
     }
     j++;
@@ -539,7 +584,8 @@ void TempData::showcoldata(RecvFile::STDetailData datildata, int col)
                 float stand=m_model->item(j,3)->text().toFloat();//理论值
                 QColor rc=standFont(showitem->text().toFloat(),m_model->item(j,3)->text().toFloat(),m_model->item(j,4)->text().toFloat(),m_model->item(j,5)->text().toFloat());
                 showitem->setForeground(QBrush(rc));
-                if(rc==Qt::red){
+                if(rc==Qt::red)
+                {
                     redvec.insert(j);
                     fn=true;
                     //auto item=m_model->item(i,m_model->columnCount()-1);
@@ -551,13 +597,18 @@ void TempData::showcoldata(RecvFile::STDetailData datildata, int col)
         }
     }
     bool flabel=false;
-    for(int j:allvec){
+    for(int j:allvec)
+    {
         auto showitem=m_model->item(j,m_model->columnCount()-1);
-        if(redvec.contains(j)){
+        if(redvec.contains(j))
+        {
             showitem=m_model->item(j,m_model->columnCount()-1);
-            if(showitem == nullptr){
+            if(showitem == nullptr)
+            {
                 showitem=new QStandardItem("NG");
-            }else{
+            }
+            else
+            {
                 showitem->setText("NG");
             }
             // 设置字体颜色为红色
@@ -565,22 +616,32 @@ void TempData::showcoldata(RecvFile::STDetailData datildata, int col)
             showitem->setTextAlignment(Qt::AlignCenter);
             flabel=true;
             m_model->setItem(j,m_model->columnCount()-1,showitem);
-        }else{
+            LOG_INFO("hezhi  red bu he ge row:%d",j);
+        }
+        else
+        {
             showitem=m_model->item(j,m_model->columnCount()-1);
-            if(showitem == nullptr){
+            if(showitem == nullptr)
+            {
                 showitem=new QStandardItem("OK");
-            }else{
+            }
+            else
+            {
                 showitem->setText("OK");
             }
             // 设置字体颜色为红色
             showitem->setForeground(QBrush(Qt::green));
             showitem->setTextAlignment(Qt::AlignCenter);
             m_model->setItem(j,m_model->columnCount()-1,showitem);
+            LOG_INFO("hezhi  green bu he ge row:%d",j);
         }
     }
-    if (flabel){
+    if (flabel)
+    {
         emit setLaybelText("NG");
-    }else{
+    }
+    else
+    {
         emit setLaybelText("OK");
     }
     j++;
@@ -612,7 +673,17 @@ void TempData::dataClear()
             //m_model->removeColumn(col);  // 删除该列
         }
     }*/
-    for (int i=6;i<columnCount-1;i++){
+    // 判定列清理
+    for(int iRow = 0 ; iRow < row; ++ iRow)
+    {
+        QStandardItem* pShowitem=m_model->item(iRow,columnCount-1);
+        if(pShowitem)
+        {
+            pShowitem->setText("");
+        }
+
+    }
+    for (int i=6;i<columnCount - 1;i++){
         m_model->removeColumn(6);
         m_tableView->update();
     }
@@ -642,6 +713,11 @@ void TempData::getData()
     static int j=6;
     static int showrow=0;
     while(true){
+        if(true == m_stopFlag)
+        {
+            qDebug() << "temdata thread is over";
+            return;
+        }
         if(m_queue.isEmpty()){
             //QThread::msleep(100);
         }
