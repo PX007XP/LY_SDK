@@ -59,7 +59,7 @@ TempData::TempData(QTableView* tv) {
 TempData::~TempData()
 {
     // 关闭工作簿
-    qDebug() << "TempData delete" ;
+    //qDebug() << "TempData delete" ;
     m_stopFlag = true;
     if(m_excel)
     {
@@ -70,45 +70,24 @@ TempData::~TempData()
         m_excel->dynamicCall("Quit()");
         delete m_excel;
         m_excel = nullptr;
-        qDebug() << "TempData delete 1" ;
+        //qDebug() << "TempData delete 1" ;
     }
     if(m_model)
     {
         delete  m_model;
         m_model = nullptr;
     }
-    qDebug() << "TempData delete 2" ;
-   // future.cancel();
-    //QThreadPool::globalInstance()->waitForDone(5000);
-    //m_workbooks->dynamicCall("Close()");
-
-    // 退出 Excel
-    //m_excel->dynamicCall("Quit()");
-
-    //delete m_excel;
+    //qDebug() << "TempData delete 2" ;
+    future.cancel();
+    QThreadPool::globalInstance()->waitForDone(1000);
 }
 
 void TempData::ReleaseObject()
 {
-    // 关闭工作簿
-   // qDebug() << "TempData delete" ;
+    // 退出线程
     m_stopFlag = true;
-    if(m_excel)
-    {
-        if(m_workbooks)
-        {
-            m_workbooks->dynamicCall("Close()");
-        }
-        m_excel->dynamicCall("Quit()");
-        delete m_excel;
-        m_excel = nullptr;
-       // qDebug() << "TempData delete 1" ;
-    }
-    if(m_model)
-    {
-        delete  m_model;
-        m_model = nullptr;
-    }
+    m_cond.wakeOne();
+
 }
 bool TempData::LoadData(QString filename, int showrow){
     bool setModel=true;
@@ -713,6 +692,7 @@ void TempData::getData()
     static int j=6;
     static int showrow=0;
     while(true){
+
         if(true == m_stopFlag)
         {
             qDebug() << "temdata thread is over";
@@ -721,6 +701,7 @@ void TempData::getData()
         if(m_queue.isEmpty()){
             //QThread::msleep(100);
         }
+
         QMutexLocker lock(&m_locker);
         m_cond.wait(&m_locker);
         //LOG_INFO("数据取出队列");

@@ -225,9 +225,9 @@ OperationInterface::~OperationInterface()
 
    if(m_tempData)
    {
+       m_tempData->ReleaseObject();
        delete m_tempData;
        m_tempData = nullptr;
-      //m_tempData->ReleaseObject();
    }
     LOG_INFO("程序 主动释放5");
    if(g_pLogger)
