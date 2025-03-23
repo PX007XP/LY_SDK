@@ -742,7 +742,7 @@ public:
         sehbeicomboBox->setItemText(2, QCoreApplication::translate("OperationInterface", "\350\200\201\345\205\206\344\270\260", nullptr));
         sehbeicomboBox->setItemText(3, QCoreApplication::translate("OperationInterface", "\346\265\267\345\205\213\346\226\257\345\272\267OMM", nullptr));
         sehbeicomboBox->setItemText(4, QCoreApplication::translate("OperationInterface", "\346\265\267\345\205\213\346\226\257\345\272\267CMM", nullptr));
-        sehbeicomboBox->setItemText(5, QCoreApplication::translate("OperationInterface", "\351\253\230\345\272\246\350\247\204", nullptr));
+        sehbeicomboBox->setItemText(5, QCoreApplication::translate("OperationInterface", "HG&MIC", nullptr));
 
         connectButton->setText(QCoreApplication::translate("OperationInterface", "\345\273\272\347\253\213\351\223\276\346\216\245", nullptr));
         GetDataButton->setText(QCoreApplication::translate("OperationInterface", "\350\216\267\345\217\226\346\225\260\346\215\256", nullptr));

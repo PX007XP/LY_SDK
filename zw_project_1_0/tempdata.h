@@ -16,6 +16,7 @@
 #include <QMutex>
 #include <QWaitCondition>
 #include <QFileSystemWatcher>
+#include <QFuture>
 class MyItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
@@ -63,6 +64,7 @@ public:
     int modelNumber();
     void showalldata(QVector<RecvFile::STDetailData> data);
     void showcoldata(RecvFile::STDetailData datildata,int col);
+    void ReleaseObject();
     signals:
         void dataChanged(int num,QString key,double value);
         void pushData();
@@ -89,6 +91,10 @@ private:
     QMap<QString,int> m_key;
     static int m_showcol;
     QFileSystemWatcher watcher;
+
+    QFuture<void> future;
+
+    std::atomic<bool> m_stopFlag{false};
 
 //
 public:
