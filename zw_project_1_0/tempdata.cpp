@@ -213,6 +213,12 @@ bool TempData::LoadData(QString filename, int showrow){
         QVariantList rowData= varRows[startRow].toList() ;//result.toList();
         if (rowData.size()<9) break;
         float stand=0,measure=0,ups=0,downs=0;
+        if(rowData.size()>2){
+            if(rowData[1].toString().size() ==0){
+                startRow++;
+                continue;
+            }
+        }
         if(rowData.size()>5){
             stand=rowData[4].toFloat();
         }
