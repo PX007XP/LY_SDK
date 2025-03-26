@@ -320,6 +320,67 @@ int OperationInterface::DealMerageMessage(RecvFile::STDetailData &stResult)
     return m_iLastInsertDataColumn;
 }
 
+int OperationInterface::DealMerageMessageAll(RecvFile::STDetailData &stResult)
+{
+    int iNowTestCount = m_vRecvData.size(); // 现有的测量件的数量
+    if(0 == iNowTestCount)
+    {
+        m_vRecvData.push_back(stResult);
+        LOG_DEBUG("插入第一条数据");
+        return 0;
+    }
+
+    // 做数据检查 找出插入的列数  1.最新的没有当前数据的一列  2.如果有重复数据 丢弃
+    int iDataInSert = 0;
+
+    for(auto it_data = m_vRecvData.begin(); it_data != m_vRecvData.end() ; ++it_data)
+    {
+        bool bHasData = false;
+        bool bNoData = false;
+        for(auto it_insert_data = stResult.m_mMeasuredValue.begin() ; it_insert_data != stResult.m_mMeasuredValue.end() ; ++it_insert_data)
+        {
+            auto it_has = it_data->m_mMeasuredValue.find(it_insert_data.key());
+            if(it_has == it_data->m_mMeasuredValue.end())
+            {
+                bNoData = true;
+            }
+            else
+            {
+                bHasData = true;
+            }
+        }
+
+        if(bHasData && bNoData)
+        {
+            LOG_ERROR("shuju error  key 和之前的有部分重复,导致数据无法融合");
+            return -99;
+        }
+        else if(bNoData == true && bHasData == false)
+        {
+            // 这种数据需要插入此列
+            break;
+        }
+        iDataInSert++;
+    }
+
+    // 插入数据
+    if(iDataInSert == m_vRecvData.size())
+    {
+        m_vRecvData.push_back(stResult);
+        LOG_DEBUG("插入新的数据");
+    }
+    else
+    {
+        auto& it_data_org = m_vRecvData[iDataInSert];
+        for(auto it_insert= stResult.m_mMeasuredValue.begin(); it_insert != stResult.m_mMeasuredValue.end();++it_insert )
+        {
+            it_data_org.m_mMeasuredValue[it_insert.key()] = it_insert.value();
+        }
+        LOG_DEBUG("新的数据融合插入[%d]",iDataInSert);
+    }
+    return iDataInSert;
+}
+
 int OperationInterface::DealMerageMessage(QVector<RecvFile::STDetailData> VRecvData)
 {
     int i = 0;
@@ -1057,7 +1118,7 @@ void OperationInterface::onDirectoryChanged(const QString &strPath)
     foreach (QFileInfo FileInfo , vNewFiles)
     {
         int iRet = m_pExcellWork->ReadFileData(FileInfo.absoluteFilePath() , VRecvData , iFileType);
-#if 0
+
         if(0 == iRet && 3 == iFileType && 0 == g_iDelTxtFile )
         {
             if( ui->sehbeicomboBox->currentText() == "MicroVu")
@@ -1065,7 +1126,7 @@ void OperationInterface::onDirectoryChanged(const QString &strPath)
                 QFile::remove(FileInfo.absoluteFilePath());
             }
         }
-#endif
+
        // m_sSetOldFiles.insert(FileInfo.fileName());
         LOG_INFO("自动感知到文件完成读取:%s,iFielType:%d ,iRet=%d , data_size=%d",FileInfo.absoluteFilePath().toStdString().c_str(), iFileType,iRet,VRecvData.size());
     }
@@ -1078,12 +1139,12 @@ void OperationInterface::onDirectoryChanged(const QString &strPath)
         LOG_INFO("文件感知1 数据类型 type=%d",iFileType);
         foreach (RecvFile::STDetailData stResult, VRecvData)
         {
-            int iRet = DealMerageMessage(stResult);
+            int iRet = DealMerageMessageAll(stResult);
             if(iRet < 0)
             {
                 LOG_ERROR("文件感知 is errord return :%d , count[%d,%d] ,filename:%s",iRet,VRecvData.size(),m_vRecvData.size(),m_LastFileInfo.absoluteFilePath().toStdString().c_str());
             }
-            LOG_ERROR("文件感知 count :%d",m_vRecvData.size());
+            LOG_INFO("文件感知 count :%d",m_vRecvData.size());
         }
     }
     else
@@ -1124,7 +1185,7 @@ void OperationInterface::onFileChanged(const QString &strPath)
         LOG_INFO("文件感知1 数据类型 type=%d",iFileType);
         foreach (RecvFile::STDetailData stResult, VRecvData)
         {
-            int iRet = DealMerageMessage(stResult);
+            int iRet = DealMerageMessageAll(stResult);
             if(iRet < 0)
             {
                 LOG_ERROR("文件感知 is errord return :%d , count[%d,%d] ,filename:%s",iRet,VRecvData.size(),m_vRecvData.size(),m_LastFileInfo.absoluteFilePath().toStdString().c_str());

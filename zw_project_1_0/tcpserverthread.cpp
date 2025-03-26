@@ -72,7 +72,26 @@ void TcpServerThread::readClient()
 void TcpServerThread::CloseSocket()
 {
     QTcpSocket *clientSocket = qobject_cast<QTcpSocket*>(sender());
-    if (clientSocket) {
+    if (clientSocket) 
+    {
+        // 在删除前强制读取剩余数据
+        if(clientSocket->bytesAvailable() > 0) 
+        {
+            QByteArray data = clientSocket->readAll();
+            QString message = QString::fromUtf8(data);
+            LOG_INFO("Late received data:%s",message.toStdString().c_str());
+            // 可以在这里添加逻辑来处理接收到的消息
+            STDetailData temData;
+            int iRet = DealWithData(message, temData);
+            if (0 == iRet)
+            {
+                emit CMMResultToUi(temData);
+            }
+            else
+            {
+                LOG_ERROR(" CMM DealWithData error 1 iret=%d", iRet);
+            }
+        }
         sockets.removeOne(clientSocket);
         clientSocket->deleteLater();
         qDebug() << "Client disconnected: " << clientSocket->peerAddress().toString();

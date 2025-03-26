@@ -440,7 +440,7 @@ void TempData::recShowData(RecvFile::STDetailData datildata)
                 }
                 allvec.insert(j);
                 m_model->setItem(j,i,showitem);
-                LOG_INFO("pandin red bu he ge row:%d",j);
+               // LOG_INFO("pandin red bu he ge row:%d",j);
             }
         }
     }
@@ -463,7 +463,7 @@ void TempData::recShowData(RecvFile::STDetailData datildata)
             showitem->setTextAlignment(Qt::AlignCenter);
             flabel=true;
             m_model->setItem(j,m_model->columnCount()-1,showitem);
-            LOG_INFO("pandin red bu he ge row:%d",j);
+           // LOG_INFO("pandin red bu he ge row:%d",j);
         }
         else
         {

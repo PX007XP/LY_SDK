@@ -858,7 +858,6 @@ int ExcellPrecess::ReadTxtData(QString strFilePath, QVector<RecvFile::STDetailDa
     }
 
     file.close();
-
     return 0;
 }
 

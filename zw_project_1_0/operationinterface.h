@@ -42,6 +42,8 @@ public:
 
     // 处理数据，对数据进行分析 融合数据 返回数据插入的列数下标 从0 开始 数据对接使用的接口
     int DealMerageMessage(RecvFile::STDetailData& stResult);
+    //处理数据，对数据进行分析 融合数据 返回数据插入的列数下标 从0 开始 数据对接使用的接口 循环遍历 融合
+    int DealMerageMessageAll(RecvFile::STDetailData& stResult);
 
     // 处理数据，对数据进行分析 融合数据 返回数据插入的列数下标 从0 开始 文件感知使用的接口
     int DealMerageMessage(QVector<RecvFile::STDetailData>);
