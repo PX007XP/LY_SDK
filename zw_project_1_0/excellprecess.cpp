@@ -130,7 +130,7 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
     QString strSubNumber = m_pOperationInterFace->GetUiPointObject()->NumberEdit->text();
     if(strSubNumber.isEmpty())
     {
-        m_pOperationInterFace->ShowMessageBoxInfo("错误", "无法");
+        m_pOperationInterFace->ShowMessageBoxInfo("错误", "请先获取单号");
         return -5;
     }
 

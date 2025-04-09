@@ -614,15 +614,12 @@ void OperationInterface::on_WriteFilepushButton_clicked()
        // ShowLoading();
 
         int iRet = m_pExcellWork->WriteData(&m_vRecvData , strFilePath);
-        qDebug() << "WriteData return " << iRet;
         LOG_DEBUG("WriteData return %d",iRet);
     }
     else
     {
         LOG_ERROR("moban file is error:%s ",strFilePath.toStdString().c_str());
     }
-
-
 
     // 上传文件
     on_pushFileButton_clicked();
@@ -1783,7 +1780,8 @@ void OperationInterface::on_gaoduguilineEdit_editingFinished()
 
     RecvFile::STDetailData& DataInfo = m_vRecvData[iDataSize];
     DataInfo.m_mMeasuredValue[strKey].dActual = strValue.toDouble();
-
+    DataInfo.m_mMeasuredValue[strKey].strName = strKey;
+    LOG_DEBUG("高度规插入数据 key:%s,value:%f",strKey.toStdString().c_str(),strValue.toDouble());
     // 显示：
     m_tempData->showcoldata(DataInfo , iDataSize + 1 );
 

@@ -266,7 +266,7 @@ bool TempData::LoadData(QString filename, int showrow){
     if(setModel){
         // 设置代理
         m_tableView->setModel(&*m_model);  // 将模型绑定到视图
-        MyItemDelegate *delegate = new MyItemDelegate(m_tableView);
+        MyItemDelegate *delegate = new MyItemDelegate(m_tableView , this);
         m_tableView->setItemDelegate(delegate);
         for(int i=0;i<8;i++){
           m_tableView->setColumnWidth(0,90);
@@ -934,7 +934,12 @@ void TempData::SaveData(const QModelIndex &topLeft, const QModelIndex &bottomRig
         return;
     }
     QString key = keyitem->text();
-    float value = m_model->item(topLeft.row(),topLeft.column())->text().toFloat();
+    QString strValue = m_model->item(topLeft.row(),topLeft.column())->text();
+    if(strValue.isEmpty())
+    {
+        return;
+    }
+    float value = strValue.toFloat();
     if(topLeft.column()<6)return;
     int row=topLeft.row();
     if(m_model->columnCount() ==0 && m_model->rowCount()==0)return;
@@ -948,9 +953,19 @@ void TempData::SaveData(const QModelIndex &topLeft, const QModelIndex &bottomRig
     QColor oldcolor= moditem->foreground().color();
     if(oldcolor != rc)moditem->setForeground(QBrush(rc));
     m_model->setItem(topLeft.row(),topLeft.column(),moditem);
-    if(rc == Qt::red){
+    if(rc == Qt::red)
+    {
         auto item=m_model->item(row,m_model->columnCount()-1);
-        if(item == nullptr)return;
+        if(item == nullptr)
+        {
+            item = new QStandardItem("NG");
+            if(nullptr == item)
+            {
+                LOG_ERROR("m_model item error row =%d , column=%d",row,m_model->columnCount()-1);
+                return;
+            }
+        }
+
         item->setForeground(QBrush(rc));
         m_model->setItem(row,m_model->columnCount()-1,item);
         emit setLaybelText("NG");
@@ -978,7 +993,18 @@ void TempData::SaveData(const QModelIndex &topLeft, const QModelIndex &bottomRig
             item->setForeground(QBrush(Qt::green));
             m_model->setItem(row,m_model->columnCount()-1,item);
         }
-
+        else
+        {
+            item = new QStandardItem("NG");
+            if(nullptr == item)
+            {
+                LOG_ERROR("m_model item error row =%d , column=%d",row,m_model->columnCount()-1);
+                return;
+            }
+            item->setText("OK");
+            item->setForeground(QBrush(Qt::green));
+            m_model->setItem(row,m_model->columnCount()-1,item);
+        }
     }
     //遍历结果列，没有红色 则设置label为绿色
     bool fs=false;
@@ -996,6 +1022,7 @@ void TempData::SaveData(const QModelIndex &topLeft, const QModelIndex &bottomRig
         emit setLaybelText("OK");
     }
     emit dataChanged(topLeft.column()-6, key,value);
+    LOG_DEBUG("SaveData end");
 }
 
 void TempData::Setyangbenshuliang(int col)
@@ -1014,24 +1041,25 @@ void TempData::onFileChanged(const QString &filePath)
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QTextStream in(&file);
         QString content = in.readAll();
-        if(content == "true"){
-            m_tableView->setEditTriggers(QAbstractItemView::DoubleClicked);
-            connect(m_model,&QStandardItemModel::dataChanged,this,&TempData::SaveData);
+        if(content == "true")
+        {
+            m_globalEditEnabled  = true;
+           // m_tableView->setEditTriggers(QAbstractItemView::DoubleClicked);
+           // connect(m_model,&QStandardItemModel::dataChanged,this,&TempData::SaveData);
         }
         else
         {
-            m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-            disconnect(m_model,&QStandardItemModel::dataChanged,this,&TempData::SaveData);
+            m_globalEditEnabled  = false;
+           // m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+            //disconnect(m_model,&QStandardItemModel::dataChanged,this,&TempData::SaveData);
         }
-        qDebug() << "File content:" << content;
-        LOG_INFO("File content change %s" , content.toStdString().c_str());
-        file.close();
+        //qDebug() << "File content:" << content;
+        //LOG_INFO("File content change %s" , content.toStdString().c_str());
+        //file.close();
     }
-    else
-    {
-        m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        qDebug() << "Failed to open file:" << filePath;
-    }
+    
+    m_tableView->setEditTriggers(QAbstractItemView::DoubleClicked);
+    connect(m_model,&QStandardItemModel::dataChanged,this,&TempData::SaveData);
 }
 
 int TempData::ChoseCell(int iRow , int iColumn , QModelIndex &nextIndex)
@@ -1060,3 +1088,27 @@ QModelIndex TempData::GetCellData(int iRow, int iColumn)
     return m_model->index(iRow, iColumn);
 }
 
+QWidget *MyItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    // 第一列和最后一列不允许编辑
+    if (index.column() < 6 || index.column() == m_tempData->m_model->columnCount()-1) {
+        return nullptr;
+    }
+    
+    // 获取第一列的数据modslot
+    QModelIndex firstColIndex = index.sibling(index.row(), 2);
+
+    QString firstColData = firstColIndex.data(Qt::DisplayRole).toString();
+    LOG_DEBUG("createEditor row=%d, str=%s",index.row() , firstColData.toStdString().data());
+    // 如果第一列是"OMM CMM HG  MIC"则允许编辑
+    if (firstColData != "OMM" && firstColData != "CMM" && firstColData != "HG" && firstColData != "MIC")
+    {
+        return QStyledItemDelegate::createEditor(parent, option, index);
+    }
+    // 否则根据全局编辑状态决定
+    else if (m_tempData->m_globalEditEnabled)
+    {
+        return QStyledItemDelegate::createEditor(parent, option, index);
+    }
+    return nullptr;
+}
