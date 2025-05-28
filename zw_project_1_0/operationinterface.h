@@ -227,6 +227,14 @@ private slots:
     // 高度规文本发生变化
     void on_gaoduguilineEdit_textChanged(const QString &arg1);
 
+    void on_DownLoadFileButton_1_clicked();
+
+    void on_cancleRecieve_clicked();
+
+    void on_confirmTask_clicked();
+
+    void on_cancleTask_clicked();
+
 private:
     QModelIndex m_indexCell; // 记录当前对象的值
 

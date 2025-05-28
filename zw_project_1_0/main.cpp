@@ -5,6 +5,7 @@
 #include <QTextCodec>
 #include <QString>
 #include <QMap>
+#include <QStyleFactory>
 
 // 加密函数：数字 -> 字母
 // 声明并初始化 QMap
@@ -25,6 +26,32 @@ QString encrypt(QString number) {
 
     return letter;
 }
+
+void printAllWidgetsFont(QWidget *parent) {
+    if (!parent) {
+        return;
+    }
+
+    // 打印当前控件的字体信息
+    QFont font = parent->font();
+    if(font.family() != "Microsoft YaHei")
+    {
+    qDebug() << "Widget:" << parent->metaObject()->className()
+             << "| ObjectName:" << parent->objectName()
+             << "| Font:" << font.family()
+             << "| Size:" << font.pointSize()
+             << "| Bold:" << font.bold()
+             << "| Italic:" << font.italic();
+    }
+
+    // 递归遍历所有子控件
+    for (QObject *child : parent->children()) {
+        if (child->isWidgetType()) {
+            printAllWidgetsFont(qobject_cast<QWidget*>(child));
+        }
+    }
+}
+
 
 // 解密函数：字母 -> 数字
 QString decrypt(QString &letter) {
@@ -83,6 +110,10 @@ int main(int argc, char *argv[])
     // 关闭文件
     setfile.close();
 
+
+   // 设置全局字体（仅指定字体，不改变大小）
+    QFont font("Microsoft YaHei");
+    QApplication::setFont(font);
     // 设置统一的样式表
     QFile file(":/style.css");  // 样式表文件路径
     if (!file.open(QFile::ReadOnly)) {
@@ -104,5 +135,11 @@ int main(int argc, char *argv[])
     w.setWindowTitle("LIMS");
     w.setWindowIconText("LIMS");
     w.show();
+
+    QFont appFont = QApplication::font();
+    qDebug() << "Application font family:" << appFont.family();
+
+     printAllWidgetsFont(&w); // 打印当前窗口所有控件的字体
+
     return a.exec();
 }

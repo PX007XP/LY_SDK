@@ -111,7 +111,7 @@ int HttpNetObject::GetCheckTaskData(QString strMmsID)
     // 发送POST请求
     qDebug() <<"get data: " <<jsonData ;
     QNetworkReply *pReply = m_pManager->post(request, jsonData);
-
+    m_iPostType = PostType_GetmmsTaskDetail;
     return 0;
 }
 
@@ -167,6 +167,11 @@ int HttpNetObject::PostFileToNet(QString strFilePath)
 
 int HttpNetObject::CompeleteCheck()
 {
+    if( false == m_bLoginStatus || m_strToken.isEmpty())
+    {
+        m_pOperationObject->MessageBoxInfomation("提示","请先登录");
+        return -1;
+    }
     if(m_strFileId.isEmpty())
     {
         m_pOperationObject->MessageBoxInfomation("提示", "请先上传文件");
@@ -207,8 +212,13 @@ int HttpNetObject::CompeleteCheck()
 }
 
 
-int HttpNetObject::DownloadFile(QString strMmsID,int iFileType /*= 0*/)
+int HttpNetObject::DownloadFile(QString strMmsID,int iFileType /*= 0*/ , bool bPlugin /* = false*/)
 {
+    if( false == m_bLoginStatus || m_strToken.isEmpty())
+    {
+        m_pOperationObject->MessageBoxInfomation("提示","请先登录");
+        return -1;
+    }
     //QUrl url("http://100.0.4.37:8080/Quality/MMS_QCChkSummary/GetQCCPKFAIExcel");
     QUrl url("https://mom.lingyiitech.com:8092/api/Quality/MMS_QCChkSummary/GetQCCPKFAIExcel");
     QNetworkRequest request(url);
@@ -228,7 +238,7 @@ int HttpNetObject::DownloadFile(QString strMmsID,int iFileType /*= 0*/)
     {
         m_strDownloadFile="FAI";
     }
-
+    m_bDownFilePlugin = bPlugin;
     QJsonArray reqDetailNoArray;
     reqDetailNoArray.append(strMmsID);
     jsonObject["ReqDetailNo"] = reqDetailNoArray;
@@ -248,6 +258,235 @@ int HttpNetObject::DownloadFile(QString strMmsID,int iFileType /*= 0*/)
 
     return 0;
 
+}
+
+// 取消检测任务
+int HttpNetObject::CancleCheckTask(QString strMmsID)
+{
+    if( false == m_bLoginStatus || m_strToken.isEmpty())
+    {
+        m_pOperationObject->MessageBoxInfomation("提示","请先登录");
+        return -1;
+    }
+    //// 先获取Id https://mom.lingyiitech.com:8092/api/Quality/MMS_ChkResultList/GetChkTaskDataList  再 调用取消 https://mom.lingyiitech.com:8092/api/Quality/MMS_ChkResultList/CancelChk    
+    m_iPostType = PostType_Begin;
+    // 定义请求的URL（假设这是登录接口的地址）
+    QUrl url("https://mom.lingyiitech.com:8092/api/Quality/MMS_ChkResultList/GetChkTaskDataList");
+
+    QNetworkRequest request(url);
+    request.setRawHeader("Authorization", QString("Bearer %1").arg(m_strToken).toUtf8());
+    request.setSslConfiguration(QSslConfiguration::defaultConfiguration());
+    // 设置请求头部信息（如果需要）
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    QJsonObject json;
+    json["PageIndex"] = 1;
+    json["PageRows"] = 100;
+    json["SortField"] = "CreateTime";
+    json["SortType"] = "asc";
+
+    QJsonObject searchData;
+    searchData["ReqDetailNo"] = "";
+    searchData["ReqNo"]="";
+    searchData["ReqDetailNoOne"]=strMmsID;
+    json["Search"] = searchData;
+
+    QJsonDocument jsonDoc(json);
+    QByteArray jsonData = jsonDoc.toJson();
+
+
+    // 发送POST请求
+    qDebug() <<"CancleCheckTask data: " <<jsonData ;
+    QNetworkReply *pReply = m_pManager->post(request, jsonData);
+    if(NULL == pReply)
+    {
+        LOG_ERROR("CancleRecieve post error :%s",strMmsID.toStdString().c_str());
+    }
+    else
+    {
+        m_iPostType = PostType_CancleTask1;
+    }
+    
+    return 0;
+}
+
+int HttpNetObject::CancleCheckTask2( QString strTaskId)
+{
+    QUrl url("https://mom.lingyiitech.com:8092/api/Quality/MMS_ChkResultList/CancelChk");
+
+    QNetworkRequest request(url);
+    request.setRawHeader("Authorization", QString("Bearer %1").arg(m_strToken).toUtf8());
+    request.setSslConfiguration(QSslConfiguration::defaultConfiguration());
+    // 设置请求头部信息（如果需要）
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    QJsonObject json;
+    json["Id"] = strTaskId;
+
+    QJsonDocument jsonDoc(json);
+    QByteArray jsonData = jsonDoc.toJson();
+
+
+    // 发送POST请求
+    qDebug() <<"CancleCheckTask2 data: " <<jsonData ;
+    QNetworkReply *pReply = m_pManager->post(request, jsonData);
+    if(NULL == pReply)
+    {
+        LOG_ERROR("CancleCheckTask2 post error :%s",strTaskId.toStdString().c_str());
+    }
+    else
+    {
+        m_iPostType = PostType_CancleTask2;
+    }
+    return 0;
+}
+
+// 取消收件
+int HttpNetObject::CancleRecieve(QString strMmsID)
+{
+    if( false == m_bLoginStatus || m_strToken.isEmpty())
+    {
+        m_pOperationObject->MessageBoxInfomation("提示","请先登录");
+        return -1;
+    }
+    m_iPostType = PostType_Begin;
+    QUrl url("https://mom.lingyiitech.com:8092/api/Quality/MMS_ChkSampleReceive/UpdateRecStatus");
+
+    QNetworkRequest request(url);
+    request.setRawHeader("Authorization", QString("Bearer %1").arg(m_strToken).toUtf8());
+    request.setSslConfiguration(QSslConfiguration::defaultConfiguration());
+    // 设置请求头部信息（如果需要）
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    QJsonObject json;
+
+    json["DetailSchedule"] = 1;
+    json["ReqDetailNo"] = strMmsID;
+    //json["ReturnReason"] = "测试退回";
+    json["Type"] = 2;
+
+    QJsonDocument jsonDoc(json);
+    QByteArray jsonData = jsonDoc.toJson();
+
+    // 发送POST请求
+    qDebug() <<"CancleRecieve data: " <<jsonData ;
+    QNetworkReply *pReply = m_pManager->post(request, jsonData);
+    if(NULL == pReply)
+    {
+        LOG_ERROR("CancleRecieve post error :%s",strMmsID.toStdString().c_str());
+    }
+    return 0;
+}
+
+int HttpNetObject::GetCheckMechineList()
+{
+    m_iPostType = PostType_Begin;
+    QUrl url("https://mom.lingyiitech.com:8092/api/Quality/MMS_ChkDeviceList/GetModelList");
+
+    QNetworkRequest request(url);
+    request.setRawHeader("Authorization", QString("Bearer %1").arg(m_strToken).toUtf8());
+    request.setSslConfiguration(QSslConfiguration::defaultConfiguration());
+    // 设置请求头部信息（如果需要）
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    QJsonObject json;
+    json["DevNo"]="";
+    json["DevName"]="";
+    json["keyword"]="1438410277883219968";
+
+
+    QJsonDocument jsonDoc(json);
+    QByteArray jsonData = jsonDoc.toJson();
+
+    // 发送POST请求
+    qDebug() <<"GetCheckMechineList data: " <<jsonData ;
+    QNetworkReply *pReply = m_pManager->post(request, jsonData);
+    if(NULL == pReply)
+    {
+        LOG_ERROR("GetCheckMechineList post error");
+    }
+    else
+    {
+        m_iPostType = PostType_GetCheckMachineList;
+    }
+    return 0;
+}
+
+int HttpNetObject::ConfirmTask(QString strMmsID)
+{
+    if( false == m_bLoginStatus || m_strToken.isEmpty())
+    {
+        m_pOperationObject->MessageBoxInfomation("提示","请先登录");
+        return -1;
+    }
+    m_iPostType = PostType_Begin;
+    // 确认收件 
+    QUrl url("https://mom.lingyiitech.com:8092/api/Quality/MMS_ChkSampleReceive/UpdateRecStatus");
+
+    QNetworkRequest request(url);
+    request.setRawHeader("Authorization", QString("Bearer %1").arg(m_strToken).toUtf8());
+    request.setSslConfiguration(QSslConfiguration::defaultConfiguration());
+    // 设置请求头部信息（如果需要）
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    QJsonObject json;
+    json["DetailSchedule"]=2;
+    //json["RecQty"]=5;
+    json["Remark"]="";
+    json["ReqDetailNo"]=strMmsID;
+    json["Type"]=1;
+
+    QJsonDocument jsonDoc(json);
+    QByteArray jsonData = jsonDoc.toJson();
+
+    // 发送POST请求
+    qDebug() <<"ConfirmTask data: " <<jsonData ;
+    QNetworkReply *pReply = m_pManager->post(request, jsonData);
+    if(NULL == pReply)
+    {
+        LOG_ERROR("ConfirmTask post error");
+    }
+    else
+    {
+        m_iPostType = PostType_ConfirRevieve;
+        m_strMmsID = strMmsID;
+    }
+    return 0;
+}
+
+int HttpNetObject::BeginCheck(QString strMmsID)
+{
+    m_iPostType = PostType_Begin;
+    // 开始检测
+    QUrl url("https://mom.lingyiitech.com:8092/api/Quality/MMS_ChkResultList/UpdateStatus");
+
+    QNetworkRequest request(url);
+    request.setRawHeader("Authorization", QString("Bearer %1").arg(m_strToken).toUtf8());
+    request.setSslConfiguration(QSslConfiguration::defaultConfiguration());
+    // 设置请求头部信息（如果需要）
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    QJsonObject json;
+    json["ReqDetailNo"] = strMmsID;
+    json["DetailSchedule"] = 6;
+    json["DeviceNo"] = m_pOperationObject->GetUiPointObject()->checkMachineList->currentText();
+    json["TestUserQty"] = 1;
+
+    QJsonDocument jsonDoc(json);
+    QByteArray jsonData = jsonDoc.toJson();
+
+    // 发送POST请求
+    qDebug() <<"BeginCheck data: " <<jsonData ;
+    QNetworkReply *pReply = m_pManager->post(request, jsonData);
+    if(NULL == pReply)
+    {
+        LOG_ERROR("BeginCheck post error");
+    }
+    else
+    {
+        m_iPostType = PostType_BeginTask;
+    }
+    return 0;
 }
 
 int HttpNetObject::SubmitForView()
@@ -290,15 +529,94 @@ void HttpNetObject::DealWithLoginResponse(QJsonObject &json)
     qDebug()<< "jsontoken:  " << m_strToken ;
     m_pOperationObject->MessageBoxInfomation("提示","登录成功");
     m_bLoginStatus = true;
+    GetCheckMechineList();
 }
 
 // 单号获取详情
 void HttpNetObject::DealWithPageListResponse(QJsonObject &json)
 {
+    if(m_iPostType == PostType_GetCheckMachineList)
+    {
+        DealWithGetCheckMachineResponse(json);
+        m_iPostType = PostType_Begin;
+        qDebug()<< "DealWithPageListResponse  end";
+    }
+    else if(m_iPostType == PostType_CancleTask1)
+    {
+        qDebug()<< "cancle task  id set";
+
+        QJsonObject jsonData = json.value("Data").toObject();
+        QJsonArray pageListArray = jsonData.value("PageList").toArray();
+        if(pageListArray.isEmpty())
+        {
+            m_pOperationObject->MessageBoxInfomation("提示", "获取单号信息为空");
+            GetCheckMechineList();
+            return ;
+        }
+        m_strBizid.clear();
+        int iArrary = jsonData.value("Total").toInt();
+        for(int i = 0 ; i < iArrary ; ++i)
+        {
+            QJsonObject pageListData = pageListArray[i].toObject();
+            m_strTaskId = pageListData.value("Id").toString();
+        }
+        CancleCheckTask2(m_strTaskId);
+        return;
+    }
+    else
+    {
+        QJsonObject jsonData = json.value("Data").toObject();
+        QJsonArray pageListArray = jsonData.value("PageList").toArray();
+        if(pageListArray.isEmpty())
+        {
+            m_pOperationObject->MessageBoxInfomation("提示", "获取单号信息为空");
+            GetCheckMechineList();
+            return ;
+        }
+        m_strBizid.clear();
+        int iArrary = jsonData.value("Total").toInt();
+        for(int i = 0 ; i < iArrary ; ++i)
+        {
+            QJsonObject pageListData = pageListArray[i].toObject();
+
+            QString strTestUserNo = pageListData.value("TestUserNo").toString();
+
+            if(strTestUserNo == m_strUserName)
+            {
+                m_strBizid = pageListData.value("Id").toString();
+
+                GetJsonValueBykey(pageListData , g_strReqNo);
+                GetJsonValueBykey(pageListData , g_strReqUserName);
+                GetJsonValueBykey(pageListData , g_strReqUnicom);
+                GetJsonValueBykey(pageListData , g_strDeviceName);
+                GetJsonValueBykey(pageListData , g_strDeviceNo);
+                GetJsonValueBykey(pageListData , g_strReqTime);
+                GetJsonValueBykey(pageListData , g_strTestCon);
+                GetJsonValueBykey(pageListData , g_strReportType);
+                GetJsonValueBykey(pageListData , g_strProjectClassId);
+                GetJsonValueBykey(pageListData , g_strProjectStageId);
+                GetJsonValueBykey(pageListData , g_strSatageNo);
+                GetJsonValueBykey(pageListData , g_strOrgCode);
+                GetJsonValueBykey(pageListData , g_strRemark);
+                GetJsonValueBykey(pageListData, g_strRevArtTime);
+                LOG_INFO(" get mms detail user[%s] ,bizid[%s]" , m_strUserName.toStdString().c_str() ,  m_strBizid.toStdString().c_str());
+            }
+        }
+        if(m_strBizid.isEmpty())
+        {
+            m_pOperationObject->MessageBoxInfomation("提示","子单号信息错误");
+        }
+    }
+}
+
+void HttpNetObject::DealWithGetCheckMachineResponse(QJsonObject &json)
+{
+
     QJsonObject jsonData = json.value("Data").toObject();
     QJsonArray pageListArray = jsonData.value("PageList").toArray();
     if(pageListArray.isEmpty())
     {
+        m_pOperationObject->MessageBoxInfomation("提示", "获取单号信息为空");
         return ;
     }
     m_strBizid.clear();
@@ -307,32 +625,17 @@ void HttpNetObject::DealWithPageListResponse(QJsonObject &json)
     {
         QJsonObject pageListData = pageListArray[i].toObject();
 
-        QString strTestUserNo = pageListData.value("TestUserNo").toString();
+        QString strDevCateName = pageListData.value("DevCateName").toString();
 
-        if(strTestUserNo == m_strUserName)
+        if(strDevCateName.contains("CMM",Qt::CaseInsensitive) || strDevCateName.contains("OMM",Qt::CaseInsensitive))
         {
-            m_strBizid = pageListData.value("Id").toString();
+            QString strDevName = pageListData.value("DevNo").toString();
 
-            GetJsonValueBykey(pageListData , g_strReqNo);
-            GetJsonValueBykey(pageListData , g_strReqUserName);
-            GetJsonValueBykey(pageListData , g_strReqUnicom);
-            GetJsonValueBykey(pageListData , g_strDeviceName);
-            GetJsonValueBykey(pageListData , g_strDeviceNo);
-            GetJsonValueBykey(pageListData , g_strReqTime);
-            GetJsonValueBykey(pageListData , g_strTestCon);
-            GetJsonValueBykey(pageListData , g_strReportType);
-            GetJsonValueBykey(pageListData , g_strProjectClassId);
-            GetJsonValueBykey(pageListData , g_strProjectStageId);
-            GetJsonValueBykey(pageListData , g_strSatageNo);
-            GetJsonValueBykey(pageListData , g_strOrgCode);
-            GetJsonValueBykey(pageListData , g_strRemark);
-            GetJsonValueBykey(pageListData, g_strRevArtTime);
-            LOG_INFO(" get mms detail user[%s] ,bizid[%s]" , m_strUserName.toStdString().c_str() ,  m_strBizid.toStdString().c_str());
+            if(!strDevName.isEmpty())
+            {
+                m_pOperationObject->GetUiPointObject()->checkMachineList->addItem(strDevName);
+            }
         }
-    }
-    if(m_strBizid.isEmpty())
-    {
-        m_pOperationObject->MessageBoxInfomation("提示","子单号信息错误");
     }
 }
 
@@ -413,7 +716,10 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
             LOG_INFO("File downloaded and saved to %s [%d,%d]", filePath.toStdString().c_str() ,fileData.size(),bytesWritten);
             if(2 == m_iFileData)
             {
-                //m_pOperationObject->MessageBoxInfomation("提示", "下载成功");
+                if(false == m_bDownFilePlugin)
+                {
+                    m_pOperationObject->MessageBoxInfomation("提示", "下载成功");
+                }
                 LOG_INFO("下载成功[%s][%s]",m_strCPKFilePath.toStdString().c_str(), filePath.toStdString().c_str());
             }
         }
@@ -423,33 +729,42 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
         }
         if(1 == m_iFileData)
         {
-            DownloadFile(fileName ,1);
+            DownloadFile(fileName ,1,m_bDownFilePlugin);
             m_strCPKFilePath = filePath;
         }
         else
         {
             m_iFileData = 0;
             m_strFAIFilePath = filePath;
-
-            // 文件下载完成  需要调用 外部插件  插件路径以及插件名通过外部配置配置
-            QString strPlugin = "";
-            if(g_strPluginPath.isEmpty())
+            LOG_DEBUG("文件下载完成");
+            if(m_bDownFilePlugin)
             {
-                strPlugin = "./Derive.exe";
-            }
-            else
-            {
-                strPlugin =  g_strPluginPath;
-            }
-            int iRet = ModifyPluginConfig();
-            if(iRet < 0)
-            {
-                LOG_ERROR("ModifyPluginConfig faild return :%d",iRet);
-            }
-            iRet = ExePlugin(strPlugin);
-            if(iRet < 0)
-            {
-                LOG_ERROR("ExePlugin faild return :%d",iRet);
+                // 文件下载完成  需要调用 外部插件  插件路径以及插件名通过外部配置配置
+                LOG_DEBUG("文件下载完成 ,开始调用插件");
+                QString strPlugin = "";
+                if(g_strPluginPath.isEmpty())
+                {
+                    strPlugin = "./Derive.exe";
+                }
+                else
+                {
+                    strPlugin =  g_strPluginPath;
+                }
+                int iRet = ModifyPluginConfig();
+                if(iRet < 0)
+                {
+                    LOG_ERROR("ModifyPluginConfig faild return :%d",iRet);
+                }
+                iRet = ExePlugin(strPlugin);
+                if(iRet < 0)
+                {
+                    LOG_ERROR("ExePlugin faild return :%d",iRet);
+                }
+                else
+                {
+                    m_pOperationObject->MessageBoxInfomation("提示", "下载成功");
+                }
+                m_bDownFilePlugin = false;
             }
         }
         return;
@@ -514,6 +829,11 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
                // SubmitForView();
                 m_pOperationObject->HideLoading();
                 m_pOperationObject->MessageBoxInfomation("提示", "上传文件成功");
+            }
+            else if(PostType_ConfirRevieve == m_iPostType)
+            {
+                //m_pOperationObject->MessageBoxInfomation("提示", "确认收件成功");
+                BeginCheck(m_strMmsID);
             }
             else
             {

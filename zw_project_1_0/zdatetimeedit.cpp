@@ -18,6 +18,7 @@ ZDateTimeEdit::ZDateTimeEdit(QWidget *parent):QDateTimeEdit(parent)
     //m_popupButton->setCursor(Qt::ArrowCursor);
     QHBoxLayout *layout = new QHBoxLayout();
     m_popupButton->setCursor(QCursor(Qt::PointingHandCursor));
+    m_popupButton->setFont(QFont("Microsoft YaHei"));
     layout->addStretch();
     layout->addWidget(m_popupButton);
     layout->setContentsMargins(0,0,20,0);

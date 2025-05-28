@@ -168,6 +168,9 @@ OperationInterface::OperationInterface(QWidget *parent)
 
     // 数据感知初始化
     InitWatcher();
+    qDebug()<<"button 字体:" << ui->label_20->font().family();
+    qDebug()<<"button 字体:" << ui->label_30->font().family();
+    qDebug()<<"caijiTypecomboBox 字体:" << ui->caijiTypecomboBox->font().family();
 }
 
 OperationInterface::~OperationInterface()
@@ -795,7 +798,7 @@ void OperationInterface::SetUIMessageInfo(QString strUiName, QString strData)
     }
     else if(g_strRemark == strUiName)
     {
-        ui->label_beizhu->setText(strData);
+        //ui->label_beizhu->setText(strData);
     }
     else if(g_strRevArtTime == strUiName)
     {
@@ -1655,6 +1658,18 @@ void OperationInterface::on_DownLoadFileButton_clicked()
     m_pHttpNetObject->DownloadFile(ui->NumberEdit->text());
 }
 
+void OperationInterface::on_DownLoadFileButton_1_clicked()
+{
+    qDebug()<< " 下载文件开始 1";
+    QString strNumberEdit = ui->NumberEdit->text();
+    if(strNumberEdit.isEmpty())
+    {
+        QMessageBox::information(this,"提示","请输入单号");
+        return ;
+    }
+    m_pHttpNetObject->DownloadFile(ui->NumberEdit->text() , 0 , true);
+}
+
 
 void OperationInterface::on_lineEdit_3_editingFinished()
 {
@@ -1817,5 +1832,44 @@ void OperationInterface::on_gaoduguilineEdit_textChanged(const QString &arg1)
             LOG_INFO("on_gaoduguilineEdit_textChanged time begin:[%llu] ,text[%s]",m_lGaoduguiLineStatTime , arg1.toStdString().c_str());
         }
     }
+}
+
+
+
+
+// 取消收件
+void OperationInterface::on_cancleRecieve_clicked()
+{
+    QString strMmsID = ui->NumberEdit->text();
+    if(strMmsID.isEmpty())
+    {
+        QMessageBox::information(this,"提示","请输入子单号");
+        return;
+    }
+    m_pHttpNetObject->CancleRecieve(strMmsID);
+}
+
+
+void OperationInterface::on_confirmTask_clicked()
+{
+    QString strMmsID = ui->NumberEdit->text();
+    if(strMmsID.isEmpty())
+    {
+        QMessageBox::information(this,"提示","请输入子单号");
+        return;
+    }
+    m_pHttpNetObject->ConfirmTask(strMmsID);
+}
+
+
+void OperationInterface::on_cancleTask_clicked()
+{
+    QString strMmsID = ui->NumberEdit->text();
+    if(strMmsID.isEmpty())
+    {
+        QMessageBox::information(this,"提示","请输入子单号");
+        return;
+    }
+    m_pHttpNetObject->CancleCheckTask(strMmsID);
 }
 

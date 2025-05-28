@@ -18,7 +18,7 @@
     <rect>
      <x>12</x>
      <y>-17</y>
-     <width>970</width>
+     <width>990</width>
      <height>609</height>
     </rect>
    </property>
@@ -96,84 +96,21 @@
              <string>参数</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_5">
-             <item row="0" column="2">
-              <widget class="QPushButton" name="GetInfoButton">
-               <property name="text">
-                <string>查询</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="3">
-              <widget class="QLabel" name="label_jitai">
-               <property name="text">
-                <string>请先输入mms子单号</string>
-               </property>
-              </widget>
-             </item>
-             <item row="6" column="0">
-              <widget class="QLabel" name="label_beizhu">
-               <property name="text">
-                <string>备注：</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="2">
-              <widget class="QLabel" name="label_38">
-               <property name="text">
-                <string>是否破坏：</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QLabel" name="label_jianyanleibie">
-               <property name="text">
-                <string>请先输入mms子单号</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="5">
-              <widget class="QLabel" name="label_25">
-               <property name="text">
-                <string>送检单位:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="1">
-              <widget class="QLabel" name="label_gongxu">
-               <property name="text">
-                <string>请先输入mms子单号</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="2">
-              <widget class="QLabel" name="label_23">
-               <property name="text">
-                <string>申请人员：</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="6">
-              <widget class="QLabel" name="label_songjiandanwei">
-               <property name="text">
-                <string>请先输入mms子单号</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="5">
-              <widget class="QLabel" name="label_41">
-               <property name="text">
-                <string>检测项目:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="3">
-              <widget class="QLabel" name="label_shifoupohuai">
+             <item row="7" column="6">
+              <widget class="QLabel" name="label_muxuehao">
                <property name="text">
                 <string>请先输入mms子单号</string>
                </property>
               </widget>
              </item>
              <item row="5" column="3">
+              <widget class="QLabel" name="label_yangpingshuliang">
+               <property name="text">
+                <string>5</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="3">
               <widget class="QLabel" name="label_jiajubianhao">
                <property name="text">
                 <string>请先输入mms子单号</string>
@@ -181,105 +118,126 @@
               </widget>
              </item>
              <item row="5" column="2">
-              <widget class="QLabel" name="label_44">
-               <property name="text">
-                <string>夹具编号：</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="label_42">
-               <property name="text">
-                <string>检验类别：</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="6">
-              <widget class="QLabel" name="label_muxuehao">
-               <property name="text">
-                <string>请先输入mms子单号</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="6">
-              <widget class="QLabel" name="label_jiancexiangmu">
-               <property name="text">
-                <string>请先输入mms子单号</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QLabel" name="label_xiangmmumingchen">
-               <property name="text">
-                <string>请先输入mms子单号</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="5">
-              <widget class="QLabel" name="label_29">
-               <property name="text">
-                <string>申请时间:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="2">
               <widget class="QLabel" name="label_32">
                <property name="text">
                 <string>样品数量：</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="6">
+             <item row="2" column="5">
+              <widget class="QPushButton" name="confirmTask">
+               <property name="text">
+                <string>确认检测任务</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="1">
+              <widget class="QLabel" name="label_gongxu">
+               <property name="text">
+                <string>请先输入mms子单号</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="6">
               <widget class="QLabel" name="label_shoujianshijian">
                <property name="text">
                 <string>请先输入mms子单号</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_20">
-               <property name="text">
-                <string>申请单号：</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="5">
-              <widget class="QLabel" name="label_35">
-               <property name="text">
-                <string>收件时间:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="5">
+             <item row="7" column="5">
               <widget class="QLabel" name="label_47">
                <property name="text">
                 <string>模穴号:</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="6">
-              <widget class="QLabel" name="label_shenqingshijian">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_19">
+               <property name="text">
+                <string>mm子单号：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="5">
+              <widget class="QLabel" name="label_35">
+               <property name="text">
+                <string>收件时间:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="2">
+              <widget class="QLabel" name="label_26">
+               <property name="text">
+                <string>机台：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="6">
+              <widget class="QLabel" name="label_jiancexiangmu">
                <property name="text">
                 <string>请先输入mms子单号</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="3">
-              <widget class="QLabel" name="label_yangpingshuliang">
+             <item row="6" column="1">
+              <widget class="QLabel" name="label_jianyanleibie">
                <property name="text">
-                <string>5</string>
+                <string>请先输入mms子单号</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_30">
+             <item row="0" column="3">
+              <widget class="QLabel" name="label_8">
                <property name="text">
-                <string>项目名称：</string>
+                <string>检测设备</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="6">
+              <widget class="QPushButton" name="cancleRecieve">
+               <property name="text">
+                <string>取消收件</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <widget class="QLabel" name="label_42">
+               <property name="text">
+                <string>检验类别：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QLabel" name="label_jianceyaoqiu">
+               <property name="text">
+                <string>请先输入mms子单号</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_20">
+               <property name="text">
+                <string>申请单号：</string>
                </property>
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="QLabel" name="label_jianceyaoqiu">
+              <widget class="QLabel" name="label_shenqingdanhao">
+               <property name="text">
+                <string>请先输入mms子单号</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="3">
+              <widget class="QLabel" name="label_shifoupohuai">
+               <property name="text">
+                <string>请先输入mms子单号</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="3">
+              <widget class="QLabel" name="label_jitai">
                <property name="text">
                 <string>请先输入mms子单号</string>
                </property>
@@ -298,45 +256,111 @@
                </property>
               </widget>
              </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="label_36">
-               <property name="text">
-                <string>检测要求：</string>
-               </property>
-              </widget>
+             <item row="0" column="4" colspan="2">
+              <widget class="QComboBox" name="checkMachineList"/>
              </item>
-             <item row="5" column="0">
+             <item row="7" column="0">
               <widget class="QLabel" name="label_48">
                <property name="text">
                 <string>工序：</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="3">
+             <item row="6" column="2">
+              <widget class="QLabel" name="label_38">
+               <property name="text">
+                <string>是否破坏：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="3">
               <widget class="QLabel" name="lable_shenqingrenyuan">
                <property name="text">
                 <string>请先输入mms子单号</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="2">
-              <widget class="QLabel" name="label_26">
+             <item row="7" column="2">
+              <widget class="QLabel" name="label_44">
                <property name="text">
-                <string>机台：</string>
+                <string>夹具编号：</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="1">
-              <widget class="QLabel" name="label_shenqingdanhao">
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_30">
+               <property name="text">
+                <string>项目名称：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="6">
+              <widget class="QLabel" name="label_shenqingshijian">
                <property name="text">
                 <string>请先输入mms子单号</string>
                </property>
               </widget>
              </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_19">
+             <item row="3" column="2">
+              <widget class="QLabel" name="label_23">
                <property name="text">
-                <string>mm子单号：</string>
+                <string>申请人员：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="5">
+              <widget class="QLabel" name="label_25">
+               <property name="text">
+                <string>送检单位:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="5">
+              <widget class="QLabel" name="label_41">
+               <property name="text">
+                <string>检测项目:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="6">
+              <widget class="QPushButton" name="cancleTask">
+               <property name="text">
+                <string>取消检测任务</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QLabel" name="label_xiangmmumingchen">
+               <property name="text">
+                <string>请先输入mms子单号</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="6">
+              <widget class="QLabel" name="label_songjiandanwei">
+               <property name="text">
+                <string>请先输入mms子单号</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="5">
+              <widget class="QLabel" name="label_29">
+               <property name="text">
+                <string>申请时间:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QPushButton" name="GetInfoButton">
+               <property name="text">
+                <string>查询</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="label_36">
+               <property name="text">
+                <string>检测要求：</string>
                </property>
               </widget>
              </item>
@@ -351,37 +375,6 @@
            <string/>
           </property>
           <layout class="QGridLayout" name="gridLayout">
-           <item row="1" column="7">
-            <widget class="QPushButton" name="ComCheckButton">
-             <property name="text">
-              <string>提交审核</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="7">
-            <widget class="QLineEdit" name="IpEdit">
-             <property name="text">
-              <string>192.168.31.145</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QPushButton" name="ClearDataButton">
-             <property name="text">
-              <string>清空数据</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="8">
-            <widget class="QRadioButton" name="radioButton">
-             <property name="text">
-              <string>修改数据</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="1">
-            <widget class="QLineEdit" name="lineEdit_3"/>
-           </item>
            <item row="5" column="6">
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
@@ -399,20 +392,6 @@
               </widget>
              </item>
             </layout>
-           </item>
-           <item row="1" column="1">
-            <widget class="QPushButton" name="DownLoadFileButton">
-             <property name="text">
-              <string>导出客户CPK&amp;&amp;FAI</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0">
-            <widget class="QLabel" name="label_6">
-             <property name="text">
-              <string>系统路径：</string>
-             </property>
-            </widget>
            </item>
            <item row="0" column="5">
             <widget class="QLabel" name="label_7">
@@ -444,122 +423,10 @@
              </item>
             </widget>
            </item>
-           <item row="0" column="6">
-            <widget class="QComboBox" name="sehbeicomboBox">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="currentIndex">
-              <number>0</number>
-             </property>
-             <item>
-              <property name="text">
-               <string>新兆丰</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>MicroVu</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>老兆丰</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>海克斯康OMM</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>海克斯康CMM</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>HG&amp;MIC</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item row="0" column="7">
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
-             <item>
-              <widget class="QPushButton" name="connectButton">
-               <property name="text">
-                <string>建立链接</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="GetDataButton">
-               <property name="text">
-                <string>获取数据</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item row="1" column="5">
-            <widget class="QPushButton" name="ShowDataButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
+           <item row="5" column="7">
+            <widget class="QLineEdit" name="IpEdit">
              <property name="text">
-              <string>信息显示</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="6">
-            <widget class="QPushButton" name="WriteFilepushButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>上传数据</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="7">
-            <widget class="QLabel" name="label_21">
-             <property name="font">
-              <font>
-               <pointsize>17</pointsize>
-              </font>
-             </property>
-             <property name="acceptDrops">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>OK</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="5">
-            <widget class="QLabel" name="label_11">
-             <property name="text">
-              <string>iP：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_5">
-             <property name="text">
-              <string>数据接口：</string>
+              <string>192.168.31.145</string>
              </property>
             </widget>
            </item>
@@ -607,6 +474,170 @@
              </property>
              <property name="text">
               <string>检查到数据上传中......</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="7">
+            <widget class="QPushButton" name="ComCheckButton">
+             <property name="text">
+              <string>提交审核</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="6">
+            <widget class="QPushButton" name="WriteFilepushButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>上传数据</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="7">
+            <widget class="QLabel" name="label_21">
+             <property name="font">
+              <font>
+               <pointsize>17</pointsize>
+              </font>
+             </property>
+             <property name="acceptDrops">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>OK</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="7">
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <widget class="QPushButton" name="connectButton">
+               <property name="text">
+                <string>建立链接</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="GetDataButton">
+               <property name="text">
+                <string>获取数据</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="1" column="0">
+            <widget class="QPushButton" name="ClearDataButton">
+             <property name="text">
+              <string>清空数据</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>数据接口：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QPushButton" name="DownLoadFileButton">
+             <property name="text">
+              <string>导出客户CPK/FAI-1</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="5">
+            <widget class="QPushButton" name="ShowDataButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>信息显示</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="6">
+            <widget class="QComboBox" name="sehbeicomboBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="currentIndex">
+              <number>0</number>
+             </property>
+             <item>
+              <property name="text">
+               <string>新兆丰</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>MicroVu</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>老兆丰</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>海克斯康OMM</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>海克斯康CMM</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>HG&amp;MIC</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>系统路径：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="8">
+            <widget class="QRadioButton" name="radioButton">
+             <property name="text">
+              <string>修改数据</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QLineEdit" name="lineEdit_3"/>
+           </item>
+           <item row="5" column="5">
+            <widget class="QLabel" name="label_11">
+             <property name="text">
+              <string>iP：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QPushButton" name="DownLoadFileButton_1">
+             <property name="text">
+              <string>导出客户CPK/FAI-2</string>
              </property>
             </widget>
            </item>
