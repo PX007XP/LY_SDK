@@ -6,6 +6,8 @@
 #include <QString>
 #include <QMap>
 #include <QStyleFactory>
+#include <QStandardPaths>
+#include <QDir>
 
 // 加密函数：数字 -> 字母
 // 声明并初始化 QMap
@@ -26,7 +28,124 @@ QString encrypt(QString number) {
 
     return letter;
 }
+// 解密函数：字母 -> 数字
+QString decrypt(QString &letter) {
+    // 'a' 的 ASCII 值是 97，所以字母的 ASCII 值减去 96 得到对应的数字
+    QString rec;
+    for(QChar ch : letter){
+        rec.append(charmap[ch]);
+    }
 
+    return rec;
+}
+
+bool CheckRegister()
+{
+    QDir homeDir = QDir::home();
+    QString homePath = homeDir.absolutePath();
+
+    qDebug() << "User Home Directory check: " << homeDir << "dkf :" << homePath;
+
+
+    QString limisDirPath = homePath + "/LIMIS";
+    QString filePath = limisDirPath + "/encrypt.txt";
+
+    if (!QFile::exists(filePath)) 
+    {
+        qDebug() << "File encrypt.txt exists at: " << filePath;
+        return false;
+    } 
+
+    // 验证文件内容
+     // 3. 打开文件
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) 
+    {
+        qDebug() << "Failed to open file: " << filePath;
+        return false;
+    }
+
+    // 4. 读取第一行内容
+    QTextStream in(&file);
+    QString firstLine = in.readLine();
+    file.close();
+
+    // 5. 输出第一行内容
+    qDebug() << "First line content: " << firstLine;
+
+    
+    firstLine.remove('\n');
+    QString b= decrypt(firstLine);
+    qDebug() << b ;
+    int year =b.left(4).toInt();
+    int mon = b.mid(4,2).toInt();
+    int day = b.right(2).toInt();
+    QDate dedate = QDate(year,mon,day);
+    
+    // 获取当前系统的日期
+    QDate currentDate = QDateTime::currentDateTime().date();
+    if(currentDate > dedate)
+    {
+        return false;
+    }
+
+    return true;
+}
+// 注册程序
+int RegisterExe()
+{
+    QDir homeDir = QDir::home();
+    QString homePath = homeDir.absolutePath();
+
+    qDebug() << "User Home Directory: " << homeDir << "dkf :" << homePath;
+
+    // 2. 在主目录下创建文件夹 LIMIS
+    QString limisDirPath = homePath + "/LIMIS";
+    QString filePath = limisDirPath + "/encrypt.txt";
+
+    // 检测文件是否存在 存在则不创建
+    if (QFile::exists(filePath)) 
+    {
+        qDebug() << "File encrypt.txt exists at: " << filePath;
+        return 1;
+    } 
+
+    QDir limisDir(limisDirPath);
+
+    if (!limisDir.exists()) 
+    {
+        if (limisDir.mkpath(".")) 
+        {
+            qDebug() << "Folder LIMIS created successfully at: " << limisDirPath;
+        } 
+        else 
+        {
+            qDebug() << "Failed to create folder LIMIS.";
+            return -1;
+        }
+    } 
+    else 
+    {
+        qDebug() << "Folder LIMIS already exists at: " << limisDirPath;
+    }
+
+    // 3. 在 LIMIS 文件夹中创建文件 encrypt.txt
+    QFile file(filePath);
+
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) 
+    {
+        QTextStream out(&file);
+
+        // 4. 向文件中写入 dbehbhdb 八个字符
+        out << "dbehbhdb";
+        file.close();
+        qDebug() << "File encrypt.txt created and written successfully at: " << filePath;
+    } else 
+    {
+        qDebug() << "Failed to create or write to file encrypt.txt.";
+    }
+    return 0;
+}
 void printAllWidgetsFont(QWidget *parent) {
     if (!parent) {
         return;
@@ -53,22 +172,12 @@ void printAllWidgetsFont(QWidget *parent) {
 }
 
 
-// 解密函数：字母 -> 数字
-QString decrypt(QString &letter) {
-    // 'a' 的 ASCII 值是 97，所以字母的 ASCII 值减去 96 得到对应的数字
-    QString rec;
-    for(QChar ch : letter){
-        rec.append(charmap[ch]);
-    }
-
-    return rec;
-}
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     //加密解密
     // 打开文件
-    QFile setfile(":/encrypt.txt");  // 替换为实际的文件路径
+    QFile setfile(":/encrypt.txt");  // 替换为实际的文件路径  文件打包时打入到资源文件中了 要修改只能重新打包
 
     if (!setfile.open(QIODevice::ReadOnly)) {
         qDebug() << "无加密文件";
@@ -97,13 +206,25 @@ int main(int argc, char *argv[])
     int mon = b.mid(4,2).toInt();
     int day = b.right(2).toInt();
     QDate dedate = QDate(year,mon,day);
+    
     // 获取当前系统的日期
     QDate currentDate = QDateTime::currentDateTime().date();
-    if(currentDate>dedate){
+    if(currentDate > dedate)
+    {
         qDebug() << dedate << " , " << currentDate;
-        return -1;
+        if (CheckRegister())
+        {
+            qDebug() << "注册完成 , 可以打开";
+        }
+        else
+        {
+            QMessageBox::warning(nullptr, "Storage Error",QString("使用时间到期, 请联系开发人员"));
+            return -1;
+        }
     }
 
+    // 第一次验证通过 在C盘固定目录下生成一个文件  C:\Program Files\LIMS\encrypt.txt
+    RegisterExe();
     // 输出文件内容
     qDebug() << "文件内容：\n" << b;
 
