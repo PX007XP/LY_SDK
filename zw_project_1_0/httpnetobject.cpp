@@ -629,11 +629,16 @@ void HttpNetObject::DealWithGetCheckMachineResponse(QJsonObject &json)
 
         if(strDevCateName.contains("CMM",Qt::CaseInsensitive) || strDevCateName.contains("OMM",Qt::CaseInsensitive))
         {
-            QString strDevName = pageListData.value("DevNo").toString();
-
-            if(!strDevName.isEmpty())
+            // 过滤掉  1438410277883219968
+            QString strTestId = pageListData.value("TestUnitId").toString();
+            if (!strTestId.isEmpty() && strTestId == "1438410277883219968")
             {
-                m_pOperationObject->GetUiPointObject()->checkMachineList->addItem(strDevName);
+                QString strDevName = pageListData.value("DevNo").toString();
+
+                if (!strDevName.isEmpty())
+                {
+                    m_pOperationObject->GetUiPointObject()->checkMachineList->addItem(strDevName);
+                }
             }
         }
     }

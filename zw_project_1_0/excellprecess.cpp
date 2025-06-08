@@ -252,11 +252,11 @@ int ExcellPrecess::FillBasicInfomation(QAxObject *pSheet,int iCloumNum)
 
     pCell = pSheet->querySubObject("Cells(int, int)", 9, 113);
     // QVariant cellValue = pCell->dynamicCall("Value()");
-    pCell->setProperty("Value", strBeginTime);
+    pCell->setProperty("Value", strEndTime);
 
     pCell = pSheet->querySubObject("Cells(int, int)", 9, 115);
     // QVariant cellValue = pCell->dynamicCall("Value()");
-    pCell->setProperty("Value", strBeginTime);
+    pCell->setProperty("Value", strEndTime);
 
     // 检查类别
     QString strCheckType = m_pOperationInterFace->GetUiPointObject()->jianceleibie_comboBox->currentText();

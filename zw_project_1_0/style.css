@@ -88,19 +88,35 @@ QPushButton:pressed#cancleTask
     background-color: #f3f020;;
 }
 
-QLineEdit#lineEdit_3,#IpEdit,#PortEdit,#NumberEdit,#MobanlujinEdit,#lineEdit,#lineEdit_2,#UserEdit,#PasswordEdit,#celiangrenyuan_lineEdit,#shenherenyuan_lineEdit {
+QLineEdit#lineEdit_3,#IpEdit,#PortEdit,#MobanlujinEdit,#lineEdit,#lineEdit_2,#UserEdit,#PasswordEdit,#celiangrenyuan_lineEdit,#shenherenyuan_lineEdit {
     border: 2px solid #ccc;
     padding: 4px 8px;
     font-size: 15px;
     border-radius: 4px;
     min-height: 23px;       /* 新增：设置最小高度 */
 }
-QComboBox#caijiTypecomboBox,#sehbeicomboBox,#checkMachineList,#PathcomboBox,#TypecomboBox,#FilecomboBox,#jianceleibie_comboBox{
+QLineEdit#NumberEdit{
     border: 2px solid #ccc;
     padding: 4px 8px;
-    font-size: 15px; 
+    font-size: 13px;
+    border-radius: 4px;
+    min-height: 23px;       /* 新增：设置最小高度 */
+    min-width: 140px; /* 增加最小宽度，根据需要调整数值 */
+}
+QComboBox#caijiTypecomboBox,#sehbeicomboBox,#PathcomboBox,#TypecomboBox,#FilecomboBox,#jianceleibie_comboBox,#jianceleibie_comboBox{
+    border: 2px solid #ccc;
+    padding: 4px 8px;
+    font-size: 13px; 
     min-height: 23px;
 }
+QComboBox#checkMachineList{
+    border: 2px solid #ccc;
+    padding: 4px 8px;
+    font-size: 13px; 
+    min-height: 23px;
+    min-width: 100px; /* 增加最小宽度，根据需要调整数值 */
+}
+
 QLabel#label_17,#label_6,#label_8,#label_10,#label_5,#label_7,#label_11,#label_13,#label_19,#line_5,#label,#label_12,#label_14,#label_15,#label_16,#label_2,#label_3,#label_4,#label_9,#label_17,#label_18 {
     font-size: 15px;
     color: #333;

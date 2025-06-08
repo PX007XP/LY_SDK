@@ -9,6 +9,7 @@
 #include <QSet>
 #include <QItemSelectionModel>
 #include "logger.h"
+#include <QHeaderView>  
 int TempData::m_showcol=6;
 TempData::TempData(QTableView* tv) {
     m_tableView = tv;
@@ -199,6 +200,11 @@ bool TempData::LoadData(QString filename, int showrow){
     m_model->setRowCount(varRows.size());
     m_model->setColumnCount(6+1);
     m_model->setHorizontalHeaderLabels(headList);
+
+     // 设置表头字体大小
+    QFont font = m_tableView->horizontalHeader()->font();
+    font.setPointSize(10);  // 设置为10号字体，可根据需要调整
+    m_tableView->horizontalHeader()->setFont(font);
 
     //points.clear();
     //points= rp.readXml(xmlFile,"");

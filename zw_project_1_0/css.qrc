@@ -10,5 +10,6 @@
         <file>encrypt.txt</file>
         <file>Resources/loading.gif</file>
         <file>Resources/loadingdialog2.gif</file>
+        <file>Resources/LIMS.ico</file>
     </qresource>
 </RCC>

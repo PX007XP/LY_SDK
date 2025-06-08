@@ -67,3 +67,5 @@ DISTFILES +=
 
 RESOURCES += \
     css.qrc
+
+RC_ICONS = resources/LIMS.ico
