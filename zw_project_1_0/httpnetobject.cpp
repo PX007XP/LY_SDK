@@ -10,6 +10,7 @@
 #include <QProcess>
 #include <QSettings>
 #include <QDir>
+#include <set>
 
 HttpNetObject::HttpNetObject() {}
 
@@ -84,7 +85,8 @@ int HttpNetObject::GetCheckTaskData(QString strMmsID)
         return -1;
     }
     // 定义请求的URL（假设这是登录接口的地址）
-    QUrl url("https://mom.lingyiitech.com:8092/api/Quality/MMS_ChkResultList/GetChkTaskDataList");
+    //QUrl url("https://mom.lingyiitech.com:8092/api/Quality/MMS_ChkResultList/GetChkTaskDataList");
+    QUrl url("https://mom.lingyiitech.com:8092/api/Quality/MMS_QCChkSummary/GetQCChkNEW");
 
     // 创建请求对象
     QNetworkRequest request(url);
@@ -96,14 +98,15 @@ int HttpNetObject::GetCheckTaskData(QString strMmsID)
 
     // 准备POST请求的数据
     QJsonObject json;
-    json["PageIndex"] = 1;
-    json["PageRows"] = 100;
-    json["SortField"] = "CreateTime";
-    json["SortType"] = "asc";
+    //json["PageIndex"] = 1;
+    //json["PageRows"] = 100;
+    //json["SortField"] = "CreateTime";
+    //json["SortType"] = "asc";
+    json["ReqDetailNo"] = strMmsID.toUtf8().constData();
 
-    QJsonObject searchData;
-    searchData["ReqDetailNo"] = strMmsID.toUtf8().constData();
-    json["Search"] = searchData;
+    //QJsonObject searchData;
+    //searchData["ReqDetailNo"] = strMmsID.toUtf8().constData();
+    //json["Search"] = searchData;
 
     QJsonDocument jsonDoc(json);
     QByteArray jsonData = jsonDoc.toJson();
@@ -148,10 +151,11 @@ int HttpNetObject::PostFileToNet(QString strFilePath)
         m_pOperationObject->MessageBoxInfomation("提示","无法打开文件");
         return -3;
     }
-
+    QString strFileRealName = m_pOperationObject->GetUiPointObject()->FilecomboBox->currentText();
     // 构建文件内容体
     QHttpPart filePart;
-    filePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"file\"; filename=\"880-GNT022-03-004.xlsm\""));
+    //filePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"file\"; filename=\"880-GNT022-03-004.xlsm\""));
+    filePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QString("form-data; name=\"file\"; filename=\"%1\"").arg(strFileRealName)));
     filePart.setBodyDevice(file);  // 绑定文件流
     file->setParent(multiPart);    // 确保 multipart 释放时也会释放文件
 
@@ -553,7 +557,7 @@ void HttpNetObject::DealWithPageListResponse(QJsonObject &json)
             GetCheckMechineList();
             return ;
         }
-        m_strBizid.clear();
+        //m_strBizid.clear();
         int iArrary = jsonData.value("Total").toInt();
         for(int i = 0 ; i < iArrary ; ++i)
         {
@@ -566,30 +570,30 @@ void HttpNetObject::DealWithPageListResponse(QJsonObject &json)
     else
     {
         QJsonObject jsonData = json.value("Data").toObject();
-        QJsonArray pageListArray = jsonData.value("PageList").toArray();
-        if(pageListArray.isEmpty())
+       // QJsonArray pageListArray = jsonData.value("PageList").toArray();
+       // if(pageListArray.isEmpty())
+       // {
+       //     m_pOperationObject->MessageBoxInfomation("提示", "获取单号信息为空");
+       //     GetCheckMechineList();
+       //     return ;
+       /// }
+       // m_strBizid.clear();
+       // int iArrary = jsonData.value("Total").toInt();
+        //for(int i = 0 ; i < iArrary ; ++i)
         {
-            m_pOperationObject->MessageBoxInfomation("提示", "获取单号信息为空");
-            GetCheckMechineList();
-            return ;
-        }
-        m_strBizid.clear();
-        int iArrary = jsonData.value("Total").toInt();
-        for(int i = 0 ; i < iArrary ; ++i)
-        {
-            QJsonObject pageListData = pageListArray[i].toObject();
+            QJsonObject pageListData = jsonData.value("Model").toObject();;
 
             QString strTestUserNo = pageListData.value("TestUserNo").toString();
 
-            if(strTestUserNo == m_strUserName)
+           // if(strTestUserNo == m_strUserName)
             {
-                m_strBizid = pageListData.value("Id").toString();
+                //m_strBizid = pageListData.value("Id").toString();TaskList
 
                 GetJsonValueBykey(pageListData , g_strReqNo);
                 GetJsonValueBykey(pageListData , g_strReqUserName);
                 GetJsonValueBykey(pageListData , g_strReqUnicom);
                 GetJsonValueBykey(pageListData , g_strDeviceName);
-                GetJsonValueBykey(pageListData , g_strDeviceNo);
+                
                 GetJsonValueBykey(pageListData , g_strReqTime);
                 GetJsonValueBykey(pageListData , g_strTestCon);
                 GetJsonValueBykey(pageListData , g_strReportType);
@@ -599,12 +603,33 @@ void HttpNetObject::DealWithPageListResponse(QJsonObject &json)
                 GetJsonValueBykey(pageListData , g_strOrgCode);
                 GetJsonValueBykey(pageListData , g_strRemark);
                 GetJsonValueBykey(pageListData, g_strRevArtTime);
-                LOG_INFO(" get mms detail user[%s] ,bizid[%s]" , m_strUserName.toStdString().c_str() ,  m_strBizid.toStdString().c_str());
+                GetJsonValueBykey(pageListData, g_strSampleQty);
+                GetJsonValueBykey(pageListData, g_strCanBreak);
+                LOG_INFO(" get mms detail user[%s], [%s] ,bizid[%s]" , m_strUserName.toStdString().c_str() , strTestUserNo.toStdString().c_str() , m_strBizid.toStdString().c_str());
             }
         }
+
+        QJsonArray TaskListArray = jsonData.value("TaskList").toArray();
+        int iArrary = TaskListArray.count();  // 获取数组元素个数
+        LOG_DEBUG("TaskList count is :%d",iArrary);
+
+        for(int i = 0 ; i < iArrary ; ++i)   // 使用元素个数进行循环
+        {
+            QJsonObject TaskListData = TaskListArray[i].toObject();
+            QString strTaskId = TaskListData.value("Id").toString();
+
+            QString strTaskStatus = TaskListData.value("TaskStatus").toString();
+
+            GetJsonValueBykey(TaskListData , g_strDeviceNo);
+            m_strBizid = TaskListData.value("Id").toString();
+            LOG_DEBUG("id :  %s =  %s ",m_strBizid.toStdString().c_str() , TaskListData.value("Id").toString().toStdString().c_str());
+            
+        }
+
         if(m_strBizid.isEmpty())
         {
-            m_pOperationObject->MessageBoxInfomation("提示","子单号信息错误");
+            //m_pOperationObject->MessageBoxInfomation("提示","子单号信息错误");
+            LOG_INFO("未获取到子单号信息");
         }
     }
 }
@@ -621,6 +646,14 @@ void HttpNetObject::DealWithGetCheckMachineResponse(QJsonObject &json)
     }
     m_strBizid.clear();
     int iArrary = jsonData.value("Total").toInt();
+
+    // 先取出所有元素 去重
+    std::set<QString> sMachineSet;
+    for (int j = 0; j < m_pOperationObject->GetUiPointObject()->checkMachineList->count(); j++)
+    {
+        QString strName = m_pOperationObject->GetUiPointObject()->checkMachineList->itemText(j);
+        sMachineSet.insert(strName);
+    }
     for(int i = 0 ; i < iArrary ; ++i)
     {
         QJsonObject pageListData = pageListArray[i].toObject();
@@ -634,8 +667,7 @@ void HttpNetObject::DealWithGetCheckMachineResponse(QJsonObject &json)
             if (!strTestId.isEmpty() && strTestId == "1438410277883219968")
             {
                 QString strDevName = pageListData.value("DevNo").toString();
-
-                if (!strDevName.isEmpty())
+                if (!strDevName.isEmpty() && sMachineSet.find(strDevName) == sMachineSet.end())
                 {
                     m_pOperationObject->GetUiPointObject()->checkMachineList->addItem(strDevName);
                 }
@@ -673,8 +705,32 @@ int HttpNetObject::GetJsonValueBykey(QJsonObject jsonObject,QString strKeyName)
     {
         return -1;
     }
-    QString strValue = jsonValue.toString();
-    m_pOperationObject->SetUIMessageInfo(strKeyName , strValue);
+    if (g_strSampleQty == strKeyName)
+    {
+        int iSampleQty = jsonValue.toInt();
+        QString strSampleQty = QString::number(iSampleQty);
+        m_pOperationObject->SetUIMessageInfo(strKeyName , strSampleQty);
+
+    }
+    else if (g_strCanBreak == strKeyName)
+    {
+        bool bCanBreak = jsonValue.toBool();
+        if (bCanBreak)
+        {
+            m_pOperationObject->SetUIMessageInfo(strKeyName , "是");
+        }
+        else
+        {
+            m_pOperationObject->SetUIMessageInfo(strKeyName , "否");
+        }
+        
+    }
+    else
+    {
+        QString strValue = jsonValue.toString();
+        LOG_DEBUG("GetJsonValueBykey key[%s] value[%s]", strKeyName.toStdString().c_str() , strValue.toStdString().c_str());
+        m_pOperationObject->SetUIMessageInfo(strKeyName , strValue);
+    }
     return 0;
 }
 
@@ -809,7 +865,7 @@ void HttpNetObject::SlotsRecvReplayData(QNetworkReply *pReplay)
         {
             DealWithLoginResponse(json);
         }
-        else if(jsonData.contains("PageList"))
+        else if(jsonData.contains("PageList") || jsonData.contains("Model"))
         {
             DealWithPageListResponse(json);
         }

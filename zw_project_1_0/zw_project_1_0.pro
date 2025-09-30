@@ -58,6 +58,10 @@ msvc{
     QMAKE_CXXFLAGS += /utf-8
 }
 
+#release {
+#    DEFINES += QT_NO_DEBUG_OUTPUT
+#}
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

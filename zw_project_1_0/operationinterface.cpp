@@ -776,6 +776,17 @@ void OperationInterface::SetUIMessageInfo(QString strUiName, QString strData)
     {
         ui->label_jianceyaoqiu->setText(strData);
     }
+    else if(g_strSampleQty == strUiName)
+    {
+        ui->label_yangpingshuliang->setText(strData);
+    }
+    else if(g_strRevArtTime == strUiName)
+    {
+        ui->label_shoujianshijian->setText(strData);
+
+        QDateTime dateTime = QDateTime::fromString(strData, "yyyy-MM-dd HH:mm:ss");
+        ui->dateTimeEditStart->setDateTime(dateTime);
+    }
     else if(g_strReportType == strUiName)
     {
         ui->label_jianyanleibie->setText(strData);
@@ -800,21 +811,15 @@ void OperationInterface::SetUIMessageInfo(QString strUiName, QString strData)
     {
         //ui->label_beizhu->setText(strData);
     }
-    else if(g_strRevArtTime == strUiName)
+    else if (g_strCanBreak == strUiName)
     {
-        ui->label_shoujianshijian->setText(strData);
-
-        QDateTime dateTime = QDateTime::fromString(strData, "yyyy-MM-dd HH:mm:ss");
-        ui->dateTimeEditStart->setDateTime(dateTime);
-    }
-    else if(g_strReqNo == strUiName)
-    {
-
+        ui->label_shifoupohuai->setText(strData);
     }
     else
     {
 
     }
+    
 }
 
 void OperationInterface::SavePushFilePath(QString strFileName)

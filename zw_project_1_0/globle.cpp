@@ -4,21 +4,21 @@
 #include <QFileInfo>
 #include "logger.h"
 
-QString g_strReqNo = QStringLiteral("ReqNO");
+QString g_strReqNo = QStringLiteral("ReqNo"); 
 QString g_strReqUserName = QStringLiteral("CreatorName");
-QString g_strReqUnicom = QStringLiteral("TestUnitName"); // 送检单位
-QString g_strDeviceName = QStringLiteral("DeviceName"); // 项目名称
+QString g_strReqUnicom = QStringLiteral("QCDeptName"); // 送检单位
+QString g_strDeviceName = QStringLiteral("ProjectName"); // 项目名称
 QString g_strDeviceNo = QStringLiteral("DeviceNo"); // 机台
 QString g_strReqTime = QStringLiteral("CreateTime"); // 申请时间
-QString g_strTestCon = QStringLiteral("TestCon"); // 检查要求
-//QString g_strReqTime = QStringLiteral("CreateTime"); // 样品数量
-QString g_strRevArtTime = QStringLiteral("UpdateTime"); // 收件时间
-QString g_strReportType = QStringLiteral("ReportType"); // 检验类别
-//QString g_strReqTime = QStringLiteral("CreateTime"); // 是否破坏
-QString g_strProjectClassId = QStringLiteral("ProjectClassId"); // 检查项目
-QString g_strProjectStageId = QStringLiteral("ProjectStageId"); // 工序
-QString g_strSatageNo = QStringLiteral("SatageNo"); // 夹具编号
-QString g_strOrgCode = QStringLiteral("OrgCode"); // 模穴号
+QString g_strTestCon = QStringLiteral("ChkDemand"); // 检查要求
+QString g_strSampleQty = QStringLiteral("SampleQty"); // 样品数量
+QString g_strRevArtTime = QStringLiteral("RecDateTime"); // 收件时间
+QString g_strReportType = QStringLiteral("ProjectStageName"); // 检验类别
+QString g_strCanBreak = QStringLiteral("CanBreak"); // 是否破坏
+QString g_strProjectClassId = QStringLiteral("ProjectListName"); // 检查项目
+QString g_strProjectStageId = QStringLiteral("WorkStageName"); // 工序
+QString g_strSatageNo = QStringLiteral("MachineName"); // 夹具编号
+QString g_strOrgCode = QStringLiteral("HoleNo"); // 模穴号
 QString g_strRemark = QStringLiteral("Remark"); // 备注
 
 QString g_strSaveFilePath;  // 下载文件自动保存路径

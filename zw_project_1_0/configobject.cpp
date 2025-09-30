@@ -123,6 +123,19 @@ void ConfigObject::ReadConfig(OperationInterface* pObjcet)
         }
     }
 #endif
+    elements = root.elementsByTagName("MachineList");
+    for (int i = 0; i < elements.count(); i++)
+    {
+        QDomElement machineElement = elements.at(i).toElement();
+        QString machineName = machineElement.attribute("name", "");
+        if (!machineName.isEmpty())
+        {
+            
+            //LOG_STATS("读取到设备配置: %s", machineName.toStdString().c_str());
+            pObjcet->GetUiPointObject()->checkMachineList->addItem(machineName);
+        }
+    }
+
     InitJsonObject(pObjcet);
 
     g_strSaveFilePath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);

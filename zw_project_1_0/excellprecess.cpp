@@ -19,6 +19,7 @@
 #include <QFileInfo>
 #include <QVariant>
 #include <QThread>
+#include <Set>
 
 
 
@@ -80,6 +81,11 @@ std::shared_ptr<CExcellPointMgr> ExcellPrecess::InitExcellObject()
     {
         LOG_ERROR("加载excel控件失败");
     }
+    pAxObject->dynamicCall("SetVisible(bool)", false);
+    pAxObject->dynamicCall("EnableEvents(bool)", false);
+    pAxObject->dynamicCall("ScreenUpdating(bool)", false);
+    pAxObject->dynamicCall("DisplayAlerts(bool)", false);
+    pAxObject->dynamicCall("Calculation(int)", -4135); // xlCalculationManual
     QAxObject* pWorkBooks = pAxObject->querySubObject("Workbooks");
     if(nullptr == pWorkBooks)
     {
@@ -177,8 +183,12 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
     FillBasicInfomation(pSheet , pVectorData->size());
     ReadCellKey(pSheet);
     int iNowColumn = m_pSheetInfo->GetNowColumn();
+    
+    
     for(auto& it : *pVectorData)
     {
+        std::map<int,QString> sRowIndex;
+        
         for(auto& it_value : it.m_mMeasuredValue)
         {
             int iBeginRow =GetDataRow(it_value.strName);
@@ -188,23 +198,71 @@ int ExcellPrecess::WriteData(QVector<RecvFile::STDetailData> *pVectorData, QStri
                 LOG_ERROR("error writedata error key:%s ,column:%d",it_value.strName.toStdString().c_str() , iBeginRow);
                 continue;
             }
+            //sRowIndex[iBeginRow] = it_value.dActual;
+            sRowIndex[iBeginRow] = QString::number(it_value.dActual, 'f', 4);
+        }
+        QVariantList  columnValues;
+        for(auto& it_row : sRowIndex)
+        {
+            QVariantList row;
+            row.append(it_row.second);
+            columnValues.append(QVariant(row));
+        }
+        
+        QString strColumnName;
+        int columnNumber = iNowColumn;
+        while(columnNumber > 0 )
+        {
+            int remainder = (columnNumber - 1) % 26;
+            strColumnName.prepend(QChar('A' + remainder));
+            columnNumber = (columnNumber - 1) / 26; 
+        }
+
+        if(!columnValues.isEmpty())
+        {
+            QString rangeStr = QString("%1%2:%1%3").arg(strColumnName).arg(sRowIndex.begin()->first).arg(sRowIndex.rbegin()->first);
+            LOG_DEBUG("rangeStr :%s",rangeStr.toStdString().c_str());
+        
+         // 一次性写入整列数据
+            QAxObject *range = pSheet->querySubObject("Range(const QString&)", rangeStr);
+            if(range) 
+            {
+                range->setProperty("Value", QVariant(columnValues));
+                delete range;
+            }
+
+        /*
+            auto start1 = std::chrono::high_resolution_clock::now();
             QAxObject *pCell = pSheet->querySubObject("Cells(int, int)", iBeginRow, iNowColumn);
            // QVariant cellValue = pCell->dynamicCall("Value()");
+           auto end1 = std::chrono::high_resolution_clock::now();
+           auto duration1 = std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - start1).count();
+
+           start1 = std::chrono::high_resolution_clock::now();
             pCell->setProperty("Value", it_value.dActual);
-            
-            
+            end1 = std::chrono::high_resolution_clock::now();
+            auto duration2 = std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - start1).count();
+            start1 = std::chrono::high_resolution_clock::now();
             QVariant cellValue = pCell->dynamicCall("Value()");
+            end1 = std::chrono::high_resolution_clock::now();
+            auto duration3 = std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - start1).count();
           //  qDebug() << "fill cell :  " << iNowColumn << ": " << iBeginRow  << "value:" << cellValue.toString();
           LOG_DEBUG("error writedata success row:%d ,column:%d,key:%s,value:%s ",iNowColumn , iBeginRow,it_value.strName.toStdString().c_str() ,cellValue.toString().toStdString().c_str());
+          LOG_DEBUG("write data time stat querySubObject:%lu , setProperty:%lu , dynamicCall:%lu",duration1,duration2,duration3);
+          */
+
         }
         iNowColumn++;
     }
-
+ 
     // 另保存 Excel 文件
     qDebug() << "new file: " << strNewFile;
     //strNewFile = "D:\\S_wroking/new/123.xlms";
     // 把 : 后的 / 改成 \\
-
+    // 在保存前恢复设置
+    pExcellPtr->m_pExcellWork->dynamicCall("ScreenUpdating(bool)", true);
+    pExcellPtr->m_pExcellWork->dynamicCall("DisplayAlerts(bool)", true);
+    pExcellPtr->m_pExcellWork->dynamicCall("Calculation(int)", -4105); // xlCalculationAutomatic
     DealFilePath(strNewFile);
     qDebug() << "new file: " << strNewFile;
     QVariant result = pWorkbook->dynamicCall("SaveAs(const QString&)", strNewFile);
