@@ -136,8 +136,8 @@ int RegisterExe()
     {
         QTextStream out(&file);
 
-        // 4. 向文件中写入 dbehbhdb 八个字符
-        out << "dbehbhdb";
+        // 4. 向文件中写入 dbfhbhdb 八个字符20460620
+        out << "dbfhbhdb";
         file.close();
         qDebug() << "File encrypt.txt created and written successfully at: " << filePath;
     } else 
@@ -211,7 +211,6 @@ int main(int argc, char *argv[])
     QDate currentDate = QDateTime::currentDateTime().date();
     if(currentDate > dedate)
     {
-       /*
         qDebug() << dedate << " , " << currentDate;
         if (CheckRegister())
         {
@@ -222,12 +221,10 @@ int main(int argc, char *argv[])
             QMessageBox::warning(nullptr, "Storage Error",QString("使用时间到期, 请联系开发人员"));
             return -1;
         }
-*/
-        return -1;
     }
 
     // 第一次验证通过 在C盘固定目录下生成一个文件  C:\Program Files\LIMS\encrypt.txt
-  //  RegisterExe();
+    RegisterExe();
     // 输出文件内容
     qDebug() << "文件内容：\n" << b;
 
