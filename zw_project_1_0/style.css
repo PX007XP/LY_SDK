@@ -1,0 +1,150 @@
+﻿
+QWidget#OperationInterface {
+    background-color: #f0f0f0;
+}
+QMenuBar {
+    background-color: #f0f0f0;
+    font-size: 14px;
+}
+/* 按钮 字体 颜色 背景等的功能*/
+QPushButton#ClearDataButton,#ComCheckButton,#ShowDataButton,#WriteFilepushButton,#GetDataButton,#connectButton,#GetInfoButton,#LoginPushButton,#SavePasswordPushButton,#DownLoadFileButton, #DownLoadFileButton_1,#confirmTask{
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    font-size: 15px;
+    border-radius: 4px;
+    min-width: 55px;        /* 新增：设置最小宽度 */
+    min-height: 25px;       /* 新增：设置最小高度 */
+}
+QPushButton#cancleRecieve{
+    background-color: #cc510a;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    font-size: 15px;
+    border-radius: 4px;
+    min-width: 55px;        /* 新增：设置最小宽度 */
+    min-height: 25px;       /* 新增：设置最小高度 */
+}
+QPushButton#cancleTask{
+    background-color: #ccc908;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    font-size: 15px;
+    border-radius: 4px;
+    min-width: 55px;        /* 新增：设置最小宽度 */
+    min-height: 25px;       /* 新增：设置最小高度 */
+}
+/* 按钮 鼠标放上的颜色*/
+QPushButton:hover#ClearDataButton,
+QPushButton:hover#ComCheckButton,
+QPushButton:hover#ShowDataButton,
+QPushButton:hover#WriteFilepushButton,
+QPushButton:hover#GetDataButton,
+QPushButton:hover#connectButton,
+QPushButton:hover#GetInfoButton,
+QPushButton:hover#LoginPushButton,
+QPushButton:hover#DownLoadFileButton,
+QPushButton:hover#DownLoadFileButton_1,
+QPushButton:hover#confirmTask,
+QPushButton:hover#SavePasswordPushButton {
+    background-color: #45a049;
+}
+
+QPushButton:hover#cancleRecieve
+{
+    background-color: #dd570a;
+}
+QPushButton:hover#cancleTask 
+{
+    background-color: #d8d509;;
+}
+/* 按钮 鼠标点击的颜色*/
+QPushButton:pressed#ClearDataButton,
+QPushButton:pressed#ComCheckButton,
+QPushButton:pressed#ShowDataButton,
+QPushButton:pressed#WriteFilepushButton,
+QPushButton:pressed#GetDataButton,
+QPushButton:pressed#connectButton,
+QPushButton:pressed#GetInfoButton,
+QPushButton:pressed#LoginPushButton,
+QPushButton:pressed#DownLoadFileButton,
+QPushButton:pressed#DownLoadFileButton_1
+QPushButton:pressed#confirmTask,
+QPushButton:pressed#cancleTask,
+QPushButton:pressed#cancleRecieve,
+QPushButton:pressed#SavePasswordPushButton {
+    background-color: #397e39;
+}
+
+QPushButton:pressed#cancleRecieve
+{
+    background-color: #f05c06;
+}
+QPushButton:pressed#cancleTask 
+{
+    background-color: #f3f020;;
+}
+
+QLineEdit#lineEdit_3,#IpEdit,#PortEdit,#MobanlujinEdit,#lineEdit,#lineEdit_2,#UserEdit,#PasswordEdit,#celiangrenyuan_lineEdit,#shenherenyuan_lineEdit {
+    border: 2px solid #ccc;
+    padding: 4px 8px;
+    font-size: 15px;
+    border-radius: 4px;
+    min-height: 23px;       /* 新增：设置最小高度 */
+}
+QLineEdit#NumberEdit{
+    border: 2px solid #ccc;
+    padding: 4px 8px;
+    font-size: 13px;
+    border-radius: 4px;
+    min-height: 23px;       /* 新增：设置最小高度 */
+    min-width: 140px; /* 增加最小宽度，根据需要调整数值 */
+}
+QComboBox#caijiTypecomboBox,#sehbeicomboBox,#PathcomboBox,#TypecomboBox,#FilecomboBox,#jianceleibie_comboBox,#jianceleibie_comboBox{
+    border: 2px solid #ccc;
+    padding: 4px 8px;
+    font-size: 13px; 
+    min-height: 23px;
+}
+QComboBox#checkMachineList{
+    border: 2px solid #ccc;
+    padding: 4px 8px;
+    font-size: 13px; 
+    min-height: 23px;
+    min-width: 100px; /* 增加最小宽度，根据需要调整数值 */
+}
+
+QLabel#label_17,#label_6,#label_8,#label_10,#label_5,#label_7,#label_11,#label_13,#label_19,#line_5,#label,#label_12,#label_14,#label_15,#label_16,#label_2,#label_3,#label_4,#label_9,#label_17,#label_18 {
+    font-size: 15px;
+    color: #333;
+}
+
+QLabel#label_20,#label_30,#label_36,#label_42,#label_48,#label_23,#label_26,#label_32,#label_38,#label_44,#label_25,#label_29,#label_35,#label_41,#label_47
+{
+    font-weight: bold; 
+    font-size: 12px;    
+}
+
+QLabel#label_21{
+    font-size: 15px;
+    color: #333;
+}
+
+QLabel#label_gongxu,#label_jiajubianhao,#label_jiancexiangmu,#label_jianceyaoqiu,#label_jianyanleibie,#label_jitai,#label_muxuehao,#label_shenqingdanhao,#label_shenqingshijian,#label_shifoupohuai,#label_shoujianshijian,#label_songjiandanwei,#label_xiangmmumingchen,#label_yangpingshuliang,#lable_shenqingrenyuan
+{
+    font-size: 12px;    
+}
+
+ZDateTimeEdit#dateTimeEditStart,#dateTimeEditEnd {
+    padding: 3px 5px;      
+    font-size: 12px;        
+    border: 2px solid #ccc;
+    padding: 4px 8px;
+    font-size: 15px;
+    border-radius: 4px;
+    min-height: 23px;
+}
+

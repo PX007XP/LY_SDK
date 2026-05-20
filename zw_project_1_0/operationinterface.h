@@ -1,4 +1,4 @@
-#ifndef OPERATIONINTERFACE_H
+﻿#ifndef OPERATIONINTERFACE_H
 #define OPERATIONINTERFACE_H
 
 #include <QWidget>
@@ -7,6 +7,16 @@
 #include "excellprecess.h"
 #include <QVector>
 #include "httpnetobject.h"
+#include "tempdata.h"
+#include <QRadioButton>
+#include <QFileSystemWatcher>
+#include <QFileInfo>
+#include <QSet>
+#include <QMessageBox>
+#include <QModelIndex>
+#include "tcpserverthread.h"
+
+class LoadingDialog;
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -29,8 +39,20 @@ public:
 
     // 信号接收函数 所有的消息显示
     void RecvSocketMessage(QByteArray szMessage);
-    // 信号接收函数 解析后的数据
+
+    // 处理数据，对数据进行分析 融合数据 返回数据插入的列数下标 从0 开始 数据对接使用的接口
+    int DealMerageMessage(RecvFile::STDetailData& stResult);
+    //处理数据，对数据进行分析 融合数据 返回数据插入的列数下标 从0 开始 数据对接使用的接口 循环遍历 融合
+    int DealMerageMessageAll(RecvFile::STDetailData& stResult);
+
+    // 处理数据，对数据进行分析 融合数据 返回数据插入的列数下标 从0 开始 文件感知使用的接口
+    int DealMerageMessage(QVector<RecvFile::STDetailData>);
+    // 信号接收函数 解析后的数据 OMM
     void ShowDetailMesage(RecvFile::STDetailData stResult);
+
+    // 信号接收函数 解析后的数据 CMM
+    void ShowDetailMesageCMM(TcpServerThread::STDetailData stResult);
+
 
     // 设置excel写文件捕获异常
     void SetSlotExcelException(QAxObject *pWorkbook, QString strFile);
@@ -73,21 +95,29 @@ private slots:
 
     void handleExcelException(int code, const QString &source, const QString &desc, const QString &help);
 
-    void on_pushFileButton_clicked();
-
     void on_ComCheckButton_clicked();
 
     void on_ShowDataButton_clicked();
 
     void on_MobanlujinEdit_editingFinished();
+
+    void DataChanged(int num,QString key,double value);
+
+    void LaybelText(QString text);
+
+    void sonWidget();
+
 signals:
     void StartConnect(QString strIP,unsigned short usPort);
     void SendMessage(QString strMessage);
+
 private:
     Ui::OperationInterface *ui;
     QThread* m_pSocketThread  ;
     RecvFile *m_pRecvFileWorker ;
     QString m_strLocalIp;
+    TempData *m_tempData;
+    QWidget  *m_widget;//子界面
 
     // UI的相关初始化
     int UiInit();
@@ -106,10 +136,112 @@ private:
     // 根据文件夹显示文件
     int SetFileComboByDirPath(QString strDirPath);
 
+    void on_pushFileButton_clicked();
+
+    int GetMobanFileName(QString& strFilePath);
+
 public:
+    bool IsFileWorkType()
+    {
+        return m_bFileReadtype;
+    }
 
 private:
     void GetLocalIp();
+
+    bool m_bFileReadtype = false ; // false 数据对接  true文件感知
+
+    int m_iLastInsertDataColumn = 0; // 记录上一次插入数据的列数
+
+// 自动感知相关功能
+private:
+    QFileSystemWatcher m_Watcher;
+    bool m_bListening = false;
+    QString m_strListeningPath;
+    bool m_bFileReading = false;  // 读取中 设为true  完成检查 或者清除数据后 置回 false
+
+    QSet<QString> m_sSetOldFiles; // 不需要处理的文件
+
+    QFileInfo m_LastFileInfo; // 记录最新文件记录
+
+    int GetSheBeiType();
+
+    bool RemoveRepetiton(QFileInfo fileInfo);
+public:
+    void FindLatestFile(const QString &strPath , QVector<QFileInfo>& vNewFiles);
+
+    bool isFileInUse(const QString &filePath);
+    // 数据感知相关初始化
+    int InitWatcher();
+   //
+    void StartListening();
+    void StopListening();
+private slots:
+    // 信号处理函数
+    void onDirectoryChanged(const QString &strPath);
+    void onFileChanged(const QString &strPath);
+
+    void on_caijiTypecomboBox_activated(int index);
+    void on_zhidongganzhi_lineEdit_editingFinished();
+
+    void on_UserEdit_editingFinished();
+
+    void on_PasswordEdit_editingFinished();
+
+
+    void on_celiangrenyuan_lineEdit_editingFinished();
+
+    void on_shenherenyuan_lineEdit_editingFinished();
+
+    void on_DownLoadFileButton_clicked();
+
+    void on_lineEdit_3_editingFinished();
+
+    void on_NumberEdit_editingFinished();
+
+public:
+    bool CheckWorkCondition();
+
+    // 对读取完数据后进行数据限制 最多100 列数据；
+    void CheckDataCount();
+
+    LoadingDialog *pLoad = nullptr;
+
+
+    void ShowLoading();
+
+    void HideLoading();
+
+    QMessageBox *msgBox = nullptr;
+
+#if 0
+private:
+    void closeEvent(QCloseEvent *event) override;
+#endif
+
+private slots:
+    void ClikedInfoCell(const QModelIndex &index);
+
+    // 高度规完成输入 回车或者失去焦点
+    void on_gaoduguilineEdit_editingFinished();
+    // 高度规文本发生变化
+    void on_gaoduguilineEdit_textChanged(const QString &arg1);
+
+    void on_DownLoadFileButton_1_clicked();
+
+    void on_cancleRecieve_clicked();
+
+    void on_confirmTask_clicked();
+
+    void on_cancleTask_clicked();
+
+private:
+    QModelIndex m_indexCell; // 记录当前对象的值
+
+    qint64 m_lGaoduguiLineStatTime = 0; // 高度规lineedit 开始输入的 时间 单位ms
+
+    TcpServerThread* m_pServerObject;
+    QThread* m_pSocketThreadServer  ; // CMM 数据接收线程
 
 };
 #endif // OPERATIONINTERFACE_H

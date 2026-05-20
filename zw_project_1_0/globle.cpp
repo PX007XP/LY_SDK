@@ -1,28 +1,42 @@
-#include "globle.h"
+﻿#include "globle.h"
 #include <QDebug>
 #include <QDir>
+#include <QFileInfo>
 #include "logger.h"
 
-QString g_strReqNo = QStringLiteral("ReqNO");
+QString g_strReqNo = QStringLiteral("ReqNo"); 
 QString g_strReqUserName = QStringLiteral("CreatorName");
-QString g_strReqUnicom = QStringLiteral("TestUserName"); // 送检单位
-QString g_strDeviceName = QStringLiteral("DeviceName"); // 项目名称
+QString g_strReqUnicom = QStringLiteral("QCDeptName"); // 送检单位
+QString g_strDeviceName = QStringLiteral("ProjectName"); // 项目名称
 QString g_strDeviceNo = QStringLiteral("DeviceNo"); // 机台
 QString g_strReqTime = QStringLiteral("CreateTime"); // 申请时间
-QString g_strTestCon = QStringLiteral("TestCon"); // 检查要求
-//QString g_strReqTime = QStringLiteral("CreateTime"); // 样品数量
-//QString g_strReqTime = QStringLiteral("CreateTime"); // 收件时间
-QString g_strReportType = QStringLiteral("ReportType"); // 检验类别
-//QString g_strReqTime = QStringLiteral("CreateTime"); // 是否破坏
-QString g_strProjectClassId = QStringLiteral("ProjectClassId"); // 检查项目
-QString g_strProjectStageId = QStringLiteral("ProjectStageId"); // 工序
-QString g_strSatageNo = QStringLiteral("SatageNo"); // 夹具编号
-QString g_strOrgCode = QStringLiteral("OrgCode"); // 模穴号
+QString g_strTestCon = QStringLiteral("ChkDemand"); // 检查要求
+QString g_strSampleQty = QStringLiteral("SampleQty"); // 样品数量
+QString g_strRevArtTime = QStringLiteral("RecDateTime"); // 收件时间
+QString g_strReportType = QStringLiteral("ProjectStageName"); // 检验类别
+QString g_strCanBreak = QStringLiteral("CanBreak"); // 是否破坏
+QString g_strProjectClassId = QStringLiteral("ProjectListName"); // 检查项目
+QString g_strProjectStageId = QStringLiteral("WorkStageName"); // 工序
+QString g_strSatageNo = QStringLiteral("MachineName"); // 夹具编号
+QString g_strOrgCode = QStringLiteral("HoleNo"); // 模穴号
 QString g_strRemark = QStringLiteral("Remark"); // 备注
+
+QString g_strSaveFilePath;  // 下载文件自动保存路径
 
 Logger* g_pLogger = nullptr;
 
 int g_iLogLevel = 5;
+QString g_strIpAddressKey = "以太网";
+int g_iFileSaveFlag = 0;
+
+int g_iDelTxtFile = 0; // 文件感知文件是否读取后直接删除 1 不删 0 删除
+
+QString g_strPluginPath = "";
+QString g_strPluginConfigFilePath = "";
+
+QString g_strDownloadFileSavePath = "D:"; // 下载文件保存的路径
+
+qint64 g_lGaoduguiTimeInterval = 200;  // 200 ms
 
 int CheckDirectoryExists(QString strPath)
 {
@@ -42,4 +56,10 @@ int CheckDirectoryExists(QString strPath)
         qDebug() << "目录已存在:" << strPath;
     }
     return 0;
+}
+
+QString GetFileSuffix(const QString strFile)
+{
+    QFileInfo fileInfo(strFile);
+    return fileInfo.suffix();
 }

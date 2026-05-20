@@ -1,9 +1,10 @@
-#ifndef RECVFILE_H
+﻿#ifndef RECVFILE_H
 #define RECVFILE_H
 
 #include <QObject>
 #include <QTcpSocket>
 #include <QHash>
+#include <QWaitCondition>
 
 const QString g_strPacketHeader = "msResult";
 const QString g_strPacketTail1 = "\n\r";
@@ -49,6 +50,13 @@ public:
             m_strUnits.clear();
             m_mMeasuredValue.clear();
         }
+        void RestData()
+        {
+            m_strPartID.clear();
+            m_strDateTime.clear();
+            m_strUnits.clear();
+            m_mMeasuredValue.clear();
+        }
         QString m_strPartID;  // 工件ID
         QString m_strDateTime;   // 测量时间
         QChar m_cQualified;  // 是否合格  G代表合格,B代表不合格
@@ -65,6 +73,7 @@ public:
     QString GetADetailData(QString& strData, QChar cSplitChar);
     //拆分测量值
     bool GetDimensionData(QString &strDimension , STDimenSionData& stDimenSionData);
+
 signals:
     void ConnectOk();
     void ConnectError();
@@ -72,11 +81,13 @@ signals:
     void ResultToUi(STDetailData stResult);
 private slots:
     void RecieveData();
+    void stopWorking();
 
 private:
     QTcpSocket* m_pTcpSocket = nullptr;
 
     QString m_strMessageData;
+    QWaitCondition m_waitCondition;
 
 };
 
